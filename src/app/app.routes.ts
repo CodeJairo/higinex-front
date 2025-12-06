@@ -1,10 +1,14 @@
 import { Routes } from '@angular/router';
-import { SalesLayoutPage } from './sales/Layouts/sales-layout-page/sales-layout-page';
 
 export const routes: Routes = [
   {
+    path: 'auth',
+    loadChildren: () => import('./auth/auth.routes').then((m) => m.authRoutes),
+  },
+  {
     path: 'sales',
-    component: SalesLayoutPage,
+    loadComponent: () =>
+      import('./sales/Layouts/sales-layout-page/sales-layout-page').then((m) => m.SalesLayoutPage),
     loadChildren: () => import('./sales/sales.routes').then((m) => m.salesRoutes),
   },
   {
