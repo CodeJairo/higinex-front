@@ -14,6 +14,7 @@ import {
   Twitter,
   Youtube,
 } from 'lucide-angular';
+import { FilterService } from '../../services/filter.service';
 
 @Component({
   selector: 'sales-footer',
@@ -23,6 +24,7 @@ import {
 })
 export class Footer {
   private router = inject(Router);
+  private filterService = inject(FilterService);
 
   // Icons
   readonly facebookIcon = Facebook;
@@ -74,7 +76,7 @@ export class Footer {
   }
 
   goToPromotions(): void {
-    //TODO: Change to promotions route when available
+    this.filterService.setDiscountFilter(true);
     this.router.navigateByUrl('/catalog');
     setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
   }
