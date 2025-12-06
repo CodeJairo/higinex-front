@@ -6,7 +6,7 @@ import { Product } from '../../interface';
 import { CartService } from '../../services/cart.service';
 
 @Component({
-  selector: 'app-product-card',
+  selector: 'sales-product-card',
   imports: [CommonModule, LucideAngularModule, ImageWithFallback],
   templateUrl: './product-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

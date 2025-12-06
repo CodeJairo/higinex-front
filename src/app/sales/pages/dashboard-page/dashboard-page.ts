@@ -15,6 +15,7 @@ import {
   Truck,
 } from 'lucide-angular';
 import { ImageWithFallback } from '../../../shared/components/image-with-fallback/image-with-fallback';
+import { FilterService } from '../../services/filter.service';
 
 @Component({
   selector: 'sales-dashboard-page',
@@ -24,6 +25,7 @@ import { ImageWithFallback } from '../../../shared/components/image-with-fallbac
 })
 export class DashboardPage {
   private router = inject(Router);
+  private filterService = inject(FilterService);
 
   // Icons
   readonly cartIcon = ShoppingCart;
@@ -180,12 +182,12 @@ export class DashboardPage {
   }
 
   navigateToCatalog(): void {
-    this.router.navigateByUrl('/catalog');
+    this.router.navigateByUrl('sales/catalog');
   }
 
   navigateToPromotions(): void {
-    //TODO: Change to promotions route when available
-    this.router.navigateByUrl('/catalog');
+    this.filterService.setDiscountFilter(true);
+    this.router.navigateByUrl('sales/catalog');
     setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
   }
 }

@@ -1,0 +1,64 @@
+<div class="flex flex-1">
+  <sales-sidebar></sales-sidebar>
+
+  <main class="flex-1 p-6 lg:p-8">
+    <div class="flex items-center justify-between gap-3 mb-6">
+      <div class="flex-1">
+        <h2 class="text-slate-900 mb-1">Productos Disponibles</h2>
+        <p class="text-sm text-slate-600">
+          {{ filteredProducts().length }}
+          {{ filteredProducts().length === 1 ? 'producto encontrado' : 'productos encontrados' }}
+        </p>
+      </div>
+
+      <!-- Mobile Filters Button -->
+      <button
+        (click)="openMobileFilters()"
+        class="lg:hidden flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+      >
+        <lucide-icon [img]="filterIcon" class="w-4 h-4"></lucide-icon>
+        <span class="text-sm">Filtros</span>
+      </button>
+
+      <select
+        class="hidden sm:block px-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        <option>Ordenar por: Relevancia</option>
+        <option>Menor precio</option>
+        <option>Mayor precio</option>
+        <option>Nombre A-Z</option>
+        <option>Nombre Z-A</option>
+      </select>
+    </div>
+
+    <!-- Mobile Filters Modal -->
+    @if (showMobileFilters()) {
+    <sales-mobile-filters (closeFilters)="closeMobileFilters()"></sales-mobile-filters>
+    } @if (filteredProducts().length === 0) {
+    <div class="text-center py-16">
+      <div
+        class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4"
+      >
+        <svg class="w-8 h-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+          />
+        </svg>
+      </div>
+      <h3 class="text-slate-900 mb-2">No se encontraron productos</h3>
+      <p class="text-sm text-slate-600">
+        Intenta ajustar los filtros o la búsqueda para ver más resultados
+      </p>
+    </div>
+    } @else {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 auto-rows-fr">
+      @for (product of filteredProducts(); track product.id) {
+      <sales-product-card [product]="product"></sales-product-card>
+      }
+    </div>
+    }
+  </main>
+</div>
