@@ -1,0 +1,203 @@
+<header
+  class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm transition-transform duration-300"
+  [class.translate-y-0]="isVisible()"
+  [class.-translate-y-full]="!isVisible()"
+>
+  <div class="px-4 lg:px-6 py-4">
+    <div class="flex items-center justify-between gap-4">
+      <!-- Logo - Left -->
+      <button
+        (click)="goToDashboard()"
+        class="flex items-center gap-3 min-w-0 shrink hover:opacity-80 transition-opacity"
+      >
+        <div
+          class="w-10 h-10 bg-white flex items-center cursor-pointer justify-center shrink-0 rounded-lg overflow-hidden"
+        >
+          <svg
+            width="40"
+            height="40"
+            viewBox="0 0 40 40"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect width="40" height="40" fill="white" />
+            <path d="M8 8H12V32H8V8Z" fill="#0EA5E9" />
+            <path d="M16 8H20V32H16V8Z" fill="#0EA5E9" />
+            <path d="M24 8H28V32H24V8Z" fill="#0EA5E9" />
+            <path d="M8 18H28V22H8V18Z" fill="#0EA5E9" />
+            <circle cx="32" cy="12" r="3" fill="#10B981" />
+            <circle cx="32" cy="28" r="3" fill="#10B981" />
+          </svg>
+        </div>
+        <div class="block min-w-0">
+          <h1 class="text-slate-900 tracking-tight truncate cursor-pointer">Higinex</h1>
+          <p class="text-xs text-slate-500 truncate">Confianza en cada producto</p>
+        </div>
+      </button>
+
+      <!-- Search Bar - Center (Hidden on mobile, shown below) -->
+      <div class="hidden md:flex flex-1 max-w-xl mx-auto">
+        <div class="relative w-full">
+          <lucide-icon
+            [img]="searchIcon"
+            class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"
+          ></lucide-icon>
+          <input
+            type="text"
+            placeholder=" Buscar productos..."
+            [ngModel]="searchQuery()"
+            (ngModelChange)="searchQuery.set($event)"
+            (focus)="goToCatalog()"
+            class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+          />
+        </div>
+      </div>
+
+      <!-- Actions - Right -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Notifications -->
+        <button class="relative p-2 hover:bg-slate-100 rounded-lg transition-colors">
+          <lucide-icon [img]="bellIcon" class="w-5 h-5 text-slate-700"></lucide-icon>
+          <span class="absolute top-1 right-1 w-2 h-2 bg-blue-600 rounded-full"></span>
+        </button>
+
+        <!-- Cart -->
+        <button
+          class="relative p-2 hover:bg-slate-100 rounded-lg transition-colors"
+          (click)="toggleCart()"
+        >
+          <lucide-icon [img]="cartIcon" class="w-5 h-5 text-slate-700"></lucide-icon>
+          <span
+            class="absolute -top-1 -right-1 w-5 h-5 bg-blue-600 text-white text-xs rounded-full flex items-center justify-center"
+          >
+            {{ totalItems() }}
+          </span>
+        </button>
+
+        <!-- User Profile -->
+        <button
+          id="user-menu-button"
+          class="flex items-center gap-2 p-2 hover:bg-slate-100 rounded-lg transition-colors"
+          (click)="toggleUserMenu()"
+        >
+          <div
+            class="w-8 h-8 bg-linear-to-br from-slate-600 to-slate-700 rounded-full flex items-center justify-center"
+          >
+            <lucide-icon [img]="userIcon" class="w-4 h-4 text-white"></lucide-icon>
+          </div>
+          <!-- User name - Hidden on mobile -->
+          <div class="hidden lg:block text-sm text-left">
+            <p class="text-slate-900 leading-tight">{{ userName() || 'Usuario' }}</p>
+            <p class="text-xs text-slate-500">Distribuidor</p>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Search Bar - Below header on mobile -->
+    <div class="md:hidden mt-3">
+      <div class="relative">
+        <lucide-icon
+          [img]="searchIcon"
+          class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"
+        ></lucide-icon>
+        <input
+          type="text"
+          placeholder="Buscar productos..."
+          [ngModel]="searchQuery()"
+          (ngModelChange)="searchQuery.set($event)"
+          (focus)="goToCatalog()"
+          class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+        />
+      </div>
+    </div>
+
+    <!-- User Menu Dropdown -->
+    @if (showUserMenu()) {
+    <div
+      id="user-menu-dropdown"
+      class="absolute right-4 lg:right-6 top-20 bg-white border border-slate-200 rounded-lg shadow-lg z-50 mmin-w-60"
+    >
+      <!-- User Info Header -->
+      <div class="px-4 py-3 border-b border-slate-200">
+        <p class="text-slate-900">{{ userName() || 'Usuario' }}</p>
+        <p class="text-xs text-slate-500">{{ userEmail() || 'usuario@higinex.com' }}</p>
+      </div>
+
+      <!-- Menu Items -->
+      <div class="py-2">
+        <button
+          class="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-3"
+        >
+          <lucide-icon [img]="userCircleIcon" class="w-4 h-4 text-slate-500"></lucide-icon>
+          Mi Cuenta
+        </button>
+
+        <button
+          class="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-3"
+        >
+          <lucide-icon [img]="packageIcon" class="w-4 h-4 text-slate-500"></lucide-icon>
+          Historial de Pedidos
+        </button>
+
+        <button
+          class="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-3"
+        >
+          <lucide-icon [img]="mapPinIcon" class="w-4 h-4 text-slate-500"></lucide-icon>
+          Mis Direcciones
+        </button>
+
+        <button
+          class="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-3"
+        >
+          <lucide-icon [img]="fileTextIcon" class="w-4 h-4 text-slate-500"></lucide-icon>
+          Facturación
+        </button>
+
+        <button
+          class="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-3"
+        >
+          <lucide-icon [img]="heartIcon" class="w-4 h-4 text-slate-500"></lucide-icon>
+          Favoritos
+        </button>
+
+        <div class="my-2 border-t border-slate-200"></div>
+
+        <button
+          class="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-3"
+        >
+          <lucide-icon [img]="settingsIcon" class="w-4 h-4 text-slate-500"></lucide-icon>
+          Configuración
+        </button>
+
+        <button
+          class="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-3"
+        >
+          <lucide-icon [img]="helpIcon" class="w-4 h-4 text-slate-500"></lucide-icon>
+          Ayuda / Soporte
+        </button>
+
+        <div class="my-2 border-t border-slate-200"></div>
+
+        <button
+          (click)="logout()"
+          class="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors flex items-center gap-3"
+        >
+          <lucide-icon [img]="logoutIcon" class="w-4 h-4"></lucide-icon>
+          Cerrar sesión
+        </button>
+      </div>
+    </div>
+    }
+
+    <!-- Cart Dropdown -->
+    <sales-cart-dropdown
+      [isOpen]="showCart()"
+      [items]="cartItems()"
+      (closeCart)="closeCart()"
+      (updateQuantity)="updateQuantity($event.id, $event.quantity)"
+      (removeItem)="removeItem($event)"
+      (clearCart)="clearCart()"
+    ></sales-cart-dropdown>
+  </div>
+</header>
