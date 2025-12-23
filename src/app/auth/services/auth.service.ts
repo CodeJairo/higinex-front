@@ -1,15 +1,18 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { Router } from '@angular/router';
 import { toObservable } from '@angular/core/rxjs-interop';
-import {
-  injectMutation,
-  injectQuery,
-  QueryClient,
-} from '@tanstack/angular-query-experimental';
+import { Router } from '@angular/router';
+import { injectMutation, injectQuery, QueryClient } from '@tanstack/angular-query-experimental';
 import { firstValueFrom, Observable } from 'rxjs';
-import { LoginCredentials, LoginResponse, LogoutResponse, RefreshResponse, User } from '../interfaces';
 import { environment } from '../../../environments/environment';
+import {
+  LoginCredentials,
+  LoginResponse,
+  LogoutResponse,
+  RefreshResponse,
+  RegisterPayload,
+  User,
+} from '../interfaces';
 
 type SessionStatus = 'loading' | 'authenticated' | 'unauthenticated';
 
@@ -24,6 +27,7 @@ export class AuthService {
 
   private readonly accessTokenSignal = signal<string | null>(null);
   private readonly loginErrorSignal = signal<string | null>(null);
+  private readonly registerErrorSignal = signal<string | null>(null);
   private readonly isRecoveryLoadingSignal = signal(false);
   private refreshInFlight: Promise<boolean> | null = null;
   private initialized = false;
@@ -63,6 +67,10 @@ export class AuthService {
     },
   }));
 
+  private readonly registerMutation = injectMutation(() => ({
+    mutationFn: (payload: RegisterPayload) => this.registerRequest(payload),
+  }));
+
   readonly user = computed(() => this.meQuery.data() ?? null);
   readonly user$ = toObservable(this.user);
   readonly isAuthenticated = computed(() => this.user() !== null);
@@ -76,6 +84,8 @@ export class AuthService {
   readonly userEmail = computed(() => this.user()?.email ?? '');
   readonly loginError = this.loginErrorSignal.asReadonly();
   readonly isLoginLoading = computed(() => this.loginMutation.isPending());
+  readonly registerError = this.registerErrorSignal.asReadonly();
+  readonly isRegisterLoading = computed(() => this.registerMutation.isPending());
   readonly isLoading = computed(
     () =>
       this.loginMutation.isPending() ||
@@ -131,6 +141,21 @@ export class AuthService {
 
   clearLoginError(): void {
     this.loginErrorSignal.set(null);
+  }
+
+  async register(payload: RegisterPayload): Promise<boolean> {
+    this.registerErrorSignal.set(null);
+    try {
+      await this.registerMutation.mutateAsync(payload);
+      return true;
+    } catch (error) {
+      this.registerErrorSignal.set(this.mapRegisterError(error));
+      return false;
+    }
+  }
+
+  clearRegisterError(): void {
+    this.registerErrorSignal.set(null);
   }
 
   private async fetchCurrentUser(): Promise<User> {
@@ -218,6 +243,14 @@ export class AuthService {
     );
   }
 
+  private async registerRequest(payload: RegisterPayload): Promise<User> {
+    return this.requestWithAuth(() =>
+      this.http.post<User>(this.buildUrl('/auth/register'), payload, {
+        headers: this.authHeaders(),
+      })
+    );
+  }
+
   private isAuthError(error: unknown): boolean {
     return error instanceof HttpErrorResponse && (error.status === 401 || error.status === 403);
   }
@@ -236,6 +269,25 @@ export class AuthService {
     }
 
     return 'No se pudo iniciar sesion. Intenta de nuevo.';
+  }
+
+  private mapRegisterError(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      if (error.status === 400) {
+        return 'Datos invalidos. Revisa el formulario e intenta de nuevo.';
+      }
+      if (error.status === 403) {
+        return 'No tienes permisos para registrar usuarios.';
+      }
+      if (error.status === 409) {
+        return 'El correo o el documento ya estan registrados.';
+      }
+      if (error.status === 0) {
+        return 'No se pudo conectar con el servidor. Intenta de nuevo.';
+      }
+    }
+
+    return 'No se pudo registrar el usuario. Intenta de nuevo.';
   }
 
   private buildUrl(path: string): string {

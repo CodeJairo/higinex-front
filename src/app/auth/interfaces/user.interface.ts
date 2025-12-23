@@ -3,6 +3,16 @@ export enum Role {
   ADMIN = 'ADMIN',
 }
 
+export type DocumentType = 'CC' | 'CE' | 'NIT' | 'TI' | 'PAS';
+
+export interface CustomerRegistration {
+  email: string;
+  name: string;
+  phone: string;
+  documentType: DocumentType;
+  documentNumber: string;
+}
+
 export interface Customer {
   id: string;
   email: string;
@@ -39,4 +49,10 @@ export interface RefreshResponse {
 
 export interface LogoutResponse {
   ok: true;
+}
+
+export interface RegisterPayload {
+  email: string;
+  password: string;
+  customer?: CustomerRegistration;
 }
