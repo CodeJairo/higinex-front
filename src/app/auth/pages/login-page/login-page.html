@@ -40,6 +40,11 @@
             <h1 class="text-4xl tracking-tight">HIGINEX</h1>
             <p class="text-sm text-blue-100 mt-1">Tu proveedor de confianza</p>
           </div>
+          @if (showError('email')) {
+          <p class="text-xs text-red-600 mt-1">
+            @if (hasError('email', 'required')) { Correo requerido. } @else { Correo invalido. }
+          </p>
+          }
         </div>
       </div>
 
@@ -103,6 +108,9 @@
             <h3 class="mb-2">Envío Rápido</h3>
             <p class="text-sm text-blue-100">Despacho en 24-48 horas</p>
           </div>
+          @if (showError('password')) {
+          <p class="text-xs text-red-600 mt-1">Contrasena requerida.</p>
+          }
         </div>
       </div>
 
@@ -145,7 +153,7 @@
         <p class="text-slate-600">Ingresa tus credenciales para acceder a tu cuenta</p>
       </div>
 
-      <form (ngSubmit)="onSubmit()" class="space-y-6">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6">
         <!-- Email Input -->
         <div>
           <label for="email" class="block text-sm text-slate-700 mb-2"> Correo Electrónico </label>
@@ -157,9 +165,7 @@
             <input
               id="email"
               type="email"
-              [ngModel]="email()"
-              (ngModelChange)="email.set($event)"
-              name="email"
+              formControlName="email"
               placeholder="tu&#64;email.com"
               class="w-full pl-12 pr-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
             />
@@ -177,9 +183,7 @@
             <input
               id="password"
               [type]="showPassword() ? 'text' : 'password'"
-              [ngModel]="password()"
-              (ngModelChange)="password.set($event)"
-              name="password"
+              formControlName="password"
               placeholder="••••••••"
               class="w-full pl-12 pr-12 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
             />
@@ -210,7 +214,7 @@
         <!-- Submit Button -->
         <button
           type="submit"
-          [disabled]="isLoginLoading()"
+          [disabled]="isLoginLoading() || form.invalid"
           class="cursor-pointer w-full bg-linear-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white py-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group"
         >
           @if (isLoginLoading()) {
