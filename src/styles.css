@@ -1,3 +1,24 @@
 /* You can add global styles to this file, and also import other style files */
 
-@import "tailwindcss";
+@import 'tailwindcss';
+
+:root {
+  --input-icon-padding-md: 3rem;
+  --input-icon-padding-lg: 3.5rem;
+}
+
+:is(input, select, textarea).pl-10 {
+  padding-left: var(--input-icon-padding-md);
+}
+
+:is(input, select, textarea).pl-12 {
+  padding-left: var(--input-icon-padding-lg);
+}
+
+:is(input, select, textarea).pr-10 {
+  padding-right: var(--input-icon-padding-md);
+}
+
+:is(input, select, textarea).pr-12 {
+  padding-right: var(--input-icon-padding-lg);
+}
