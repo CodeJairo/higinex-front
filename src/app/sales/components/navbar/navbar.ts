@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   effect,
   inject,
   OnDestroy,
@@ -27,6 +28,7 @@ import {
   User,
 } from 'lucide-angular';
 import { AuthService } from '../../../auth/services/auth.service';
+import { Role } from '../../../auth/interfaces';
 import { CartService } from '../../services/cart.service';
 import { FilterService } from '../../services/filter.service';
 import { CartDropdown } from '../cart-dropdown/cart-dropdown';
@@ -70,13 +72,39 @@ export class Navbar implements OnInit, OnDestroy {
   // From services
   readonly totalItems = this.cartService.totalItems;
   readonly cartItems = this.cartService.items;
-  readonly userName = this.authService.userName;
-  readonly userEmail = this.authService.userEmail;
+  readonly hasUser = computed(() => !!this.authService.user());
+  readonly userDisplayName = computed(() => {
+    const user = this.authService.user();
+    if (!user) {
+      return '';
+    }
+    if (user.role === Role.USER) {
+      return this.capitalizeWords(user.customer?.name ?? '') || user.email || '';
+    }
+    return user.email ?? '';
+  });
+  readonly userDisplayDetail = computed(() => {
+    const user = this.authService.user();
+    if (!user) {
+      return '';
+    }
+    if (user.role === Role.USER) {
+      return user.customer?.name ? user.email ?? '' : '';
+    }
+    if (user.role === Role.ADMIN) {
+      return 'ADMINISTRADOR';
+    }
+    return '';
+  });
 
   constructor() {
-    // Sync search query with filter service
     effect(() => {
       this.filterService.updateSearchQuery(this.searchQuery());
+    });
+    effect(() => {
+      if (!this.authService.user()) {
+        this.showUserMenu.set(false);
+      }
     });
   }
 
@@ -117,6 +145,9 @@ export class Navbar implements OnInit, OnDestroy {
   }
 
   toggleUserMenu(): void {
+    if (!this.hasUser()) {
+      return;
+    }
     this.showUserMenu.update((v) => !v);
   }
 
@@ -139,7 +170,7 @@ export class Navbar implements OnInit, OnDestroy {
   logout(): void {
     this.showUserMenu.set(false);
     this.authService.logout();
-    this.router.navigateByUrl('/auth/login');
+    window.location.reload();
   }
 
   updateQuantity(id: string, quantity: number): void {
@@ -152,5 +183,14 @@ export class Navbar implements OnInit, OnDestroy {
 
   clearCart(): void {
     this.cartService.clearCart();
+  }
+
+  private capitalizeWords(value: string): string {
+    return value
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((word) => `${word.charAt(0).toUpperCase()}${word.slice(1).toLowerCase()}`)
+      .join(' ');
   }
 }

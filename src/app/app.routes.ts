@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { roleMatchGuard } from './auth/guards/role.guard';
+import { Role } from './auth/interfaces';
 
 export const routes: Routes = [
   {
@@ -7,6 +9,10 @@ export const routes: Routes = [
   },
   {
     path: 'sales',
+    canMatch: [roleMatchGuard],
+    data: {
+      roles: [Role.ADMIN, Role.USER],
+    },
     loadComponent: () =>
       import('./sales/Layouts/sales-layout-page/sales-layout-page').then((m) => m.SalesLayoutPage),
     loadChildren: () => import('./sales/sales.routes').then((m) => m.salesRoutes),

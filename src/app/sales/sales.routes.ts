@@ -13,7 +13,7 @@ export const salesRoutes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'dashboard',
+    redirectTo: 'catalog',
     pathMatch: 'full',
   },
 ];

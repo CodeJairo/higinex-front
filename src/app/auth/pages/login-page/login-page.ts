@@ -23,12 +23,13 @@ export class LoginPage {
   readonly arrowRightIcon = ArrowRight;
 
   // Form state
-  email = signal('');
-  password = signal('');
-  showPassword = signal(false);
+  email = signal('admin@mail.com');
+  password = signal('c+1>=pI99M>m');
+  showPassword = signal(true);
 
   // Loading state from service
-  readonly isLoading = this.authService.isLoading;
+  readonly isLoginLoading = this.authService.isLoginLoading;
+  readonly loginError = this.authService.loginError;
 
   togglePasswordVisibility(): void {
     this.showPassword.update((v) => !v);
@@ -37,11 +38,15 @@ export class LoginPage {
   async onSubmit(): Promise<void> {
     const success = await this.authService.login(this.email(), this.password());
     if (success) {
-      this.router.navigate(['/dashboard']);
+      this.router.navigateByUrl('/sales');
     }
   }
 
   goToForgotPassword(): void {
     this.router.navigate(['/auth/forgot-password']);
+  }
+
+  dismissError(): void {
+    this.authService.clearLoginError();
   }
 }
