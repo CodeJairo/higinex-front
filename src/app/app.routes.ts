@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { roleMatchGuard } from './auth/guards/role.guard';
-import { Role } from './auth/interfaces';
+import { SalesLayoutPage } from './sales/Layouts/sales-layout-page/sales-layout-page';
+import { salesRoutes } from './sales/sales.routes';
 
 export const routes: Routes = [
   {
@@ -8,14 +9,14 @@ export const routes: Routes = [
     loadChildren: () => import('./auth/auth.routes').then((m) => m.authRoutes),
   },
   {
+    path: 'admin',
+    loadChildren: () => import('./admin/admin.routes').then((m) => m.adminRoutes),
+  },
+  {
     path: 'sales',
     canMatch: [roleMatchGuard],
-    data: {
-      roles: [Role.ADMIN, Role.USER],
-    },
-    loadComponent: () =>
-      import('./sales/Layouts/sales-layout-page/sales-layout-page').then((m) => m.SalesLayoutPage),
-    loadChildren: () => import('./sales/sales.routes').then((m) => m.salesRoutes),
+    component: SalesLayoutPage,
+    children: salesRoutes,
   },
   {
     path: 'errors',

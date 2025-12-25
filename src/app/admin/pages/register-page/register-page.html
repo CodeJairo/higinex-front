@@ -1,0 +1,485 @@
+<div
+  class="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-cyan-50 flex items-center justify-center p-4"
+>
+  <div class="card w-full max-w-4xl bg-base-100 shadow-2xl rounded-2xl overflow-hidden">
+    <div class="p-8 lg:p-12">
+      <div class="mb-6">
+        <h2 class="text-2xl font-semibold text-slate-900 mb-1">Registrar usuario</h2>
+        <p class="text-slate-600 text-sm">
+          Completa los datos para crear una cuenta de distribuidor.
+        </p>
+      </div>
+
+      @if (registerError()) {
+      <div role="alert" class="alert alert-error mb-6">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6 shrink-0 stroke-current"
+          fill="none"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+        <span>{{ registerError() }}</span>
+        <button type="button" (click)="dismissError()" class="btn btn-ghost btn-xs ml-auto">
+          Cerrar
+        </button>
+      </div>
+      } @if (registerSuccess()) {
+      <div role="alert" class="alert alert-success mb-6">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6 shrink-0 stroke-current"
+          fill="none"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 12.5l2 2.5 4-5M12 3a9 9 0 1 1 0 18 9 9 0 0 1 0-18z"
+          />
+        </svg>
+        <span>Cuenta creada correctamente.</span>
+      </div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6">
+        <div class="space-y-4">
+          <div class="flex items-center gap-2 text-sm text-slate-700">
+            <svg
+              class="h-[1em] opacity-70"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <g
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect x="4" y="11" width="16" height="9" rx="2" />
+                <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+              </g>
+            </svg>
+            <span class="font-semibold">Credenciales de acceso</span>
+          </div>
+
+          <div class="form-control">
+            <label for="email" class="mb-1 block text-sm text-slate-700">
+              Correo electronico de usuario
+            </label>
+
+            <label class="input input-bordered validator flex items-center gap-2 w-full">
+              <svg
+                class="h-[1em] opacity-60"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <g
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="3" y="5" width="18" height="14" rx="2" />
+                  <path d="M5 7l7 6 7-6" />
+                </g>
+              </svg>
+
+              <input
+                id="email"
+                type="email"
+                formControlName="email"
+                name="email"
+                autocomplete="email"
+                required
+                placeholder="usuario&#64;ejemplo.com"
+                class="grow"
+              />
+            </label>
+
+            @if (showError('email')) {
+            <p class="validator-hint text-xs text-error mt-1">
+              @if (hasError('email', 'required')) { Correo requerido. } @else { Correo invalido. }
+            </p>
+            }
+          </div>
+
+          <div class="form-control">
+            <label for="password" class="mb-1 block text-sm text-slate-700">Contrasena</label>
+
+            <label class="input input-bordered validator flex items-center gap-2 w-full">
+              <svg
+                class="h-[1em] opacity-60"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <g
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="4" y="11" width="16" height="9" rx="2" />
+                  <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+                </g>
+              </svg>
+
+              <input
+                id="password"
+                [type]="showPassword() ? 'text' : 'password'"
+                formControlName="password"
+                name="password"
+                autocomplete="new-password"
+                required
+                placeholder="Min. 8 caracteres"
+                class="grow"
+              />
+
+              <button
+                type="button"
+                (click)="togglePasswordVisibility()"
+                class="btn btn-ghost btn-xs"
+                aria-label="Mostrar u ocultar contrasena"
+                tabindex="-1"
+              >
+                @if (!showPassword()) {
+                <svg
+                  class="h-[1em] opacity-70"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <g
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </g>
+                </svg>
+                } @else {
+                <svg
+                  class="h-[1em] opacity-70"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <g
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M3 3l18 18" />
+                    <path d="M10.6 10.6A3 3 0 0 1 13.4 13.4" />
+                    <path d="M9.88 4.15A9.6 9.6 0 0 1 12 4c6.5 0 10 6 10 6a17 17 0 0 1-3.1 4.11" />
+                    <path d="M6.2 6.2A16.5 16.5 0 0 0 2 10s3.5 6 10 6a9.8 9.8 0 0 0 2.2-.25" />
+                  </g>
+                </svg>
+                }
+              </button>
+            </label>
+
+            @if (showError('password')) {
+            <p class="validator-hint text-xs text-error mt-1">
+              @if (hasError('password', 'required')) { Contrasena requerida. } @else { @if
+              (hasError('password', 'minlength')) { Minimo 8 caracteres. } @else { Debe incluir
+              mayuscula, minuscula y numero. } }
+            </p>
+            } @else {
+            <p class="validator-hint text-xs text-slate-500 mt-1">
+              Minimo 8 caracteres, 1 mayuscula, 1 minuscula y 1 numero.
+            </p>
+            }
+          </div>
+        </div>
+
+        <div class="space-y-4" formGroupName="customer">
+          <div class="flex items-center gap-2 text-sm text-slate-700">
+            <svg
+              class="h-[1em] opacity-70"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <g
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <path d="M7 21V7h10v14" />
+                <path d="M7 11h10" />
+              </g>
+            </svg>
+            <span class="font-semibold">Informacion del cliente</span>
+            <span class="text-xs text-slate-400">(opcional)</span>
+          </div>
+
+          <div class="form-control">
+            <label for="customerEmail" class="mb-1 block text-sm text-slate-700">
+              Correo electronico del cliente
+            </label>
+
+            <label class="input input-bordered validator flex items-center gap-2 w-full">
+              <svg
+                class="h-[1em] opacity-60"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <g
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="3" y="5" width="18" height="14" rx="2" />
+                  <path d="M5 7l7 6 7-6" />
+                </g>
+              </svg>
+
+              <input
+                id="customerEmail"
+                type="email"
+                formControlName="email"
+                autocomplete="email"
+                placeholder="cliente&#64;negocio.com"
+                class="grow"
+              />
+            </label>
+
+            @if (showError('customer.email') && hasError('customer.email', 'email')) {
+            <p class="validator-hint text-xs text-error mt-1">Correo invalido.</p>
+            }
+          </div>
+
+          <div class="form-control">
+            <label for="customerName" class="mb-1 block text-sm text-slate-700">
+              Nombre comercial / razon social
+            </label>
+
+            <label class="input input-bordered flex items-center gap-2 w-full">
+              <svg
+                class="h-[1em] opacity-60"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <g
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </g>
+              </svg>
+
+              <input
+                id="customerName"
+                type="text"
+                formControlName="name"
+                placeholder="FARMATODO LA 33"
+                class="grow"
+              />
+            </label>
+          </div>
+
+          <div class="form-control">
+            <label for="customerPhone" class="mb-1 block text-sm text-slate-700">
+              Telefono de contacto
+            </label>
+
+            <label class="input input-bordered flex items-center gap-2 w-full">
+              <svg
+                class="h-[1em] opacity-60"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.8 12.8 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.8 12.8 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"
+                />
+              </svg>
+
+              <input
+                id="customerPhone"
+                type="tel"
+                formControlName="phone"
+                placeholder="3000000000"
+                class="grow"
+              />
+            </label>
+
+            @if (showError('customer.phone') && hasError('customer.phone', 'pattern')) {
+            <p class="validator-hint text-xs text-error mt-1">Telefono invalido.</p>
+            }
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="form-control">
+              <label for="documentType" class="mb-1 block text-sm text-slate-700">
+                Tipo de documento
+              </label>
+
+              <label class="input input-bordered flex items-center gap-2 w-full">
+                <svg
+                  class="h-[1em] opacity-60"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <g
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <path d="M14 2v6h6" />
+                    <path d="M16 13H8" />
+                    <path d="M16 17H8" />
+                  </g>
+                </svg>
+
+                <select
+                  id="documentType"
+                  formControlName="documentType"
+                  class="grow bg-transparent"
+                >
+                  @for (type of documentTypes; track type.value) {
+                  <option [value]="type.value">{{ type.label }}</option>
+                  }
+                </select>
+              </label>
+            </div>
+
+            <div class="form-control">
+              <label for="documentNumber" class="mb-1 block text-sm text-slate-700">
+                Numero de documento
+              </label>
+
+              <label class="input input-bordered flex items-center gap-2 w-full">
+                <svg
+                  class="h-[1em] opacity-60"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <g
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <path d="M14 2v6h6" />
+                    <path d="M16 13H8" />
+                    <path d="M16 17H8" />
+                  </g>
+                </svg>
+
+                <input
+                  id="documentNumber"
+                  type="text"
+                  formControlName="documentNumber"
+                  placeholder="987654321-1"
+                  class="grow"
+                />
+              </label>
+
+              @if (showError('customer.documentNumber') && hasError('customer.documentNumber',
+              'pattern')) {
+              <p class="validator-hint text-xs text-error mt-1">Numero de documento invalido.</p>
+              }
+            </div>
+          </div>
+
+          @if (customerIncomplete()) {
+          <p class="validator-hint text-xs text-error">
+            Completa todos los datos del cliente o deja todos los campos vacios.
+          </p>
+          }
+        </div>
+
+        <button
+          type="submit"
+          [disabled]="isLoading()"
+          class="btn btn-primary w-full justify-center gap-2 disabled:opacity-60"
+        >
+          @if (isLoading()) {
+          <span class="loading loading-spinner loading-sm"></span>
+          <span>Registrando...</span>
+          } @else {
+          <span>Crear cuenta</span>
+          }
+        </button>
+
+        <button
+          type="button"
+          (click)="goBack()"
+          class="btn btn-ghost w-full justify-center gap-2 text-slate-600 hover:text-slate-900"
+        >
+          <svg
+            class="h-[1em]"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <g
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M15 18l-6-6 6-6" />
+              <path d="M9 12h12" />
+            </g>
+          </svg>
+          <span>Volver al panel</span>
+        </button>
+      </form>
+
+      <div class="mt-8 alert alert-info">
+        <span class="text-sm">
+          <span class="font-semibold">Importante:</span>
+          Solo el administrador puede crear cuentas. Esta funcion esta disponible unicamente para
+          personal autorizado de HIGINEX.
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -9,21 +9,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import {
-  ArrowLeft,
-  ArrowRight,
-  Building,
-  Eye,
-  EyeOff,
-  FileText,
-  Lock,
-  LucideAngularModule,
-  Mail,
-  Phone,
-  User,
-} from 'lucide-angular';
-import { DocumentType, RegisterPayload } from '../../interfaces';
-import { AuthService } from '../../services/auth.service';
+import { DocumentType, RegisterPayload } from '../../../auth/interfaces';
+import { AdminService } from '../../services/admin.service';
 
 const PASSWORD_PATTERN = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 const PHONE_PATTERN = /^[0-9]{7,15}$/;
@@ -59,32 +46,21 @@ const customerCompletenessValidator = (control: AbstractControl): ValidationErro
 
 @Component({
   selector: 'auth-register-page',
-  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './register-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RegisterPage {
-  private readonly authService = inject(AuthService);
+  private readonly adminService = inject(AdminService);
   private readonly formBuilder = inject(FormBuilder);
   private readonly router = inject(Router);
-
-  readonly mailIcon = Mail;
-  readonly lockIcon = Lock;
-  readonly eyeIcon = Eye;
-  readonly eyeOffIcon = EyeOff;
-  readonly userIcon = User;
-  readonly phoneIcon = Phone;
-  readonly fileTextIcon = FileText;
-  readonly buildingIcon = Building;
-  readonly arrowRightIcon = ArrowRight;
-  readonly arrowLeftIcon = ArrowLeft;
 
   readonly showPassword = signal(false);
   readonly submitted = signal(false);
   readonly registerSuccess = signal(false);
 
-  readonly isLoading = this.authService.isRegisterLoading;
-  readonly registerError = this.authService.registerError;
+  readonly isLoading = this.adminService.isRegisterLoading;
+  readonly registerError = this.adminService.registerError;
 
   readonly documentTypes: Array<{ value: DocumentType; label: string }> = [
     { value: 'CC', label: 'CC - Cedula de Ciudadania' },
@@ -129,7 +105,7 @@ export class RegisterPage {
     }
 
     const payload = this.buildPayload();
-    const success = await this.authService.register(payload);
+    const success = await this.adminService.register(payload);
     if (success) {
       this.registerSuccess.set(true);
       this.resetForm();
@@ -141,7 +117,7 @@ export class RegisterPage {
   }
 
   dismissError(): void {
-    this.authService.clearRegisterError();
+    this.adminService.clearRegisterError();
   }
 
   showError(path: string): boolean {
