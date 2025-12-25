@@ -1,5 +1,22 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { CircleUser, FileText, LogOut, LucideAngularModule, Package, Settings, User } from 'lucide-angular';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  Output,
+} from '@angular/core';
+import { Router } from '@angular/router';
+import {
+  CircleUser,
+  FileText,
+  LogOut,
+  LucideAngularModule,
+  Package,
+  Settings,
+  ShieldUser,
+  User,
+} from 'lucide-angular';
 
 @Component({
   selector: 'sales-admin-user-menu',
@@ -8,14 +25,16 @@ import { CircleUser, FileText, LogOut, LucideAngularModule, Package, Settings, U
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminUserMenu {
- // Icons
+  private router = inject(Router);
+
+  // Icons
   readonly userIcon = User;
   readonly userCircleIcon = CircleUser;
   readonly settingsIcon = Settings;
   readonly packageIcon = Package;
   readonly fileTextIcon = FileText;
   readonly logoutIcon = LogOut;
-
+  readonly shieldUserIcon = ShieldUser;
   // Inputs funcionales
   @Input() userName!: string;
   @Input() userDetail!: string;
@@ -24,5 +43,9 @@ export class AdminUserMenu {
 
   onLogout() {
     this.logout.emit();
+  }
+
+  navigateToDashboard(): void {
+    this.router.navigateByUrl('admin/dashboard');
   }
 }

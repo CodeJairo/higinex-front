@@ -2,8 +2,8 @@
   <div class="max-w-7xl mx-auto p-6 lg:p-8">
     <!-- Header -->
     <div class="mb-8">
-      <h1 class="text-slate-900 mb-2">Bienvenido, María González</h1>
-      <p class="text-slate-600">Gestiona tus pedidos y explora nuestro catálogo de productos</p>
+      <h1 class="text-slate-900 mb-2 text-4xl font-bold">Panel Administrativo</h1>
+      <p class="text-slate-600">----------------------------------------------------------</p>
     </div>
 
     <!-- Stats Cards -->
@@ -14,7 +14,9 @@
           <span class="text-3xl opacity-90">{{ stats.ordersThisMonth }}</span>
         </div>
         <h3 class="text-white opacity-90 mb-1">Pedidos este mes</h3>
-        <p class="text-sm text-blue-100">+3 comparado al mes anterior</p>
+        <p class="text-sm text-blue-100">
+          Pedidos creados y confirmados durante el periodo mensual.
+        </p>
       </div>
 
       <div class="bg-linear-to-br from-green-500 to-green-600 rounded-xl p-6 text-white shadow-lg">
@@ -22,8 +24,10 @@
           <lucide-icon [img]="tagIcon" class="w-8 h-8 opacity-80"></lucide-icon>
           <span class="text-3xl opacity-90">{{ formatPrice(stats.totalSavings) }}</span>
         </div>
-        <h3 class="text-white opacity-90 mb-1">Ahorro Total</h3>
-        <p class="text-sm text-green-100">Con descuentos y promociones</p>
+        <h3 class="text-white opacity-90 mb-1">Ingresos por Ventas del Mes</h3>
+        <p class="text-sm text-green-100">
+          Total facturado en ventas durante este mes, sin incluir aún costos ni gastos.
+        </p>
       </div>
     </div>
 
@@ -32,19 +36,19 @@
       <h2 class="text-slate-900 mb-4">Accesos Rápidos</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <button
-          (click)="navigateToCatalog()"
+          (click)="navigateToRegister()"
           class="bg-white border border-slate-200 rounded-xl p-6 hover:shadow-lg hover:border-blue-300 transition-all group text-left cursor-pointer"
         >
           <div
             class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-blue-600 transition-colors"
           >
             <lucide-icon
-              [img]="cartIcon"
+              [img]="userPlusIcon"
               class="w-6 h-6 text-blue-600 group-hover:text-white transition-colors"
             ></lucide-icon>
           </div>
-          <h3 class="text-slate-900 mb-1">Hacer Nuevo Pedido</h3>
-          <p class="text-sm text-slate-600">Explora el catálogo</p>
+          <h3 class="text-slate-900 mb-1">Agregar Usuarios</h3>
+          <p class="text-sm text-slate-600">Gestiona los usuarios del sistema</p>
         </button>
 
         <button
@@ -84,12 +88,12 @@
             class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-red-600 transition-colors"
           >
             <lucide-icon
-              [img]="heartIcon"
+              [img]="fileTextIcon"
               class="w-6 h-6 text-red-600 group-hover:text-white transition-colors"
             ></lucide-icon>
           </div>
-          <h3 class="text-slate-900 mb-1">Favoritos</h3>
-          <p class="text-sm text-slate-600">Tus productos guardados</p>
+          <h3 class="text-slate-900 mb-1">Reportes y Facturación</h3>
+          <p class="text-sm text-slate-600">Consulta y descarga de reportes y facturas.</p>
         </button>
       </div>
     </div>
@@ -167,68 +171,11 @@
             }
           </div>
         </div>
-
-        <!-- Promotions -->
-        <div class="bg-white rounded-xl border border-slate-200 p-6">
-          <div class="flex items-center gap-2 mb-6">
-            <lucide-icon [img]="tagIcon" class="w-5 h-5 text-slate-900"></lucide-icon>
-            <h2 class="text-slate-900">Promociones Activas</h2>
-          </div>
-          <div class="space-y-4">
-            @for (promo of promotions; track promo.id) {
-            <div class="rounded-lg p-6 text-white" [ngClass]="'bg-linear-to-r ' + promo.colorClass">
-              <div class="flex items-start justify-between mb-3">
-                <h3 class="text-white">{{ promo.title }}</h3>
-                <span class="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm">{{
-                  promo.discount
-                }}</span>
-              </div>
-              <p class="text-sm text-white/90 mb-4">{{ promo.description }}</p>
-              <button
-                (click)="navigateToPromotions()"
-                class="px-4 py-2 bg-white text-blue-600 rounded-lg hover:bg-blue-50 transition-colors text-sm cursor-pointer"
-              >
-                Ver productos
-              </button>
-            </div>
-            }
-          </div>
-        </div>
       </div>
 
       <!-- Right Column - 1/3 width -->
       <div class="space-y-6 lg:space-y-8">
         <!-- New Products -->
-        <div class="bg-white rounded-xl border border-slate-200 p-6">
-          <div class="flex items-center gap-2 mb-6">
-            <lucide-icon [img]="sparklesIcon" class="w-5 h-5 text-blue-600"></lucide-icon>
-            <h2 class="text-slate-900">Nuevos Productos</h2>
-          </div>
-          <div class="space-y-4">
-            @for (product of newProducts; track product.id) {
-            <div class="group cursor-pointer">
-              <div class="aspect-square bg-slate-100 rounded-lg overflow-hidden mb-3">
-                <shared-image-with-fallback
-                  [src]="product.image"
-                  [alt]="product.name"
-                  class="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                ></shared-image-with-fallback>
-              </div>
-              <h3 class="text-sm text-slate-900 mb-1 line-clamp-2">{{ product.name }}</h3>
-              <p class="text-xs text-slate-600 mb-2">{{ product.presentation }}</p>
-              <div class="flex items-center justify-between">
-                <span class="text-sm text-slate-900">{{ formatPrice(product.price) }}</span>
-                <button
-                  (click)="navigateToCatalog()"
-                  class="text-xs text-blue-600 hover:text-blue-700"
-                >
-                  Ver más
-                </button>
-              </div>
-            </div>
-            }
-          </div>
-        </div>
 
         <!-- Pre-order Products -->
         <div class="bg-white rounded-xl border border-slate-200 p-6">

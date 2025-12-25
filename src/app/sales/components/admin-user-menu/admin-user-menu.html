@@ -53,12 +53,21 @@
       <li class="menu-title mt-2 text-[11px] uppercase tracking-wide text-slate-400">
         Administración
       </li>
+
+      <li>
+        <button (click)="navigateToDashboard()">
+          <lucide-icon [img]="shieldUserIcon" class="w-4 h-4"></lucide-icon>
+          Panel Administrativo
+        </button>
+      </li>
+
       <li>
         <button>
           <lucide-icon [img]="packageIcon" class="w-4 h-4"></lucide-icon>
           Gestión de pedidos
         </button>
       </li>
+
       <li>
         <button>
           <lucide-icon [img]="fileTextIcon" class="w-4 h-4"></lucide-icon>
@@ -66,7 +75,7 @@
         </button>
       </li>
 
-      <li><div class="divider my-2"></div></li>
+      <li><div class="divider my-2 pointer-events-none"></div></li>
 
       <li>
         <button (click)="onLogout()" class="text-error">

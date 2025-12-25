@@ -116,6 +116,10 @@ export class RegisterPage {
     this.router.navigateByUrl('/sales/dashboard');
   }
 
+  navigateToDashboard(): void {
+    this.router.navigateByUrl('admin/dashboard');
+  }
+
   dismissError(): void {
     this.adminService.clearRegisterError();
   }

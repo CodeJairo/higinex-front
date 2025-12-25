@@ -13,9 +13,11 @@ import {
   Tag,
   TrendingUp,
   Truck,
+  UserPlus,
+  FileText,
 } from 'lucide-angular';
+import { FilterService } from '../../../sales/services/filter.service';
 import { ImageWithFallback } from '../../../shared/components/image-with-fallback/image-with-fallback';
-import { FilterService } from '../../services/filter.service';
 
 @Component({
   selector: 'sales-dashboard-page',
@@ -38,7 +40,8 @@ export class DashboardPage {
   readonly truckIcon = Truck;
   readonly sparklesIcon = Sparkles;
   readonly tagIcon = Tag;
-
+  readonly userPlusIcon = UserPlus;
+  readonly fileTextIcon = FileText;
   // Stats
   readonly stats = {
     ordersThisMonth: 12,
@@ -183,6 +186,10 @@ export class DashboardPage {
 
   navigateToCatalog(): void {
     this.router.navigateByUrl('sales/catalog');
+  }
+
+  navigateToRegister(): void {
+    this.router.navigateByUrl('admin/register');
   }
 
   navigateToPromotions(): void {
