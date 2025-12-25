@@ -186,7 +186,7 @@ export class DashboardPage {
   }
 
   navigateToPromotions(): void {
-    this.filterService.setDiscountFilter(true);
+    this.filterService.resetFilters();
     this.router.navigateByUrl('sales/catalog');
     setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
   }

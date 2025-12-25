@@ -1,0 +1,79 @@
+<div class="dropdown dropdown-end">
+  <button tabindex="0" type="button" class="btn btn-ghost gap-2 px-2 py-1 h-auto min-h-0">
+    <div
+      class="w-9 h-9 rounded-full bg-linear-to-br from-slate-600 to-slate-800 flex items-center justify-center"
+    >
+      <lucide-icon [img]="userIcon" class="w-4 h-4 text-white"></lucide-icon>
+    </div>
+
+    <div class="hidden lg:flex flex-col items-start text-left">
+      <span class="text-sm font-medium text-slate-900 leading-tight">
+        {{ userName }}
+      </span>
+      <span class="text-xs text-slate-500 truncate max-w-45">
+        {{ userDetail }}
+      </span>
+    </div>
+  </button>
+
+  <div
+    tabindex="0"
+    class="dropdown-content mt-3 z-60 w-64 shadow-lg bg-base-100 rounded-2xl border border-slate-200"
+  >
+    <!-- Header usuario -->
+    <div class="px-4 pt-3 pb-2 border-b border-slate-200">
+      <p class="text-sm font-medium text-slate-900 truncate">
+        {{ userName }}
+      </p>
+      <p class="text-xs text-slate-500 truncate">
+        {{ userDetail }}
+      </p>
+      <span class="mt-1 inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+        <span class="text-[11px] font-medium text-slate-600 uppercase tracking-wide"> Admin </span>
+      </span>
+    </div>
+
+    <!-- Menu -->
+    <ul class="menu menu-sm p-2 w-full">
+      <li class="menu-title text-[11px] uppercase tracking-wide text-slate-400">Cuenta</li>
+      <li>
+        <button>
+          <lucide-icon [img]="userCircleIcon" class="w-4 h-4"></lucide-icon>
+          Perfil
+        </button>
+      </li>
+      <li>
+        <button>
+          <lucide-icon [img]="settingsIcon" class="w-4 h-4"></lucide-icon>
+          Configuración
+        </button>
+      </li>
+
+      <li class="menu-title mt-2 text-[11px] uppercase tracking-wide text-slate-400">
+        Administración
+      </li>
+      <li>
+        <button>
+          <lucide-icon [img]="packageIcon" class="w-4 h-4"></lucide-icon>
+          Gestión de pedidos
+        </button>
+      </li>
+      <li>
+        <button>
+          <lucide-icon [img]="fileTextIcon" class="w-4 h-4"></lucide-icon>
+          Reportes y facturación
+        </button>
+      </li>
+
+      <li><div class="divider my-2"></div></li>
+
+      <li>
+        <button (click)="onLogout()" class="text-error">
+          <lucide-icon [img]="logoutIcon" class="w-4 h-4"></lucide-icon>
+          Cerrar sesión
+        </button>
+      </li>
+    </ul>
+  </div>
+</div>

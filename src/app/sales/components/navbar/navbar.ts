@@ -27,16 +27,31 @@ import {
   ShoppingCart,
   User,
 } from 'lucide-angular';
-import { AuthService } from '../../../auth/services/auth.service';
 import { Role } from '../../../auth/interfaces';
+import { AuthService } from '../../../auth/services/auth.service';
 import { CartService } from '../../services/cart.service';
 import { FilterService } from '../../services/filter.service';
+import { AdminUserMenu } from '../admin-user-menu/admin-user-menu';
 import { CartDropdown } from '../cart-dropdown/cart-dropdown';
+import { CustomerUserMenu } from '../customer-user-menu/customer-user-menu';
 
 @Component({
   selector: 'sales-navbar',
-  imports: [CommonModule, FormsModule, LucideAngularModule, CartDropdown],
+  imports: [
+    CommonModule,
+    FormsModule,
+    LucideAngularModule,
+    CartDropdown,
+    CustomerUserMenu,
+    AdminUserMenu,
+  ],
   templateUrl: './navbar.html',
+  host: {
+    class:
+      'sticky top-0 z-50 bg-base-100 border-b border-slate-200 shadow-sm transition-transform duration-300',
+    '[class.translate-y-0]': 'isVisible()',
+    '[class.-translate-y-full]': '!isVisible()',
+  },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Navbar implements OnInit, OnDestroy {
@@ -65,6 +80,7 @@ export class Navbar implements OnInit, OnDestroy {
   showUserMenu = signal(false);
   showCart = signal(false);
   searchQuery = signal('');
+  isAdmin = computed(() => this.authService.user()?.role === Role.ADMIN);
   private lastScrollY = 0;
   private scrollHandler!: () => void;
   private clickHandler!: (event: MouseEvent) => void;

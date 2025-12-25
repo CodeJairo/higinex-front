@@ -2,25 +2,28 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
+  computed,
   inject,
-  Output,
+  input,
+  output,
   signal,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { ChevronDown, ChevronUp, LucideAngularModule, X } from 'lucide-angular';
+import { Product } from '../../interface';
 import { FilterService } from '../../services/filter.service';
 
 @Component({
   selector: 'sales-mobile-filters',
-  imports: [CommonModule, FormsModule, LucideAngularModule],
+  imports: [CommonModule, LucideAngularModule],
   templateUrl: './mobile-filters.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MobileFilters {
-  @Output() closeFilters = new EventEmitter<void>();
+  readonly closeFilters = output<void>();
 
   private filterService = inject(FilterService);
+
+  readonly products = input<Product[]>([]);
 
   // Icons
   readonly chevronDownIcon = ChevronDown;
@@ -29,28 +32,13 @@ export class MobileFilters {
 
   // Section expansion state
   expandedSections = signal({
-    categories: true,
-    price: false,
-    presentation: false,
-    availability: false,
-    brands: false,
+    products: true,
   });
 
-  readonly categories = [
-    { id: 'dental', label: 'Cuidado Dental', count: 24 },
-    { id: 'personal', label: 'Cuidado Personal', count: 45 },
-    { id: 'soap', label: 'Jabones y Geles', count: 32 },
-    { id: 'cleaning', label: 'Limpieza del Hogar', count: 28 },
-    { id: 'sanitizer', label: 'Desinfectantes', count: 18 },
-  ];
-
-  readonly availabilityOptions = [
-    { value: 'all', label: 'Todos los productos' },
-    { value: 'in-stock', label: 'En stock' },
-    { value: 'pre-order', label: 'Pre-orden' },
-  ];
-
   readonly filters = this.filterService.filters;
+  readonly sortedProducts = computed(() =>
+    [...this.products()].sort((a, b) => a.name.localeCompare(b.name))
+  );
 
   toggleSection(section: string): void {
     this.expandedSections.update((prev) => ({
@@ -63,30 +51,12 @@ export class MobileFilters {
     return this.expandedSections()[section as keyof ReturnType<typeof this.expandedSections>];
   }
 
-  toggleCategory(categoryId: string): void {
-    this.filterService.toggleCategory(categoryId);
+  toggleProduct(productId: string): void {
+    this.filterService.toggleProduct(productId);
   }
 
-  isCategorySelected(categoryId: string): boolean {
-    return this.filters().categories.includes(categoryId);
-  }
-
-  setAvailability(availability: 'all' | 'in-stock' | 'pre-order'): void {
-    this.filterService.setAvailability(availability);
-  }
-
-  setPriceMin(value: string): void {
-    const num = Number(value) || 0;
-    this.filterService.setPriceRange(num, this.filters().priceRange[1]);
-  }
-
-  setPriceMax(value: string): void {
-    const num = Number(value) || 1000000;
-    this.filterService.setPriceRange(this.filters().priceRange[0], num);
-  }
-
-  setHasDiscount(value: boolean): void {
-    this.filterService.setDiscountFilter(value);
+  isProductSelected(productId: string): boolean {
+    return this.filters().productIds.includes(productId);
   }
 
   clearFilters(): void {

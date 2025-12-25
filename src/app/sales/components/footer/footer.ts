@@ -76,8 +76,8 @@ export class Footer {
   }
 
   goToPromotions(): void {
-    this.filterService.setDiscountFilter(true);
-    this.router.navigateByUrl('/catalog');
+    this.filterService.resetFilters();
+    this.router.navigateByUrl('/sales/catalog');
     setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
   }
 
