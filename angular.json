@@ -6,13 +6,15 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "higinex": {
+    "higinex-front": {
       "projectType": "application",
       "schematics": {
-        "@schematics/angular:class": {
+        "@schematics/angular:component": {
+          "inlineTemplate": true,
+          "inlineStyle": true,
           "skipTests": true
         },
-        "@schematics/angular:component": {
+        "@schematics/angular:class": {
           "skipTests": true
         },
         "@schematics/angular:directive": {
@@ -87,10 +89,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "higinex:build:production"
+              "buildTarget": "higinex-front:build:production"
             },
             "development": {
-              "buildTarget": "higinex:build:development"
+              "buildTarget": "higinex-front:build:development"
             }
           },
           "defaultConfiguration": "development"
