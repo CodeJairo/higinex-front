@@ -175,10 +175,6 @@ export class Navbar implements OnInit, OnDestroy {
     this.showCart.set(false);
   }
 
-  goToDashboard(): void {
-    this.router.navigateByUrl('/sales/dashboard');
-  }
-
   goToCatalog(): void {
     this.router.navigateByUrl('/sales/catalog');
   }
