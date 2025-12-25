@@ -1,25 +1,17 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ArrowLeft, CircleCheck, LucideAngularModule, Mail, SendHorizontal } from 'lucide-angular';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'auth-forgot-password-page',
-  imports: [CommonModule, FormsModule, LucideAngularModule],
+  imports: [FormsModule],
   templateUrl: './forgot-password-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ForgotPasswordPage {
   private router = inject(Router);
   private authService = inject(AuthService);
-
-  // Icons
-  readonly mailIcon = Mail;
-  readonly arrowLeftIcon = ArrowLeft;
-  readonly checkCircleIcon = CircleCheck;
-  readonly sendIcon = SendHorizontal;
 
   // Form state
   email = signal('');
