@@ -1,22 +1,56 @@
 <div
-  class="navbar glass w-fit mx-auto rounded-xl mt-2 sticky top-2 z-50 transition-transform duration-300"
+  class="hidden sm:flex navbar z-50 glass mx-auto w-fit rounded-xl mt-2 fixed top-2 right-1 sm:right-2 transition-transform duration-300"
   [class.translate-y-0]="isVisible()"
   [class.-translate-y-full]="!isVisible()"
 >
   <div class="navbar-center">
     <ul class="menu menu-horizontal px-1">
-      <li routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      <li routerLinkActive="link-primary">
         <a routerLink="/admin/dashboard">Inicio</a>
       </li>
-      <li routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      <li routerLinkActive="link-primary">
         <a routerLink="/admin/inventory">Inventario</a>
       </li>
-      <li routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      <li routerLinkActive="link-primary">
         <a routerLink="/admin/orders">Pedidos</a>
       </li>
-      <li routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      <li routerLinkActive="link-primary">
         <a routerLink="/admin/billing">Facturación</a>
       </li>
     </ul>
   </div>
+</div>
+
+<div class="dock hidden not-sm:flex">
+  <button routerLink="/admin/dashboard" routerLinkActive="dock-active">
+    <lucide-icon
+      [img]="houseIcon"
+      class="w-6 h-6 text-blue-600 group-hover:text-white transition-colors"
+    ></lucide-icon>
+    <span class="dock-label">Inicio</span>
+  </button>
+
+  <button routerLink="/admin/inventory" routerLinkActive="dock-active">
+    <lucide-icon
+      [img]="warehouseIcon"
+      class="w-6 h-6 text-green-600 group-hover:text-white transition-colors"
+    ></lucide-icon>
+    <span class="dock-label">Inventario</span>
+  </button>
+
+  <button routerLink="/admin/orders" routerLinkActive="dock-active">
+    <lucide-icon
+      [img]="packageIcon"
+      class="w-6 h-6 text-slate-600 group-hover:text-white transition-colors"
+    ></lucide-icon>
+    <span class="dock-label">Pedidos</span>
+  </button>
+
+  <button routerLink="/admin/billing" routerLinkActive="dock-active">
+    <lucide-icon
+      [img]="fileTextIcon"
+      class="w-6 h-6 text-red-600 group-hover:text-white transition-colors"
+    ></lucide-icon>
+    <span class="dock-label">Facturación</span>
+  </button>
 </div>

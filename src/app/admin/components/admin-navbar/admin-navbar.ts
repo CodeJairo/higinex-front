@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { FileText, House, LucideAngularModule, Package, Warehouse } from 'lucide-angular';
 
 @Component({
   selector: 'admin-navbar',
-  imports: [RouterLinkActive, RouterLink],
+  imports: [RouterLinkActive, RouterLink, LucideAngularModule],
   templateUrl: './admin-navbar.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -11,6 +12,11 @@ export class AdminNavbar {
   readonly isVisible = signal(true);
   private lastScrollY = 0;
   private scrollHandler!: () => void;
+
+  readonly warehouseIcon = Warehouse;
+  readonly houseIcon = House;
+  readonly packageIcon = Package;
+  readonly fileTextIcon = FileText;
 
   ngOnInit(): void {
     this.scrollHandler = () => this.handleScroll();

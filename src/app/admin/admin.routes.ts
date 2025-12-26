@@ -1,9 +1,11 @@
 import { Routes } from '@angular/router';
-import { RegisterPage } from './pages/register-page/register-page';
 import { roleMatchGuard } from '../auth/guards/role.guard';
 import { Role } from '../auth/interfaces';
+import { InventoryLayoutPage } from './layouts/inventory-layout-page/inventory-layout-page';
+import { CreateProduct } from './pages/create-product/create-product';
 import { DashboardPage } from './pages/dashboard-page/dashboard-page';
 import { InventoryPage } from './pages/inventory-page/inventory-page';
+import { RegisterPage } from './pages/register-page/register-page';
 
 export const adminRoutes: Routes = [
   {
@@ -28,8 +30,19 @@ export const adminRoutes: Routes = [
     data: {
       roles: [Role.ADMIN],
     },
-    component: InventoryPage,
+    component: InventoryLayoutPage,
+    children: [
+      {
+        path: '',
+        component: InventoryPage,
+      },
+      {
+        path: 'create-product',
+        component: CreateProduct,
+      },
+    ],
   },
+
   {
     path: '',
     redirectTo: 'dashboard',
