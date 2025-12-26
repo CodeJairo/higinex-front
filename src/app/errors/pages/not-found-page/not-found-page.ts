@@ -20,6 +20,10 @@ export class NotFoundPage {
     this.router.navigateByUrl('/dashboard');
   }
 
+  goToCatalog(): void {
+    this.router.navigateByUrl('/sales/catalog');
+  }
+
   goBack(): void {
     window.history.back();
   }

@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'admin-navbar',
@@ -8,9 +8,7 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminNavbar {
-  private router = inject(Router);
-
-  isVisible = signal(true);
+  readonly isVisible = signal(true);
   private lastScrollY = 0;
   private scrollHandler!: () => void;
 
@@ -27,14 +25,10 @@ export class AdminNavbar {
   private handleScroll(): void {
     const currentScrollY = window.scrollY;
 
-    if (window.innerWidth < 768) {
-      if (currentScrollY < this.lastScrollY) {
-        this.isVisible.set(true);
-      } else if (currentScrollY > this.lastScrollY && currentScrollY > 80) {
-        this.isVisible.set(false);
-      }
-    } else {
+    if (currentScrollY < this.lastScrollY) {
       this.isVisible.set(true);
+    } else if (currentScrollY > this.lastScrollY && currentScrollY > 80) {
+      this.isVisible.set(false);
     }
 
     this.lastScrollY = currentScrollY;

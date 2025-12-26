@@ -1,4 +1,8 @@
-<div class="navbar glass w-fit mx-auto rounded-xl mt-2 sticky top-1 z-50">
+<div
+  class="navbar glass w-fit mx-auto rounded-xl mt-2 sticky top-2 z-50 transition-transform duration-300"
+  [class.translate-y-0]="isVisible()"
+  [class.-translate-y-full]="!isVisible()"
+>
   <div class="navbar-center">
     <ul class="menu menu-horizontal px-1">
       <li routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">

@@ -97,6 +97,18 @@ export class DashboardPage {
     }
   }
 
+  navigateToInventory(): void {
+    this.router.navigateByUrl('admin/inventory');
+  }
+
+  navigateToOrders(): void {
+    this.router.navigateByUrl('admin/orders');
+  }
+
+  navigateToBilling(): void {
+    this.router.navigateByUrl('admin/billing');
+  }
+
   navigateToCatalog(): void {
     this.router.navigateByUrl('sales/catalog');
   }
