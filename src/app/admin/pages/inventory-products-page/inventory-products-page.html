@@ -33,7 +33,7 @@
                 </p>
               </div>
 
-              <!-- Buscador (solo diseño) -->
+              <!-- Buscador -->
               <div class="w-full max-w-xs">
                 <label class="input input-bordered input-sm flex items-center gap-2">
                   <svg
@@ -55,7 +55,23 @@
               </div>
             </div>
 
-            @if (isLoading()) {
+            @if (actionMessage(); as message) {
+            <div
+              role="alert"
+              class="alert mb-4"
+              [class.alert-success]="message.type === 'success'"
+              [class.alert-error]="message.type === 'error'"
+            >
+              <span>{{ message.text }}</span>
+              <button
+                type="button"
+                class="btn btn-ghost btn-xs ml-auto"
+                (click)="dismissActionMessage()"
+              >
+                Cerrar
+              </button>
+            </div>
+            } @if (isLoading()) {
             <div class="py-8 text-center text-xs text-slate-500">Cargando productos...</div>
             } @else if (isError()) {
             <div class="py-8 text-center text-xs text-slate-500">
@@ -75,16 +91,19 @@
                 </thead>
                 <tbody>
                   @for (product of products; track product.id) {
-                  <tr class="hover:bg-base-200 cursor-pointer" (click)="onSelectProduct(product)">
+                  <tr class="hover:bg-base-200">
                     <!-- indicador seleccionado -->
                     <td>
-                      <span
+                      <button
+                        type="button"
                         class="badge badge-xs"
                         [ngClass]="{
                           'badge-primary': selectedProduct()?.id === product.id,
                           'badge-ghost': selectedProduct()?.id !== product.id
                         }"
-                      ></span>
+                        (click)="onOpenVariantPanel(product)"
+                        aria-label="Seleccionar para agregar variante"
+                      ></button>
                     </td>
 
                     <!-- nombre + descripción -->
@@ -123,36 +142,54 @@
                         <!-- Publicar -->
                         <button
                           type="button"
-                          class="btn btn-xs"
+                          class="btn btn-xs gap-2"
                           [ngClass]="{
                             'btn-success': product.status !== 'PUBLISHED',
                             'btn-success btn-outline cursor-default': product.status === 'PUBLISHED'
                           }"
-                          [disabled]="product.status === 'PUBLISHED'"
+                          [disabled]="
+                            product.status === 'PUBLISHED' ||
+                            isPublishing(product.id) ||
+                            isArchiving(product.id)
+                          "
                           (click)="$event.stopPropagation(); onPublish(product)"
                         >
-                          Publicar
+                          @if (isPublishing(product.id)) {
+                          <span class="loading loading-spinner loading-xs"></span>
+                          <span>Publicando...</span>
+                          } @else {
+                          <span>Publicar</span>
+                          }
                         </button>
 
                         <!-- Archivar -->
                         <button
                           type="button"
-                          class="btn btn-xs"
+                          class="btn btn-xs gap-2"
                           [ngClass]="{
                             'btn-error btn-outline': product.status !== 'ARCHIVED',
                             'btn-error cursor-default': product.status === 'ARCHIVED'
                           }"
-                          [disabled]="product.status === 'ARCHIVED'"
+                          [disabled]="
+                            product.status === 'ARCHIVED' ||
+                            isArchiving(product.id) ||
+                            isPublishing(product.id)
+                          "
                           (click)="$event.stopPropagation(); onArchive(product)"
                         >
-                          Archivar
+                          @if (isArchiving(product.id)) {
+                          <span class="loading loading-spinner loading-xs"></span>
+                          <span>Archivando...</span>
+                          } @else {
+                          <span>Archivar</span>
+                          }
                         </button>
 
                         <!-- Agregar variante -->
                         <button
                           type="button"
                           class="btn btn-xs btn-ghost"
-                          (click)="$event.stopPropagation(); onSelectProduct(product)"
+                          (click)="$event.stopPropagation(); onOpenVariantPanel(product)"
                         >
                           Agregar variante
                         </button>
@@ -184,7 +221,7 @@
               seleccionado.
             </p>
 
-            @if (!selectedProduct()) {
+            @if (!isVariantPanelOpen()) {
             <div class="py-10 text-center text-xs text-slate-500">
               Selecciona un producto de la lista para crear una variante.
             </div>

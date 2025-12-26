@@ -36,6 +36,10 @@ export class InventoryProductsPage implements OnInit {
   private readonly queryClient = inject(QueryClient);
 
   readonly selectedProduct = signal<Product | null>(null);
+  readonly isVariantPanelOpen = signal(false);
+  readonly actionMessage = signal<{ type: 'success' | 'error'; text: string } | null>(null);
+  readonly publishingProductId = signal<string | null>(null);
+  readonly archivingProductId = signal<string | null>(null);
 
   readonly variantForm = this.formBuilder.nonNullable.group({
     sku: this.formBuilder.nonNullable.control('', [Validators.required]),
@@ -60,26 +64,52 @@ export class InventoryProductsPage implements OnInit {
   private readonly publishProductMutation = injectMutation(() => ({
     mutationFn: (productId: string) =>
       firstValueFrom(this.inventoryService.publishProduct(productId)),
-    onSuccess: (updated) => this.updateProductCache(updated),
+    onMutate: (productId: string) => {
+      this.actionMessage.set(null);
+      this.publishingProductId.set(productId);
+    },
+    onSuccess: (updated) => {
+      this.updateProductCache(updated);
+      this.actionMessage.set({ type: 'success', text: 'Producto publicado.' });
+    },
+    onError: () => {
+      this.actionMessage.set({ type: 'error', text: 'No se pudo publicar el producto.' });
+    },
+    onSettled: () => {
+      this.publishingProductId.set(null);
+    },
   }));
 
   private readonly archiveProductMutation = injectMutation(() => ({
     mutationFn: (productId: string) =>
       firstValueFrom(this.inventoryService.archiveProduct(productId)),
-    onSuccess: (updated) => this.updateProductCache(updated),
+    onMutate: (productId: string) => {
+      this.actionMessage.set(null);
+      this.archivingProductId.set(productId);
+    },
+    onSuccess: (updated) => {
+      this.updateProductCache(updated);
+      this.actionMessage.set({ type: 'success', text: 'Producto archivado.' });
+    },
+    onError: () => {
+      this.actionMessage.set({ type: 'error', text: 'No se pudo archivar el producto.' });
+    },
+    onSettled: () => {
+      this.archivingProductId.set(null);
+    },
   }));
 
   private readonly createVariantMutation = injectMutation(() => ({
     mutationFn: (payload: { productId: string; variant: CreateVariantPayload }) =>
       firstValueFrom(this.inventoryService.createVariant(payload.productId, payload.variant)),
-    onSuccess: () => this.onResetVariantForm(),
+    onSuccess: () => this.resetVariantFormValues(),
   }));
 
   readonly isLoading = computed(() => this.productsQuery.isLoading());
   readonly isError = computed(() => this.productsQuery.isError());
 
   ngOnInit(): void {
-    this.onResetVariantForm();
+    this.closeVariantPanel();
   }
 
   get products(): Product[] {
@@ -90,9 +120,10 @@ export class InventoryProductsPage implements OnInit {
     return this.variantForm.get('attributes') as FormArray<FormGroup>;
   }
 
-  onSelectProduct(product: Product): void {
+  onOpenVariantPanel(product: Product): void {
     this.selectedProduct.set(product);
-    this.onResetVariantForm();
+    this.isVariantPanelOpen.set(true);
+    this.resetVariantFormValues();
   }
 
   onPublish(product: Product): void {
@@ -117,6 +148,16 @@ export class InventoryProductsPage implements OnInit {
   }
 
   onResetVariantForm(): void {
+    this.closeVariantPanel();
+  }
+
+  closeVariantPanel(): void {
+    this.isVariantPanelOpen.set(false);
+    this.selectedProduct.set(null);
+    this.resetVariantFormValues();
+  }
+
+  private resetVariantFormValues(): void {
     this.variantForm.reset({
       sku: '',
       gtin: '',
@@ -153,6 +194,18 @@ export class InventoryProductsPage implements OnInit {
       return 'Archivado';
     }
     return 'Borrador';
+  }
+
+  dismissActionMessage(): void {
+    this.actionMessage.set(null);
+  }
+
+  isPublishing(productId: string): boolean {
+    return this.publishProductMutation.isPending() && this.publishingProductId() === productId;
+  }
+
+  isArchiving(productId: string): boolean {
+    return this.archiveProductMutation.isPending() && this.archivingProductId() === productId;
   }
 
   private updateProductCache(updated: Product): void {
