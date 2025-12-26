@@ -4,7 +4,7 @@ import { Role } from '../auth/interfaces';
 import { InventoryLayoutPage } from './layouts/inventory-layout-page/inventory-layout-page';
 import { CreateProduct } from './pages/create-product/create-product';
 import { DashboardPage } from './pages/dashboard-page/dashboard-page';
-import { InventoryPage } from './pages/inventory-page/inventory-page';
+import { InventoryProductsPage } from './pages/inventory-products-page/inventory-products-page';
 import { RegisterPage } from './pages/register-page/register-page';
 
 export const adminRoutes: Routes = [
@@ -33,8 +33,8 @@ export const adminRoutes: Routes = [
     component: InventoryLayoutPage,
     children: [
       {
-        path: '',
-        component: InventoryPage,
+        path: 'products',
+        component: InventoryProductsPage,
       },
       {
         path: 'create-product',

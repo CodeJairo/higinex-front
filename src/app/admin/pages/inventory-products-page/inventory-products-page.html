@@ -1,0 +1,348 @@
+<div class="min-h-screen bg-base-200">
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="mb-6">
+      <div class="text-sm breadcrumbs mb-2">
+        <ul>
+          <li><a>Panel</a></li>
+          <li><a>Inventario</a></li>
+          <li>Productos</li>
+        </ul>
+      </div>
+
+      <h1 class="text-2xl lg:text-3xl font-semibold text-slate-900 tracking-tight mb-1">
+        Productos y variantes
+      </h1>
+      <p class="text-sm text-slate-600 max-w-3xl">
+        Gestiona el estado de publicación de los productos y crea variantes con sus atributos e
+        inventario inicial.
+      </p>
+    </div>
+
+    <!-- Main grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+      <!-- LISTA DE PRODUCTOS -->
+      <section class="lg:col-span-2 space-y-4">
+        <div class="card bg-base-100 shadow-sm border border-base-200">
+          <div class="card-body p-4 lg:p-6">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-2">
+              <div>
+                <h2 class="text-slate-900 text-lg font-medium">Lista de productos</h2>
+                <p class="text-xs text-slate-500">
+                  Selecciona un producto para publicar, archivar o añadir variantes.
+                </p>
+              </div>
+
+              <!-- Buscador (solo diseño) -->
+              <div class="w-full max-w-xs">
+                <label class="input input-bordered input-sm flex items-center gap-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-4 w-4 text-slate-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"
+                    />
+                  </svg>
+                  <input type="text" placeholder="Buscar por nombre o slug" class="grow text-sm" />
+                </label>
+              </div>
+            </div>
+
+            @if (isLoading()) {
+            <div class="py-8 text-center text-xs text-slate-500">Cargando productos...</div>
+            } @else if (isError()) {
+            <div class="py-8 text-center text-xs text-slate-500">
+              No se pudieron cargar los productos. Intenta nuevamente.
+            </div>
+            } @else {
+            <div class="overflow-x-auto mt-4">
+              <table class="table text-sm">
+                <thead>
+                  <tr class="text-xs text-slate-500">
+                    <th class="w-8"></th>
+                    <th>Producto</th>
+                    <th>Slug</th>
+                    <th class="w-28">Estado</th>
+                    <th class="w-64">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (product of products; track product.id) {
+                  <tr class="hover:bg-base-200 cursor-pointer" (click)="onSelectProduct(product)">
+                    <!-- indicador seleccionado -->
+                    <td>
+                      <span
+                        class="badge badge-xs"
+                        [ngClass]="{
+                          'badge-primary': selectedProduct()?.id === product.id,
+                          'badge-ghost': selectedProduct()?.id !== product.id
+                        }"
+                      ></span>
+                    </td>
+
+                    <!-- nombre + descripción -->
+                    <td>
+                      <div class="flex flex-col">
+                        <span class="font-medium text-slate-900">
+                          {{ product.name }}
+                        </span>
+                        <span class="text-xs text-slate-500 line-clamp-1">
+                          {{ product.description || 'Sin descripción' }}
+                        </span>
+                      </div>
+                    </td>
+
+                    <!-- slug -->
+                    <td class="text-xs text-slate-500">/productos/{{ product.slug }}</td>
+
+                    <!-- estado -->
+                    <td>
+                      <span
+                        class="badge badge-sm"
+                        [ngClass]="{
+                          'badge-success badge-outline': product.status === 'PUBLISHED',
+                          'badge-error badge-outline': product.status === 'ARCHIVED',
+                          'badge-ghost':
+                            product.status !== 'PUBLISHED' && product.status !== 'ARCHIVED'
+                        }"
+                      >
+                        {{ getProductStatusLabel(product.status) }}
+                      </span>
+                    </td>
+
+                    <!-- acciones -->
+                    <td>
+                      <div class="flex flex-wrap gap-2">
+                        <!-- Publicar -->
+                        <button
+                          type="button"
+                          class="btn btn-xs"
+                          [ngClass]="{
+                            'btn-success': product.status !== 'PUBLISHED',
+                            'btn-success btn-outline cursor-default': product.status === 'PUBLISHED'
+                          }"
+                          [disabled]="product.status === 'PUBLISHED'"
+                          (click)="$event.stopPropagation(); onPublish(product)"
+                        >
+                          Publicar
+                        </button>
+
+                        <!-- Archivar -->
+                        <button
+                          type="button"
+                          class="btn btn-xs"
+                          [ngClass]="{
+                            'btn-error btn-outline': product.status !== 'ARCHIVED',
+                            'btn-error cursor-default': product.status === 'ARCHIVED'
+                          }"
+                          [disabled]="product.status === 'ARCHIVED'"
+                          (click)="$event.stopPropagation(); onArchive(product)"
+                        >
+                          Archivar
+                        </button>
+
+                        <!-- Agregar variante -->
+                        <button
+                          type="button"
+                          class="btn btn-xs btn-ghost"
+                          (click)="$event.stopPropagation(); onSelectProduct(product)"
+                        >
+                          Agregar variante
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  } @empty {
+                  <tr>
+                    <td colspan="5" class="text-center text-xs text-slate-500 py-6">
+                      No hay productos registrados todavía.
+                    </td>
+                  </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+            }
+          </div>
+        </div>
+      </section>
+
+      <!-- FORMULARIO DE VARIANTE -->
+      <section class="space-y-4">
+        <div class="card bg-base-100 shadow-sm border border-base-200">
+          <div class="card-body p-4 lg:p-6">
+            <h2 class="text-slate-900 text-lg font-medium mb-1">Crear variante</h2>
+            <p class="text-xs text-slate-500 mb-4">
+              Define SKU, GTIN, nombre, atributos y stock inicial para la variante del producto
+              seleccionado.
+            </p>
+
+            @if (!selectedProduct()) {
+            <div class="py-10 text-center text-xs text-slate-500">
+              Selecciona un producto de la lista para crear una variante.
+            </div>
+            } @else {
+            <form [formGroup]="variantForm" (ngSubmit)="onSubmitVariant()">
+              <!-- producto seleccionado -->
+              <div class="mb-4 text-xs text-slate-500">
+                Producto seleccionado:<br />
+                <span class="font-medium text-slate-900">
+                  {{ selectedProduct()?.name }}
+                </span>
+                <span class="text-slate-400"> · /productos/{{ selectedProduct()?.slug }} </span>
+              </div>
+
+              <!-- SKU -->
+              <div class="form-control mb-3">
+                <label class="label">
+                  <span class="label-text font-medium text-slate-800">SKU</span>
+                  <span class="label-text-alt text-xs text-slate-400">Obligatorio</span>
+                </label>
+                <input
+                  type="text"
+                  class="input input-bordered input-sm w-full"
+                  placeholder="Ej. CARGO-KHA-34"
+                  formControlName="sku"
+                />
+                <label class="label">
+                  <span class="label-text-alt text-slate-500">
+                    Identificador interno único de la variante.
+                  </span>
+                </label>
+              </div>
+
+              <!-- GTIN -->
+              <div class="form-control mb-3">
+                <label class="label">
+                  <span class="label-text font-medium text-slate-800">
+                    GTIN / Código de barras
+                  </span>
+                  <span class="label-text-alt text-xs text-slate-400">Opcional</span>
+                </label>
+                <input
+                  type="text"
+                  class="input input-bordered input-sm w-full"
+                  placeholder="Ej. 7701234567103"
+                  formControlName="gtin"
+                />
+                <label class="label">
+                  <span class="label-text-alt text-slate-500">
+                    Código de barras asociado a esta variante.
+                  </span>
+                </label>
+              </div>
+
+              <!-- Nombre de la variante -->
+              <div class="form-control mb-3">
+                <label class="label">
+                  <span class="label-text font-medium text-slate-800"> Nombre de la variante </span>
+                  <span class="label-text-alt text-xs text-slate-400">Obligatorio</span>
+                </label>
+                <input
+                  type="text"
+                  class="input input-bordered input-sm w-full"
+                  placeholder="Ej. Khaki / Talla 34"
+                  formControlName="name"
+                />
+                <label class="label">
+                  <span class="label-text-alt text-slate-500">
+                    Nombre que se mostrará junto al producto.
+                  </span>
+                </label>
+              </div>
+
+              <!-- Atributos dinámicos -->
+              <div class="form-control mb-4">
+                <label class="label">
+                  <span class="label-text font-medium text-slate-800">Atributos</span>
+                  <span class="label-text-alt text-xs text-slate-400">Opcional</span>
+                </label>
+
+                <div class="space-y-2" formArrayName="attributes">
+                  @for (attr of attributes.controls; track $index) {
+                  <div class="flex gap-2" [formGroupName]="$index">
+                    <input
+                      type="text"
+                      class="input input-bordered input-xs flex-1"
+                      placeholder="Nombre (ej. color)"
+                      formControlName="key"
+                    />
+                    <input
+                      type="text"
+                      class="input input-bordered input-xs flex-1"
+                      placeholder="Valor (ej. Khaki)"
+                      formControlName="value"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-ghost btn-xs text-error"
+                      (click)="onRemoveAttribute($index)"
+                    >
+                      Quitar
+                    </button>
+                  </div>
+                  }
+
+                  <button
+                    type="button"
+                    class="btn btn-ghost btn-xs mt-1"
+                    (click)="onAddAttribute()"
+                  >
+                    + Agregar atributo
+                  </button>
+                </div>
+
+                <label class="label">
+                  <span class="label-text-alt text-slate-500">
+                    Se enviarán como <code>attributesJson</code> (clave–valor).
+                  </span>
+                </label>
+              </div>
+
+              <!-- Stock inicial -->
+              <div class="form-control mb-4">
+                <label class="label">
+                  <span class="label-text font-medium text-slate-800">Stock inicial</span>
+                  <span class="label-text-alt text-xs text-slate-400">Opcional</span>
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  class="input input-bordered input-sm w-40"
+                  placeholder="Ej. 15"
+                  formControlName="initialOnHand"
+                />
+                <label class="label">
+                  <span class="label-text-alt text-slate-500">
+                    Unidades iniciales en inventario para esta variante.
+                  </span>
+                </label>
+              </div>
+
+              <!-- Acciones -->
+              <div class="border-t border-base-200 mt-2 pt-4 flex flex-col gap-3">
+                <div class="text-xs text-slate-500">
+                  El inventario podrá ajustarse después mediante movimientos de stock.
+                </div>
+                <div class="flex justify-end gap-2">
+                  <button type="button" class="btn btn-ghost btn-sm" (click)="onResetVariantForm()">
+                    Limpiar formulario
+                  </button>
+                  <button type="submit" class="btn btn-primary btn-sm">Guardar variante</button>
+                </div>
+              </div>
+            </form>
+            }
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>

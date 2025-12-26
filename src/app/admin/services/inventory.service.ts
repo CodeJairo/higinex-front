@@ -1,13 +1,33 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { injectMutation } from '@tanstack/angular-query-experimental';
+import { defer, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../auth/services/auth.service';
+
+export interface Product {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  status: 'PUBLISHED' | 'ARCHIVED' | string;
+  createdAt?: string;
+  updatedAt?: string;
+  deletedAt?: string | null;
+}
 
 export interface CreateProductPayload {
   name: string;
   slug: string;
   description?: string;
+}
+
+export interface CreateVariantPayload {
+  sku: string;
+  gtin?: string;
+  name: string;
+  attributesJson?: Record<string, string>;
+  initialOnHand?: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -23,6 +43,56 @@ export class InventoryManagementService {
 
   readonly createProductError = this.createProductErrorSignal.asReadonly();
   readonly isCreatingProduct = computed(() => this.createProductMutation.isPending());
+
+  listProducts(
+    limit: number = 100,
+    offset: number = 0,
+    status: string = 'ALL'
+  ): Observable<Product[]> {
+    const params = new HttpParams({
+      fromObject: {
+        limit: String(limit),
+        offset: String(offset),
+        status,
+      },
+    });
+
+    return defer(() =>
+      this.authService.requestWithAuthHeaders((headers) =>
+        this.http.get<Product[]>(this.buildUrl('/products'), { headers, params })
+      )
+    );
+  }
+
+  publishProduct(productId: string): Observable<Product> {
+    return defer(() =>
+      this.authService.requestWithAuthHeaders((headers) =>
+        this.http.patch<Product>(this.buildUrl(`/products/publish/${productId}`), null, {
+          headers,
+        })
+      )
+    );
+  }
+
+  archiveProduct(productId: string): Observable<Product> {
+    return defer(() =>
+      this.authService.requestWithAuthHeaders((headers) =>
+        this.http.patch<Product>(this.buildUrl(`/products/archive/${productId}`), null, {
+          headers,
+        })
+      )
+    );
+  }
+
+  createVariant(productId: string, payload: CreateVariantPayload): Observable<unknown> {
+    return defer(() =>
+      this.authService.requestWithAuthHeaders((headers) =>
+        this.http.post(this.buildUrl(`/products/variants/create/${productId}`), payload, {
+          headers,
+        })
+      )
+    );
+  }
 
   async createProduct(payload: CreateProductPayload): Promise<boolean> {
     this.createProductErrorSignal.set(null);
