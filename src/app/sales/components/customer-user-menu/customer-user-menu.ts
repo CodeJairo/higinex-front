@@ -22,7 +22,6 @@ export class CustomerUserMenu {
   readonly userCircleIcon = CircleUser;
   readonly packageIcon = Package;
   readonly mapPinIcon = MapPin;
-  readonly heartIcon = Heart;
   readonly helpIcon = CircleQuestionMark;
   readonly logoutIcon = LogOut;
 
