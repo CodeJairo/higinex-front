@@ -1,0 +1,1 @@
+<section class="min-h-screen"></section>

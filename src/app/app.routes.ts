@@ -10,6 +10,8 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
+    loadComponent: () =>
+      import('./admin/layouts/admin-layout-page/admin-layout-page').then((m) => m.AdminLayoutPage),
     loadChildren: () => import('./admin/admin.routes').then((m) => m.adminRoutes),
   },
   {

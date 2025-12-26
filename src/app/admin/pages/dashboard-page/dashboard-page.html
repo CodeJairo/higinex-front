@@ -1,9 +1,14 @@
-<div class="min-h-screen bg-slate-50">
+<section class="min-h-screen">
   <div class="max-w-7xl mx-auto p-6 lg:p-8">
     <!-- Header -->
     <div class="mb-8">
-      <h1 class="text-slate-900 mb-2 text-4xl font-bold">Panel Administrativo</h1>
-      <p class="text-slate-600">----------------------------------------------------------</p>
+      <h1 class="text-slate-900 text-3xl lg:text-4xl font-semibold tracking-tight mb-2">
+        Panel de Gestión Administrativa
+      </h1>
+
+      <p class="text-slate-600 max-w-3xl">
+        Consolida y supervisa las operaciones principales del sistema.
+      </p>
     </div>
 
     <!-- Stats Cards -->
@@ -48,7 +53,7 @@
             ></lucide-icon>
           </div>
           <h3 class="text-slate-900 mb-1">Agregar Usuarios</h3>
-          <p class="text-sm text-slate-600">Gestiona los usuarios del sistema</p>
+          <p class="text-sm text-slate-600">Gestiona los usuarios y agrega nuevos clientes</p>
         </button>
 
         <button
@@ -63,7 +68,7 @@
             ></lucide-icon>
           </div>
           <h3 class="text-slate-900 mb-1">Pedidos Recientes</h3>
-          <p class="text-sm text-slate-600">Ver historial completo</p>
+          <p class="text-sm text-slate-600">Pedidos pendientes de revisión y confirmación.</p>
         </button>
 
         <button
@@ -73,12 +78,14 @@
             class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-green-600 transition-colors"
           >
             <lucide-icon
-              [img]="refreshIcon"
+              [img]="warehouseIcon"
               class="w-6 h-6 text-green-600 group-hover:text-white transition-colors"
             ></lucide-icon>
           </div>
-          <h3 class="text-slate-900 mb-1">Repetir Último Pedido</h3>
-          <p class="text-sm text-slate-600">Reordenar con 1 click</p>
+          <h3 class="text-slate-900 mb-1">Manejo de Inventario</h3>
+          <p class="text-sm text-slate-600">
+            Gestión de existencias, movimientos y disponibilidad de productos.
+          </p>
         </button>
 
         <button
@@ -139,73 +146,69 @@
             }
           </div>
         </div>
-
-        <!-- Top Products -->
-        <div class="bg-white rounded-xl border border-slate-200 p-6">
-          <h2 class="text-slate-900 mb-6">Tus Productos Más Comprados</h2>
-          <div class="space-y-4">
-            @for (product of topProducts; track product.id) {
-            <div
-              class="flex items-center gap-4 p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
-            >
-              <div
-                class="w-16 h-16 bg-white rounded-lg overflow-hidden shrink-0 border border-slate-200"
-              >
-                <shared-image-with-fallback
-                  [src]="product.image"
-                  [alt]="product.name"
-                  class="w-full h-full object-cover"
-                ></shared-image-with-fallback>
-              </div>
-              <div class="flex-1 min-w-0">
-                <h3 class="text-sm text-slate-900 truncate mb-1">{{ product.name }}</h3>
-                <p class="text-xs text-slate-600 truncate">{{ product.presentation }}</p>
-              </div>
-              <div class="text-right shrink-0">
-                <div class="text-sm text-slate-900">{{ product.totalOrdered }} unidades</div>
-                <button class="text-xs text-blue-600 hover:text-blue-700 mt-1 cursor-pointer">
-                  Reordenar
-                </button>
-              </div>
-            </div>
-            }
-          </div>
-        </div>
       </div>
 
       <!-- Right Column - 1/3 width -->
       <div class="space-y-6 lg:space-y-8">
-        <!-- New Products -->
-
-        <!-- Pre-order Products -->
+        <!-- Resumen operativo -->
         <div class="bg-white rounded-xl border border-slate-200 p-6">
           <div class="flex items-center gap-2 mb-6">
-            <lucide-icon [img]="clockIcon" class="w-5 h-5 text-amber-600"></lucide-icon>
-            <h2 class="text-slate-900">Pre-orden Disponible</h2>
+            <lucide-icon [img]="clockIcon" class="w-5 h-5 text-blue-600"></lucide-icon>
+            <h2 class="text-slate-900">Resumen Operativo</h2>
           </div>
-          <div class="space-y-4">
-            @for (product of preOrderProducts; track product.id) {
-            <div class="group cursor-pointer">
-              <div class="aspect-square bg-slate-100 rounded-lg overflow-hidden mb-3 relative">
-                <shared-image-with-fallback
-                  [src]="product.image"
-                  [alt]="product.name"
-                  class="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                ></shared-image-with-fallback>
-                <div
-                  class="absolute top-2 left-2 px-2 py-1 bg-amber-500 text-white text-xs rounded-full"
-                >
-                  Pre-orden
-                </div>
-              </div>
-              <h3 class="text-sm text-slate-900 mb-1 line-clamp-2">{{ product.name }}</h3>
-              <p class="text-xs text-slate-600 mb-2">{{ product.presentation }}</p>
-              <p class="text-xs text-amber-600">Disponible: {{ product.availableDate }}</p>
+
+          <div class="space-y-3 text-sm">
+            <div class="flex items-center justify-between">
+              <span class="text-slate-600">Pedidos pendientes de confirmación</span>
+              <span class="font-medium text-slate-900">
+                {{ stats.pendingOrders }}
+              </span>
             </div>
+
+            <div class="flex items-center justify-between">
+              <span class="text-slate-600">Pedidos en preparación</span>
+              <span class="font-medium text-slate-900">
+                {{ stats.preparingOrders }}
+              </span>
+            </div>
+
+            <div class="flex items-center justify-between">
+              <span class="text-slate-600">Pedidos listos para despacho</span>
+              <span class="font-medium text-slate-900">
+                {{ stats.readyToShipOrders }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alertas de inventario -->
+        <div class="bg-white rounded-xl border border-slate-200 p-6">
+          <div class="flex items-center gap-2 mb-6">
+            <lucide-icon [img]="warehouseIcon" class="w-5 h-5 text-amber-600"></lucide-icon>
+            <h2 class="text-slate-900">Alertas de Inventario</h2>
+          </div>
+
+          <div class="space-y-3 text-sm">
+            @if (lowStockProducts?.length) { @for (product of lowStockProducts; track product.id) {
+            <div class="flex items-center justify-between">
+              <div class="min-w-0">
+                <p class="text-slate-900 truncate">
+                  {{ product.name }}
+                </p>
+                <p class="text-xs text-slate-500 truncate">
+                  Stock actual: {{ product.stock }} unidades
+                </p>
+              </div>
+              <span class="px-2 py-1 rounded-full text-xs bg-amber-100 text-amber-700">
+                Stock bajo
+              </span>
+            </div>
+            } } @else {
+            <p class="text-sm text-slate-500">No hay alertas de stock crítico por ahora.</p>
             }
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+</section>
