@@ -1,0 +1,365 @@
+<div class="min-h-screen bg-base-200">
+  <div class="max-w-7xl mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <div class="text-sm breadcrumbs mb-2">
+        <ul>
+          <li><a>Panel</a></li>
+          <li><a>Contratos</a></li>
+        </ul>
+      </div>
+
+      <h1 class="text-3xl font-semibold text-slate-900 mb-1">
+        Gestion de Contratos y Precios por Cliente
+      </h1>
+      <p class="text-sm text-slate-600 max-w-3xl">
+        Simulacion con datos de ejemplo: selecciona un cliente, revisa sus contratos y edita los
+        precios por variante definidos en el acuerdo.
+      </p>
+    </div>
+
+    <!-- Layout principal -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+      <!-- Columna izquierda: clientes + contratos -->
+      <section class="lg:col-span-1 space-y-6">
+        <!-- Lista de clientes (ejemplo) -->
+        <div class="card bg-base-100 border border-base-200 shadow-sm">
+          <div class="card-body">
+            <h2 class="text-lg font-medium text-slate-900 mb-2">Clientes</h2>
+            <p class="text-xs text-slate-500 mb-3">
+              Datos de ejemplo. Selecciona un cliente para ver sus contratos.
+            </p>
+
+            <ul class="menu bg-base-100 rounded-lg border border-base-200 max-h-64 overflow-auto">
+              @for (customer of customers(); track customer.id) {
+              <li>
+                <button
+                  type="button"
+                  class="justify-start"
+                  [class.active]="selectedCustomer()?.id === customer.id"
+                  (click)="onSelectCustomer(customer)"
+                >
+                  <div class="flex flex-col items-start gap-1">
+                    <div class="flex items-center gap-2">
+                      <span class="font-medium text-sm">
+                        {{ customer.name }}
+                      </span>
+                      <span
+                        class="badge badge-xs"
+                        [class.badge-success]="activeContractByCustomerId().has(customer.id)"
+                        [class.badge-ghost]="!activeContractByCustomerId().has(customer.id)"
+                      >
+                        {{
+                          activeContractByCustomerId().has(customer.id) ? 'Activo' : 'Sin contrato'
+                        }}
+                      </span>
+                    </div>
+                    <span class="text-xs text-slate-500">
+                      {{ customer.documentType }} {{ customer.documentNumber }} |
+                      {{ customer.email }}
+                    </span>
+                  </div>
+                </button>
+              </li>
+              } @empty {
+              <li class="text-xs text-slate-500 px-4 py-2">
+                No hay clientes de ejemplo configurados.
+              </li>
+              }
+            </ul>
+          </div>
+        </div>
+
+        <!-- Contratos del cliente -->
+        <div class="card bg-base-100 border border-base-200 shadow-sm">
+          <div class="card-body">
+            <div class="flex items-center justify-between mb-2">
+              <h2 class="text-lg font-medium text-slate-900">Contratos del cliente</h2>
+            </div>
+
+            @if (!selectedCustomer()) {
+            <div class="text-xs text-slate-500 py-8 text-center">
+              Selecciona un cliente para ver sus contratos.
+            </div>
+            } @else {
+            <div class="space-y-2 max-h-64 overflow-auto">
+              @for (contract of contractsForSelectedCustomer(); track contract.id) {
+              <button
+                type="button"
+                class="w-full text-left border rounded-lg px-3 py-2 text-sm hover:bg-base-200 transition-colors"
+                [class.border-blue-500]="selectedContractId() === contract.id"
+                (click)="onSelectContract(contract)"
+              >
+                <div class="flex items-center justify-between mb-1">
+                  <span class="font-medium text-slate-900 text-xs">
+                    Contrato {{ contract.id }}
+                  </span>
+                  <span
+                    class="badge badge-xs"
+                    [class.badge-success]="contract.isActive"
+                    [class.badge-ghost]="!contract.isActive"
+                  >
+                    {{ formatContractStatus(contract.isActive) }}
+                  </span>
+                </div>
+                <div class="text-[11px] text-slate-500">
+                  Inicio: {{ formatDate(contract.startsAt) }} | Fin:
+                  {{ formatDate(contract.endsAt) }}
+                </div>
+                <div class="text-[11px] text-slate-500 mt-1">
+                  Items: {{ contract._count.items }}
+                </div>
+              </button>
+              } @empty {
+              <div class="text-xs text-slate-500 py-4">
+                El cliente no tiene contratos de ejemplo.
+              </div>
+              }
+            </div>
+
+            <!-- Crear nuevo contrato (demo) -->
+            <div class="mt-4 border-t border-base-200 pt-4">
+              <h3 class="text-sm font-medium text-slate-900 mb-2">
+                Crear nuevo contrato (ejemplo)
+              </h3>
+
+              <form [formGroup]="createContractForm" class="space-y-2">
+                <div class="form-control">
+                  <label class="label">
+                    <span class="label-text text-xs">Fecha de inicio</span>
+                  </label>
+                  <input
+                    type="date"
+                    class="input input-bordered input-xs"
+                    formControlName="startsAt"
+                  />
+                </div>
+
+                <div class="form-control">
+                  <label class="label">
+                    <span class="label-text text-xs">Fecha de fin (opcional)</span>
+                  </label>
+                  <input
+                    type="date"
+                    class="input input-bordered input-xs"
+                    formControlName="endsAt"
+                  />
+                </div>
+
+                <div class="form-control">
+                  <label class="label cursor-pointer justify-start gap-2">
+                    <input
+                      type="checkbox"
+                      class="checkbox checkbox-xs"
+                      formControlName="isActive"
+                    />
+                    <span class="label-text text-xs">Marcar como activo</span>
+                  </label>
+                </div>
+
+                <div class="flex justify-end gap-2 pt-2">
+                  <button
+                    type="button"
+                    class="btn btn-success btn-xs"
+                    (click)="onFakeCreateContract()"
+                  >
+                    Crear contrato (demo)
+                  </button>
+                </div>
+              </form>
+            </div>
+            }
+          </div>
+        </div>
+      </section>
+
+      <!-- Columna derecha: detalle contrato + precios -->
+      <section class="lg:col-span-2 space-y-6">
+        <!-- Detalle contrato -->
+        <div class="card bg-base-100 border border-base-200 shadow-sm">
+          <div class="card-body">
+            <div class="flex items-center justify-between mb-3">
+              <h2 class="text-lg font-medium text-slate-900">Detalle del contrato</h2>
+
+              <div class="flex gap-2">
+                <button
+                  type="button"
+                  class="btn btn-outline btn-xs"
+                  (click)="onFakeSaveContract()"
+                  [disabled]="!selectedContract()"
+                >
+                  Guardar cambios (demo)
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-error btn-xs"
+                  (click)="onFakeDeleteContract()"
+                  [disabled]="!selectedContract()"
+                >
+                  Eliminar (demo)
+                </button>
+              </div>
+            </div>
+
+            @if (!selectedContract()) {
+            <div class="text-xs text-slate-500 py-6">
+              Selecciona un contrato para ver y actualizar sus detalles.
+            </div>
+            } @else {
+            <div
+              [formGroup]="updateContractForm"
+              class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-slate-600"
+            >
+              <div>
+                <div class="font-semibold text-slate-900 text-xs mb-1">Cliente</div>
+                <div>
+                  {{ selectedCustomer()?.name }}
+                </div>
+                <div class="text-xs text-slate-500">
+                  {{ selectedCustomer()?.documentType }}
+                  {{ selectedCustomer()?.documentNumber }}
+                </div>
+              </div>
+
+              <div>
+                <div class="font-semibold text-slate-900 text-xs mb-1">Estado</div>
+                <div class="flex items-center gap-2">
+                  <span
+                    class="badge badge-sm"
+                    [class.badge-success]="selectedContract()?.isActive"
+                    [class.badge-ghost]="!selectedContract()?.isActive"
+                  >
+                    {{ formatContractStatus(selectedContract()?.isActive ?? false) }}
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <div class="font-semibold text-slate-900 text-xs mb-1">Fecha de inicio</div>
+                <input
+                  type="date"
+                  class="input input-bordered input-xs w-full"
+                  formControlName="startsAt"
+                />
+              </div>
+
+              <div>
+                <div class="font-semibold text-slate-900 text-xs mb-1">Fecha de fin</div>
+                <input
+                  type="date"
+                  class="input input-bordered input-xs w-full"
+                  formControlName="endsAt"
+                />
+              </div>
+
+              <div class="sm:col-span-2">
+                <label class="label cursor-pointer justify-start gap-2">
+                  <input type="checkbox" class="checkbox checkbox-xs" formControlName="isActive" />
+                  <span class="label-text text-xs">
+                    Contrato activo (si se activa, el backend desactiva otros contratos del
+                    cliente).
+                  </span>
+                </label>
+              </div>
+            </div>
+            }
+          </div>
+        </div>
+
+        <!-- Tabla de precios por variante -->
+        <div class="card bg-base-100 border border-base-200 shadow-sm">
+          <div class="card-body">
+            <div class="flex items-center justify-between mb-3">
+              <h2 class="text-lg font-medium text-slate-900">Precios por variante</h2>
+              <button
+                type="button"
+                class="btn btn-primary btn-xs"
+                (click)="onFakeSavePrices()"
+                [disabled]="!selectedContract()"
+              >
+                Guardar precios del contrato (demo)
+              </button>
+            </div>
+
+            @if (!selectedContract()) {
+            <div class="text-xs text-slate-500 py-6">
+              Selecciona un contrato para asignar precios a sus variantes.
+            </div>
+            } @else {
+            <div class="overflow-x-auto">
+              <table class="table table-zebra text-sm">
+                <thead>
+                  <tr class="text-xs text-slate-500">
+                    <th>SKU</th>
+                    <th>Producto</th>
+                    <th>Variante</th>
+                    <th>Atributos</th>
+                    <th class="w-32 text-right">Precio actual</th>
+                    <th class="w-36 text-right">Nuevo precio</th>
+                    <th class="w-24 text-right">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (row of mergedVariantRows(); track row.variantId) {
+                  <tr>
+                    <td class="font-mono text-xs">
+                      {{ row.sku }}
+                    </td>
+                    <td class="text-xs text-slate-900">
+                      {{ row.productName }}
+                    </td>
+                    <td>
+                      <div class="flex flex-col">
+                        <span class="text-slate-900 text-xs">
+                          {{ row.variantName }}
+                        </span>
+                      </div>
+                    </td>
+                    <td class="text-xs text-slate-500">
+                      {{ row.attributesLabel || '--' }}
+                    </td>
+                    <td class="text-right text-xs">
+                      @if (row.markedForDelete) {
+                      <span class="text-amber-600">Se eliminara</span>
+                      } @else {
+                      <span>{{ row.currentPrice ?? '--' }}</span>
+                      }
+                    </td>
+                    <td class="text-right">
+                      <input
+                        type="number"
+                        class="input input-bordered input-xs w-32 text-right"
+                        [value]="row.draftPrice ?? row.currentPrice ?? ''"
+                        (input)="onPriceChange(row.variantId, $any($event.target).value)"
+                        placeholder="Ej. 45000"
+                        min="0"
+                      />
+                    </td>
+                    <td class="text-right">
+                      <button
+                        type="button"
+                        class="btn btn-ghost btn-xs"
+                        (click)="onClearPrice(row.variantId)"
+                        [disabled]="row.currentPrice == null"
+                      >
+                        Quitar
+                      </button>
+                    </td>
+                  </tr>
+                  } @empty {
+                  <tr>
+                    <td colspan="7" class="text-center text-xs text-slate-500 py-6">
+                      No hay variantes de ejemplo configuradas.
+                    </td>
+                  </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+            }
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
