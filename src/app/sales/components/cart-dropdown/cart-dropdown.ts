@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  Output,
+} from '@angular/core';
 import {
   ArrowRight,
   LucideAngularModule,
@@ -11,6 +18,7 @@ import {
 } from 'lucide-angular';
 import { ImageWithFallback } from '../../../shared/components/image-with-fallback/image-with-fallback';
 import { CartItem } from '../../interface';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'sales-cart-dropdown',
@@ -19,6 +27,8 @@ import { CartItem } from '../../interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CartDropdown {
+  private readonly router = inject(Router);
+
   @Input() isOpen = false;
   @Input() items: CartItem[] = [];
   @Output() closeCart = new EventEmitter<void>();
@@ -58,10 +68,17 @@ export class CartDropdown {
     }).format(price);
   }
 
+  goToCart(): void {
+    this.router.navigateByUrl('/sales/cart');
+  }
+
+  goToCheckout(): void {
+    this.router.navigateByUrl('/sales/checkout');
+  }
+
   onUpdateQuantity(id: string, quantity: number): void {
     this.updateQuantity.emit({ id, quantity: Math.max(1, quantity) });
   }
-
   onRemove(id: string): void {
     this.removeItem.emit(id);
   }
