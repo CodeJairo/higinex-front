@@ -1,0 +1,141 @@
+<div class="min-h-screen bg-base-200">
+  <div class="max-w-5xl mx-auto p-4 lg:p-8 space-y-6">
+
+    <h2 class="text-2xl font-semibold">Confirmación del pedido</h2>
+
+    <!-- Warning blocks -->
+    <div class="alert alert-warning" *ngIf="hasPriceIssues">
+      Existen productos sin precio asignado. No es posible confirmar el pedido.
+    </div>
+
+    <div class="alert alert-error" *ngIf="hasStockIssues">
+      Uno o más productos no tienen disponibilidad suficiente.
+    </div>
+
+    <!-- Layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <!-- Left -->
+      <section class="lg:col-span-2 space-y-4">
+
+        <!-- Order items -->
+        <div class="card bg-base-100 border">
+          <div class="card-body p-4">
+
+            <h3 class="font-semibold mb-2">Resumen del pedido</h3>
+
+            <div class="space-y-2">
+              @for (item of mockCartItems; track item.variantId) {
+              <div class="flex justify-between border-b pb-2 last:border-0">
+                <div>
+                  <div class="font-medium text-sm">
+                    {{ item.productName }} — {{ item.variantName }}
+                  </div>
+                  <div class="text-xs text-slate-500">
+                    SKU {{ item.sku }}
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="text-sm">
+                    x{{ item.quantity }}
+                  </div>
+                  <div class="font-semibold">
+                    {{ (item.unitPriceCop ?? 0) * item.quantity | currency:'COP' }}
+                  </div>
+                </div>
+              </div>
+              }
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Customer -->
+        <div class="card bg-base-100 border">
+          <div class="card-body p-4">
+            <h3 class="font-semibold mb-2">Datos del cliente</h3>
+
+            <div class="text-sm">
+              <div>{{ mockCheckoutCustomer.name }}</div>
+              <div class="text-slate-500">{{ mockCheckoutCustomer.email }}</div>
+              <div class="text-slate-500">{{ mockCheckoutCustomer.phone }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Address -->
+        <div class="card bg-base-100 border">
+          <div class="card-body p-4">
+            <h3 class="font-semibold mb-2">Dirección de envío</h3>
+
+            <div *ngIf="mockCheckoutAddress; else noAddress" class="text-sm">
+              <div class="font-medium">{{ mockCheckoutAddress.label }}</div>
+              <div>{{ mockCheckoutAddress.line1 }} — {{ mockCheckoutAddress.line2 }}</div>
+              <div>{{ mockCheckoutAddress.city }}, {{ mockCheckoutAddress.state }}</div>
+              <div class="text-slate-500">{{ mockCheckoutAddress.notes }}</div>
+            </div>
+
+            <ng-template #noAddress>
+              <div class="text-sm text-slate-500">
+                No hay una dirección registrada para este cliente.
+              </div>
+            </ng-template>
+          </div>
+        </div>
+
+        <!-- Notes -->
+        <div class="card bg-base-100 border">
+          <div class="card-body p-4">
+            <h3 class="font-semibold mb-2">Notas del pedido</h3>
+            <textarea class="textarea textarea-bordered w-full" maxlength="1000">
+{{ mockCheckoutNotes }}
+            </textarea>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Right -->
+      <aside>
+
+        <div class="card bg-base-100 border">
+          <div class="card-body p-4">
+
+            <h3 class="font-semibold mb-2">Totales</h3>
+
+            <div class="flex justify-between text-sm">
+              <span>Subtotal</span>
+              <span>{{ mockCheckoutSummary.subtotal | currency:'COP' }}</span>
+            </div>
+
+            <div class="flex justify-between text-sm">
+              <span>Envío</span>
+              <span>{{ mockCheckoutSummary.shipping | currency:'COP' }}</span>
+            </div>
+
+            <div class="flex justify-between text-sm">
+              <span>Descuento</span>
+              <span>-{{ mockCheckoutSummary.discount | currency:'COP' }}</span>
+            </div>
+
+            <div class="divider my-2"></div>
+
+            <div class="flex justify-between font-semibold">
+              <span>Total</span>
+              <span>{{ mockCheckoutSummary.total | currency:'COP' }}</span>
+            </div>
+
+            <button class="btn btn-primary btn-sm mt-4 w-full"
+              [class.btn-disabled]="hasPriceIssues || hasStockIssues">
+              Confirmar pedido
+            </button>
+
+          </div>
+        </div>
+
+      </aside>
+
+    </div>
+
+  </div>
+</div>
