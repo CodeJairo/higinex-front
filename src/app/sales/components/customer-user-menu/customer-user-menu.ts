@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  Output,
+} from '@angular/core';
+import { Router } from '@angular/router';
 import {
   CircleQuestionMark,
   CircleUser,
@@ -17,6 +25,8 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CustomerUserMenu {
+  private readonly router = inject(Router);
+
   // Icons
   readonly userIcon = User;
   readonly userCircleIcon = CircleUser;
@@ -30,6 +40,10 @@ export class CustomerUserMenu {
   @Input() userDetail!: string;
 
   @Output() logout = new EventEmitter<void>();
+
+  goToMyAddresses(): void {
+    this.router.navigateByUrl('/customer/addresses');
+  }
 
   onLogout() {
     this.logout.emit();

@@ -1,0 +1,411 @@
+<div class="min-h-screen bg-base-200 pb-20 sm:pb-0">
+  <div class="max-w-4xl mx-auto px-4 py-6">
+    <!-- Encabezado -->
+    <header
+      class="flex items-center justify-between gap-4 mb-6"
+    >
+      <div>
+        <h1 class="text-2xl font-semibold">Mis direcciones</h1>
+        <p class="text-sm text-slate-500">
+          Gestiona dónde quieres recibir tus pedidos.
+        </p>
+      </div>
+
+      <!-- CTA desktop -->
+      <button
+        class="btn btn-primary btn-sm hidden sm:inline-flex"
+        (click)="openCreateForm()"
+      >
+        Agregar dirección
+      </button>
+    </header>
+
+    <!-- Error -->
+    @if (errorMessage) {
+      <div class="alert alert-error mb-4">
+        <span>{{ errorMessage }}</span>
+        <button class="btn btn-sm ml-auto" (click)="retry()">
+          Reintentar
+        </button>
+      </div>
+    }
+
+    <!-- Loading -->
+    @if (isLoading) {
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        @for (skeleton of [1, 2, 3, 4]; track skeleton) {
+          <div class="card bg-base-100 border border-base-200 p-4 space-y-3">
+            <div class="flex items-center justify-between gap-2">
+              <div class="skeleton h-4 w-24"></div>
+              <div class="skeleton h-4 w-16 rounded-full"></div>
+            </div>
+            <div class="space-y-2">
+              <div class="skeleton h-4 w-full"></div>
+              <div class="skeleton h-4 w-3/4"></div>
+              <div class="skeleton h-4 w-1/2"></div>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+              <div class="skeleton h-8 w-16"></div>
+              <div class="skeleton h-8 w-20"></div>
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      <!-- No loading -->
+      @if (!addresses.length) {
+        <!-- Estado vacío -->
+        <div
+          class="card bg-base-100 border border-dashed border-base-300 p-8 text-center"
+        >
+          <div
+            class="mx-auto mb-4 h-16 w-16 rounded-full bg-base-200 flex items-center justify-center"
+          >
+            <span class="text-3xl">📦</span>
+          </div>
+          <h2 class="font-medium text-slate-800">
+            Aún no tienes direcciones
+          </h2>
+          <p class="text-sm text-slate-500 mt-1">
+            Agrega una dirección para guardar tu lugar de entrega favorito.
+          </p>
+          <button
+            class="btn btn-primary btn-sm mt-4"
+            (click)="openCreateForm()"
+          >
+            Agregar dirección
+          </button>
+        </div>
+      } @else {
+        <!-- Aviso si no hay dirección por defecto -->
+        @if (!hasDefault) {
+          <div class="alert alert-warning mb-4">
+            <span>
+              Actualmente no tienes una dirección marcada por defecto. Elige
+              una para agilizar tus próximos pedidos.
+            </span>
+          </div>
+        }
+
+        <!-- Listado de direcciones -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          @for (address of addresses; track address.id) {
+            <div
+              class="card bg-base-100 shadow-sm border border-base-200 h-full"
+            >
+              <div class="card-body p-4 flex flex-col h-full">
+                <!-- Header: label + default -->
+                <div
+                  class="flex items-start justify-between gap-2 mb-2"
+                >
+                  <div class="flex items-center gap-2">
+                    @if (address.label) {
+                      <span class="text-sm font-medium text-slate-900">
+                        {{ address.label }}
+                      </span>
+                    }
+                    @if (address.isDefault) {
+                      <span
+                        class="badge badge-primary badge-sm"
+                      >
+                        Por defecto
+                      </span>
+                    }
+                  </div>
+                </div>
+
+                <!-- Contenido dirección -->
+                <div class="space-y-1 text-sm text-slate-700 flex-1">
+                  <p class="font-medium">
+                    {{ address.line1 }}
+                  </p>
+
+                  @if (address.line2) {
+                    <p>{{ address.line2 }}</p>
+                  }
+
+                  <p>
+                    @if (address.neighborhood) {
+                      <span>{{ address.neighborhood }}, </span>
+                    }
+                    <span>{{ address.city }}</span>,
+                    <span>{{ address.state }}</span>
+                  </p>
+
+                  @if (address.postalCode) {
+                    <p class="text-xs text-slate-500">
+                      Código postal: {{ address.postalCode }}
+                    </p>
+                  }
+
+                  @if (address.notes) {
+                    <p class="text-xs text-slate-500">
+                      Notas: {{ address.notes }}
+                    </p>
+                  }
+                </div>
+
+                <!-- Acciones -->
+                <div
+                  class="mt-4 flex flex-wrap gap-2 justify-end"
+                >
+                  <button
+                    class="btn btn-ghost btn-xs"
+                    (click)="openEditForm(address)"
+                  >
+                    Editar
+                  </button>
+
+                  <button
+                    class="btn btn-ghost btn-xs text-error"
+                    (click)="confirmDelete(address)"
+                  >
+                    Eliminar
+                  </button>
+
+                  @if (!address.isDefault) {
+                    <button
+                      class="btn btn-outline btn-xs"
+                      (click)="makeDefault(address)"
+                    >
+                      Hacer default
+                    </button>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    }
+
+    <!-- CTA fijo mobile -->
+    <div
+      class="sm:hidden fixed bottom-0 left-0 right-0 border-t bg-base-100/95 backdrop-blur"
+    >
+      <div class="max-w-4xl mx-auto px-4 py-3">
+        <button
+          class="btn btn-primary btn-block"
+          (click)="openCreateForm()"
+        >
+          Agregar dirección
+        </button>
+      </div>
+    </div>
+
+    <!-- Modal crear/editar -->
+    <div
+      class="modal"
+      [ngClass]="{ 'modal-open': isFormOpen }"
+    >
+      <div class="modal-box max-w-lg">
+        <h3 class="font-semibold text-lg mb-2">
+          {{ editingAddress ? 'Editar dirección' : 'Agregar dirección' }}
+        </h3>
+        <p class="text-xs text-slate-500 mb-4">
+          Los campos marcados con * son obligatorios.
+        </p>
+
+        <div class="space-y-3">
+          <!-- Label -->
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Etiqueta</span>
+              <span class="label-text-alt text-xs text-slate-400">
+                Opcional (ej. Casa, Oficina)
+              </span>
+            </label>
+            <input
+              type="text"
+              class="input input-bordered input-sm"
+              placeholder="Casa"
+              [(ngModel)]="addressForm.label"
+              maxlength="100"
+            />
+          </div>
+
+          <!-- Linea 1 -->
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Línea 1 *</span>
+            </label>
+            <input
+              type="text"
+              class="input input-bordered input-sm"
+              placeholder="Calle 123 #45-67"
+              [(ngModel)]="addressForm.line1"
+              maxlength="200"
+            />
+          </div>
+
+          <!-- Linea 2 -->
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Línea 2</span>
+              <span class="label-text-alt text-xs text-slate-400">
+                Opcional (apto, piso, interior)
+              </span>
+            </label>
+            <input
+              type="text"
+              class="input input-bordered input-sm"
+              placeholder="Apto 302"
+              [(ngModel)]="addressForm.line2"
+              maxlength="200"
+            />
+          </div>
+
+          <!-- Neighborhood -->
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Barrio</span>
+            </label>
+            <input
+              type="text"
+              class="input input-bordered input-sm"
+              placeholder="Laureles"
+              [(ngModel)]="addressForm.neighborhood"
+              maxlength="100"
+            />
+          </div>
+
+          <!-- City / State -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text">Ciudad *</span>
+              </label>
+              <input
+                type="text"
+                class="input input-bordered input-sm"
+                placeholder="Medellín"
+                [(ngModel)]="addressForm.city"
+                maxlength="100"
+              />
+            </div>
+
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text">Departamento *</span>
+              </label>
+              <input
+                type="text"
+                class="input input-bordered input-sm"
+                placeholder="Antioquia"
+                [(ngModel)]="addressForm.state"
+                maxlength="100"
+              />
+            </div>
+          </div>
+
+          <!-- Postal code -->
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Código postal</span>
+            </label>
+            <input
+              type="text"
+              class="input input-bordered input-sm"
+              placeholder="050021"
+              [(ngModel)]="addressForm.postalCode"
+              maxlength="20"
+            />
+          </div>
+
+          <!-- Notes -->
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Notas</span>
+              <span class="label-text-alt text-xs text-slate-400">
+                Opcional
+              </span>
+            </label>
+            <textarea
+              class="textarea textarea-bordered textarea-sm"
+              rows="3"
+              placeholder="Entregar en portería"
+              [(ngModel)]="addressForm.notes"
+              maxlength="1000"
+            ></textarea>
+          </div>
+
+          <!-- Marcar como default (solo tiene efecto real en backend luego) -->
+          <div class="form-control mt-2">
+            <label class="cursor-pointer label justify-start gap-3">
+              <input
+                type="checkbox"
+                class="checkbox checkbox-sm"
+                [(ngModel)]="addressForm.isDefault"
+              />
+              <span class="label-text text-sm">
+                Marcar como dirección por defecto
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-action mt-6">
+          <button class="btn btn-ghost btn-sm" (click)="closeForm()">
+            Cancelar
+          </button>
+          <button class="btn btn-primary btn-sm" (click)="saveAddress()">
+            Guardar
+          </button>
+        </div>
+      </div>
+      <div class="modal-backdrop" (click)="closeForm()"></div>
+    </div>
+
+    <!-- Modal confirmación borrado -->
+    <div
+      class="modal"
+      [ngClass]="{ 'modal-open': isDeleteConfirmOpen }"
+    >
+      <div class="modal-box max-w-sm">
+        <h3 class="font-semibold text-lg mb-2">
+          ¿Eliminar esta dirección?
+        </h3>
+        <p class="text-sm text-slate-600">
+          Esta acción solo la quitará de tu cuenta. Podrás agregarla de nuevo
+          más adelante si la necesitas.
+        </p>
+
+        <div class="mt-4 bg-base-200 rounded-lg p-3 text-xs text-slate-600">
+          @if (addressToDelete) {
+            <div class="font-medium mb-1">
+              {{ addressToDelete.label || 'Dirección' }}
+              @if (addressToDelete.isDefault) {
+                <span class="badge badge-xs badge-outline ml-1">
+                  Por defecto
+                </span>
+              }
+            </div>
+            <div>{{ addressToDelete.line1 }}</div>
+            @if (addressToDelete.city || addressToDelete.state) {
+              <div>
+                {{ addressToDelete.city }},
+                {{ addressToDelete.state }}
+              </div>
+            }
+          }
+        </div>
+
+        <div class="modal-action mt-6">
+          <button
+            class="btn btn-ghost btn-sm"
+            (click)="cancelDelete()"
+          >
+            Cancelar
+          </button>
+          <button
+            class="btn btn-error btn-sm"
+            (click)="deleteAddress()"
+          >
+            Eliminar
+          </button>
+        </div>
+      </div>
+      <div class="modal-backdrop" (click)="cancelDelete()"></div>
+    </div>
+  </div>
+</div>
