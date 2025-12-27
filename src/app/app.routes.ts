@@ -10,6 +10,11 @@ export const routes: Routes = [
     loadChildren: () => import('./auth/auth.routes').then((m) => m.authRoutes),
   },
   {
+    path: 'customer',
+    canActivate: [authGuard],
+    loadChildren: () => import('./customer/customer.routes').then((m) => m.customerRoutes),
+  },
+  {
     path: 'admin',
     canActivate: [authGuard, adminGuard],
     loadComponent: () =>

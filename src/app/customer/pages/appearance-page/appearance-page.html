@@ -1,0 +1,225 @@
+<section class="space-y-6">
+  <!-- Encabezado de la sección -->
+  <header>
+    <h1 class="text-2xl font-semibold text-slate-900">Apariencia y estilo</h1>
+    <p class="text-sm text-slate-500 mt-1">
+      Personaliza cómo ves Higinex: tema claro u oscuro, colores y detalles visuales. Estos cambios
+      solo afectan tu experiencia.
+    </p>
+  </header>
+
+  <!-- Tema -->
+  <div class="card bg-base-100 border border-base-200 shadow-sm">
+    <div class="card-body">
+      <h2 class="card-title text-base">Tema de la interfaz</h2>
+      <p class="text-sm text-slate-500">Elige el esquema de color principal para la aplicación.</p>
+
+      <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+        @for (theme of themeOptions; track theme.id) {
+        <button
+          type="button"
+          class="card border cursor-pointer transition-all text-left hover:border-primary hover:bg-base-200/60"
+          [ngClass]="{
+            'border-primary/70 ring-2 ring-primary/40': selectedTheme() === theme.id
+          }"
+          (click)="selectTheme(theme.id)"
+        >
+          <div class="card-body py-3 px-3">
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-medium text-sm">
+                {{ theme.label }}
+              </span>
+              <span class="badge badge-xs" *ngIf="selectedTheme() === theme.id"> Activo </span>
+            </div>
+            <p class="text-xs text-slate-500">
+              {{ theme.description }}
+            </p>
+          </div>
+        </button>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Color de acento -->
+  <div class="card bg-base-100 border border-base-200 shadow-sm">
+    <div class="card-body">
+      <h2 class="card-title text-base">Color de acento</h2>
+      <p class="text-sm text-slate-500">
+        Define el color principal para botones, enlaces y elementos destacados.
+      </p>
+
+      <div class="mt-4 flex flex-wrap gap-3">
+        @for (accent of accentOptions; track accent.id) {
+        <button
+          type="button"
+          class="flex items-center gap-2 px-3 py-2 rounded-xl border text-xs hover:bg-base-200/70 transition-all"
+          [ngClass]="{
+            'border-base-300': selectedAccent() !== accent.id,
+            'border-primary ring-1 ring-primary/50 bg-base-200/80': selectedAccent() === accent.id
+          }"
+          (click)="selectAccent(accent.id)"
+        >
+          <span
+            class="inline-block w-4 h-4 rounded-full"
+            [ngClass]="{
+              'bg-emerald-500': accent.id === 'emerald',
+              'bg-sky-500': accent.id === 'sky',
+              'bg-violet-500': accent.id === 'violet',
+              'bg-amber-400': accent.id === 'amber',
+              'bg-rose-500': accent.id === 'rose'
+            }"
+          ></span>
+          <span class="font-medium text-slate-700">
+            {{ accent.label }}
+          </span>
+        </button>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Densidad y detalles visuales -->
+  <div class="card bg-base-100 border border-base-200 shadow-sm">
+    <div class="card-body">
+      <h2 class="card-title text-base">Detalles de la interfaz</h2>
+      <p class="text-sm text-slate-500">
+        Ajusta qué tan compacto se ve todo y otros detalles visuales.
+      </p>
+
+      <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Bordes redondeados -->
+        <div class="form-control">
+          <label class="label cursor-pointer justify-start gap-3">
+            <input
+              type="checkbox"
+              class="checkbox checkbox-sm"
+              [(ngModel)]="roundedCorners"
+              [ngModelOptions]="{ standalone: true }"
+              (ngModelChange)="roundedCorners.set($event)"
+            />
+            <div>
+              <span class="label-text text-sm font-medium"> Bordes redondeados </span>
+              <p class="text-xs text-slate-500">
+                Usa esquinas más suaves en tarjetas, botones y campos.
+              </p>
+            </div>
+          </label>
+        </div>
+
+        <!-- Layout compacto -->
+        <div class="form-control">
+          <label class="label cursor-pointer justify-start gap-3">
+            <input
+              type="checkbox"
+              class="checkbox checkbox-sm"
+              [(ngModel)]="compactLayout"
+              [ngModelOptions]="{ standalone: true }"
+              (ngModelChange)="compactLayout.set($event)"
+            />
+            <div>
+              <span class="label-text text-sm font-medium"> Diseño compacto </span>
+              <p class="text-xs text-slate-500">
+                Reduce espacios internos para ver más contenido en pantalla.
+              </p>
+            </div>
+          </label>
+        </div>
+
+        <!-- Animaciones sutiles -->
+        <div class="form-control">
+          <label class="label cursor-pointer justify-start gap-3">
+            <input
+              type="checkbox"
+              class="checkbox checkbox-sm"
+              [(ngModel)]="subtleAnimations"
+              [ngModelOptions]="{ standalone: true }"
+              (ngModelChange)="subtleAnimations.set($event)"
+            />
+            <div>
+              <span class="label-text text-sm font-medium"> Animaciones sutiles </span>
+              <p class="text-xs text-slate-500">
+                Transiciones suaves en hover y cambios de estado.
+              </p>
+            </div>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vista previa -->
+  <div class="card bg-base-100 border border-dashed border-base-300">
+    <div class="card-body">
+      <h2 class="card-title text-base">Vista previa rápida</h2>
+      <p class="text-sm text-slate-500">
+        Así se verán algunos elementos de la interfaz con tu configuración.
+      </p>
+
+      <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Tarjeta de ejemplo -->
+        <div
+          class="border bg-base-200/70"
+          [ngClass]="[previewAccentClasses(), previewRadiusClasses()]"
+        >
+          <div class="flex flex-col" [ngClass]="previewDensityClasses()">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs uppercase tracking-wide opacity-70"> Tarjeta de ejemplo </span>
+              <span class="badge badge-xs bg-base-100/80 border-none"> Higinex </span>
+            </div>
+
+            <p class="font-semibold text-sm">Tus pedidos y preferencias en un solo lugar</p>
+            <p class="text-xs text-slate-600/90">
+              Este bloque simula cómo se verán las tarjetas principales con la combinación de tema,
+              acento y densidad que elijas.
+            </p>
+
+            <div class="flex flex-wrap gap-2 pt-2">
+              <button class="btn btn-ghost btn-xs" type="button">Cancelar</button>
+              <button class="btn" type="button" [ngClass]="previewButtonClasses()">
+                Acción principal
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lista / inputs ejemplo -->
+        <div class="space-y-3" [ngClass]="previewDensityClasses()">
+          <div class="form-control">
+            <label class="label py-1">
+              <span class="label-text text-xs">Campo de ejemplo</span>
+            </label>
+            <input
+              type="text"
+              class="input input-bordered input-sm"
+              placeholder="Texto de muestra"
+            />
+          </div>
+
+          <div class="form-control">
+            <label class="label py-1 cursor-pointer justify-start gap-2">
+              <input type="checkbox" class="checkbox checkbox-xs" checked />
+              <span class="label-text text-xs"> Elemento seleccionado de ejemplo </span>
+            </label>
+          </div>
+
+          <div class="flex flex-wrap gap-2 text-xs">
+            <span class="badge badge-outline">Etiqueta</span>
+            <span class="badge badge-outline">Preferencias</span>
+            <span class="badge badge-outline">Cuenta</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Acciones inferiores -->
+  <div class="flex flex-col sm:flex-row gap-3 justify-end">
+    <button type="button" class="btn btn-ghost btn-sm" (click)="resetAppearance()">
+      Restablecer valores
+    </button>
+    <button type="button" class="btn btn-primary btn-sm" (click)="saveAppearance()">
+      Guardar cambios
+    </button>
+  </div>
+</section>

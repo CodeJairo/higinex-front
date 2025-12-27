@@ -37,6 +37,7 @@ export const salesRoutes: Routes = [
   },
   {
     path: '**',
-    component: NotFoundPage,
+    loadComponent: () =>
+      import('../errors/pages/not-found-page/not-found-page').then((m) => m.NotFoundPage),
   },
 ];
