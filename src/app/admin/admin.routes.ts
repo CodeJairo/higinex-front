@@ -1,44 +1,26 @@
 import { Routes } from '@angular/router';
-import { roleMatchGuard } from '../auth/guards/role.guard';
-import { Role } from '../auth/interfaces';
 import { InventoryLayoutPage } from './layouts/inventory-layout-page/inventory-layout-page';
+import { ContractsPage } from './pages/contracts-page/contracts-page';
 import { CreateProduct } from './pages/create-product/create-product';
 import { DashboardPage } from './pages/dashboard-page/dashboard-page';
 import { InventoryProductsPage } from './pages/inventory-products-page/inventory-products-page';
 import { RegisterPage } from './pages/register-page/register-page';
-import { ContractsPage } from './pages/contracts-page/contracts-page';
 
 export const adminRoutes: Routes = [
   {
     path: 'register',
-    canMatch: [roleMatchGuard],
-    data: {
-      roles: [Role.ADMIN],
-    },
     component: RegisterPage,
   },
   {
     path: 'dashboard',
-    canMatch: [roleMatchGuard],
-    data: {
-      roles: [Role.ADMIN],
-    },
     component: DashboardPage,
   },
   {
     path: 'contracts',
-    canMatch: [roleMatchGuard],
-    data: {
-      roles: [Role.ADMIN],
-    },
     component: ContractsPage,
   },
   {
     path: 'inventory',
-    canMatch: [roleMatchGuard],
-    data: {
-      roles: [Role.ADMIN],
-    },
     component: InventoryLayoutPage,
     children: [
       {

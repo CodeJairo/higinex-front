@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -11,6 +11,7 @@ import { AuthService } from '../../services/auth.service';
 })
 export class LoginPage {
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private authService = inject(AuthService);
   private formBuilder = inject(FormBuilder);
 
@@ -43,7 +44,9 @@ export class LoginPage {
     const { email, password } = this.form.getRawValue();
     const success = await this.authService.login(email.trim(), password);
     if (success) {
-      this.router.navigateByUrl('/sales');
+      const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+      const target = returnUrl && returnUrl.startsWith('/') ? returnUrl : '/sales';
+      this.router.navigateByUrl(target);
     }
   }
 

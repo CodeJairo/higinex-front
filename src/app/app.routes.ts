@@ -1,24 +1,25 @@
 import { Routes } from '@angular/router';
-import { roleMatchGuard } from './auth/guards/role.guard';
-import { SalesLayoutPage } from './sales/Layouts/sales-layout-page/sales-layout-page';
-import { salesRoutes } from './sales/sales.routes';
+import { adminGuard } from './auth/guards/admin.guard';
+import { guestGuard } from './auth/guards/guest.guard';
+import { authGuard } from './auth/guards/auth.guard';
 
 export const routes: Routes = [
   {
     path: 'auth',
+    canActivate: [guestGuard],
     loadChildren: () => import('./auth/auth.routes').then((m) => m.authRoutes),
   },
   {
     path: 'admin',
+    canActivate: [authGuard, adminGuard],
     loadComponent: () =>
       import('./admin/layouts/admin-layout-page/admin-layout-page').then((m) => m.AdminLayoutPage),
     loadChildren: () => import('./admin/admin.routes').then((m) => m.adminRoutes),
   },
   {
     path: 'sales',
-    canMatch: [roleMatchGuard],
-    component: SalesLayoutPage,
-    children: salesRoutes,
+    canActivate: [authGuard],
+    loadChildren: () => import('./sales/sales.routes').then((m) => m.salesRoutes),
   },
   {
     path: 'errors',

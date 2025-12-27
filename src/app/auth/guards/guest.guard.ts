@@ -1,36 +1,29 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, CanMatchFn, Router, UrlTree } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
-import { filter, take } from 'rxjs/operators';
+import { Router, type CanActivateFn } from '@angular/router';
+import { filter, firstValueFrom, take } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 
 const REDIRECT_URL = ['/sales'];
 
-const waitForSession = async (authService: AuthService): Promise<void> => {
-  if (authService.sessionStatus() !== 'loading') {
-    return;
-  }
-
-  await firstValueFrom(
-    authService.sessionStatus$.pipe(
-      filter((status) => status !== 'loading'),
-      take(1)
-    )
-  );
-};
-
-const redirectIfAuthenticated = async (): Promise<boolean | UrlTree> => {
+export const guestGuard: CanActivateFn = async (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  await waitForSession(authService);
+  // Esperar si el estado aún está cargando
+  if (authService.sessionStatus() === 'loading') {
+    await firstValueFrom(
+      authService.sessionStatus$.pipe(
+        filter((status) => status !== 'loading'),
+        take(1)
+      )
+    );
+  }
 
+  // Si YA está logueado → redirigir a landing
   if (authService.isAuthenticated()) {
     return router.createUrlTree(REDIRECT_URL);
   }
 
+  // Si NO está logueado → permitir acceso a login / recovery
   return true;
 };
-
-export const guestMatchGuard: CanMatchFn = () => redirectIfAuthenticated();
-export const guestGuard: CanActivateFn = () => redirectIfAuthenticated();
