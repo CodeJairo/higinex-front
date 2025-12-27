@@ -1,5 +1,5 @@
 <div
-  class="hidden sm:flex navbar z-50 glass mx-auto w-fit rounded-xl mt-2 fixed top-2 right-1 sm:right-2 transition-transform duration-300"
+  class="hidden md:flex navbar z-50 glass mx-auto w-fit rounded-xl mt-2 fixed top-2 right-1 sm:right-2 transition-transform duration-300"
   [class.translate-y-0]="isVisible()"
   [class.-translate-y-full]="!isVisible()"
 >
@@ -15,13 +15,16 @@
         <a routerLink="/admin/orders">Pedidos</a>
       </li>
       <li routerLinkActive="link-primary">
+        <a routerLink="/admin/contracts">Contratos</a>
+      </li>
+      <li routerLinkActive="link-primary">
         <a routerLink="/admin/billing">Facturación</a>
       </li>
     </ul>
   </div>
 </div>
 
-<div class="dock hidden not-sm:flex">
+<div class="dock hidden not-md:flex">
   <button routerLink="/admin/dashboard" routerLinkActive="dock-active">
     <lucide-icon
       [img]="houseIcon"
@@ -44,6 +47,14 @@
       class="w-6 h-6 text-slate-600 group-hover:text-white transition-colors"
     ></lucide-icon>
     <span class="dock-label">Pedidos</span>
+  </button>
+
+  <button routerLink="/admin/contracts" routerLinkActive="dock-active">
+    <lucide-icon
+      [img]="dolarSignIcon"
+      class="w-6 h-6 text-amber-600 group-hover:text-white transition-colors"
+    ></lucide-icon>
+    <span class="dock-label">Contratos</span>
   </button>
 
   <button routerLink="/admin/billing" routerLinkActive="dock-active">

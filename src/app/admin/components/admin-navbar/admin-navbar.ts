@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { FileText, House, LucideAngularModule, Package, Warehouse } from 'lucide-angular';
+import { DollarSign, FileText, House, LucideAngularModule, Package, Warehouse } from 'lucide-angular';
 
 @Component({
   selector: 'admin-navbar',
@@ -17,6 +17,7 @@ export class AdminNavbar {
   readonly houseIcon = House;
   readonly packageIcon = Package;
   readonly fileTextIcon = FileText;
+  readonly dolarSignIcon = DollarSign;
 
   ngOnInit(): void {
     this.scrollHandler = () => this.handleScroll();

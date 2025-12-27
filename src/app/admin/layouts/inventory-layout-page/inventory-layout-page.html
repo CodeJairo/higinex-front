@@ -75,16 +75,6 @@
                 Movimientos de stock
               </a>
             </li>
-            <li>
-              <a
-                routerLink="/admin/inventory/alerts"
-                routerLinkActive="bg-base-200"
-                [routerLinkActiveOptions]="{ exact: true }"
-                class="rounded-lg"
-              >
-                Alertas de stock
-              </a>
-            </li>
           </ul>
         </li>
 
@@ -115,14 +105,31 @@
                 Crear producto
               </a>
             </li>
+          </ul>
+        </li>
+
+        <!-- Bloque Variantes -->
+        <li>
+          <h3 class="menu-title text-xs uppercase tracking-wide text-slate-400">Variantes</h3>
+          <ul class="mt-1 space-y-1">
             <li>
               <a
-                routerLink="/admin/inventory/products/categories"
+                routerLink="/admin/inventory/variants"
                 routerLinkActive="bg-base-200"
                 [routerLinkActiveOptions]="{ exact: true }"
                 class="rounded-lg"
               >
-                Categorías y agrupaciones
+                Lista de variantes
+              </a>
+            </li>
+            <li>
+              <a
+                routerLink="/admin/inventory/create-variant"
+                routerLinkActive="bg-base-200"
+                [routerLinkActiveOptions]="{ exact: true }"
+                class="rounded-lg"
+              >
+                Crear variante
               </a>
             </li>
           </ul>
