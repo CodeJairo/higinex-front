@@ -1,49 +1,29 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { injectMutation, injectQuery, QueryClient } from '@tanstack/angular-query-experimental';
+import { firstValueFrom } from 'rxjs';
+import { AuthService } from '../../../auth/services/auth.service';
+import {
+  ContractItemInput,
+  ContractSummary,
+  ContractWithItems,
+  CreateContractPayload,
+  CustomerSummary,
+  ListCustomersQuery,
+  ListVariantsQuery,
+  UpdateContractPayload,
+} from '../../interfaces/contracts.interface';
+import { ContractsService } from '../../services/contracts.service';
 
-interface CustomerSummary {
-  id: string;
-  name: string;
-  email: string;
-  documentType: string;
-  documentNumber: string;
-}
-
-interface ContractSummary {
-  id: string;
-  customerId: string;
-  isActive: boolean;
-  startsAt: string;
-  endsAt: string | null;
-  createdAt: string;
-  updatedAt: string;
-  _count: {
-    items: number;
-  };
-}
-
-interface ContractItem {
-  id: string;
-  variantId: string;
-  unitPriceCop: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface Variant {
-  id: string;
-  productId: string;
-  sku: string;
-  gtin?: string | null;
-  name: string;
-  attributesJson?: Record<string, string> | null;
-  product: {
-    id: string;
-    name: string;
-    slug: string;
-    status: 'PUBLISHED' | 'ARCHIVED';
-  };
-}
+type CustomerContractStatus = 'active' | 'inactive' | 'unknown';
 
 interface VariantPriceRow {
   variantId: string;
@@ -56,231 +36,213 @@ interface VariantPriceRow {
   markedForDelete: boolean;
 }
 
-// =======================
-// MOCKS / EJEMPLOS FALSOS
-// =======================
-
-const MOCK_CUSTOMERS: CustomerSummary[] = [
-  {
-    id: 'c1',
-    name: 'Acme SAS',
-    email: 'compras@acme.com',
-    documentType: 'NIT',
-    documentNumber: '900123456-7',
-  },
-  {
-    id: 'c2',
-    name: 'Distribuciones Beta',
-    email: 'compras@beta.com',
-    documentType: 'NIT',
-    documentNumber: '901234567-8',
-  },
-];
-
-const MOCK_CONTRACTS: ContractSummary[] = [
-  {
-    id: 'ct1',
-    customerId: 'c1',
-    isActive: true,
-    startsAt: '2025-01-01T00:00:00.000Z',
-    endsAt: null,
-    createdAt: '2025-01-01T00:00:00.000Z',
-    updatedAt: '2025-01-02T00:00:00.000Z',
-    _count: {
-      items: 35,
-    },
-  },
-  {
-    id: 'ct2',
-    customerId: 'c1',
-    isActive: false,
-    startsAt: '2024-01-01T00:00:00.000Z',
-    endsAt: '2024-12-31T23:59:59.000Z',
-    createdAt: '2024-01-01T00:00:00.000Z',
-    updatedAt: '2024-12-31T23:59:59.000Z',
-    _count: {
-      items: 20,
-    },
-  },
-  {
-    id: 'ct3',
-    customerId: 'c2',
-    isActive: true,
-    startsAt: '2025-02-01T00:00:00.000Z',
-    endsAt: null,
-    createdAt: '2025-02-01T00:00:00.000Z',
-    updatedAt: '2025-02-02T00:00:00.000Z',
-    _count: {
-      items: 10,
-    },
-  },
-];
-
-const MOCK_VARIANTS: Variant[] = [
-  {
-    id: 'v1',
-    productId: 'p1',
-    sku: 'TSHIRT-PREM-NEG-S',
-    gtin: '7701234567001',
-    name: 'Negro / S',
-    attributesJson: { color: 'Negro', talla: 'S' },
-    product: {
-      id: 'p1',
-      name: 'Camiseta Premium',
-      slug: 'camiseta-premium',
-      status: 'PUBLISHED',
-    },
-  },
-  {
-    id: 'v2',
-    productId: 'p1',
-    sku: 'TSHIRT-PREM-NEG-M',
-    gtin: '7701234567002',
-    name: 'Negro / M',
-    attributesJson: { color: 'Negro', talla: 'M' },
-    product: {
-      id: 'p1',
-      name: 'Camiseta Premium',
-      slug: 'camiseta-premium',
-      status: 'PUBLISHED',
-    },
-  },
-  {
-    id: 'v3',
-    productId: 'p1',
-    sku: 'TSHIRT-PREM-BLA-M',
-    gtin: '7701234567003',
-    name: 'Blanco / M',
-    attributesJson: { color: 'Blanco', talla: 'M' },
-    product: {
-      id: 'p1',
-      name: 'Camiseta Premium',
-      slug: 'camiseta-premium',
-      status: 'PUBLISHED',
-    },
-  },
-];
-
-const MOCK_CONTRACT_ITEMS_BY_CONTRACT: Record<string, ContractItem[]> = {
-  ct1: [
-    {
-      id: 'ci1',
-      variantId: 'v1',
-      unitPriceCop: 45000,
-      createdAt: '2025-01-01T00:00:00.000Z',
-      updatedAt: '2025-01-10T00:00:00.000Z',
-    },
-    {
-      id: 'ci2',
-      variantId: 'v2',
-      unitPriceCop: 47000,
-      createdAt: '2025-01-01T00:00:00.000Z',
-      updatedAt: '2025-01-10T00:00:00.000Z',
-    },
-  ],
-  ct2: [
-    {
-      id: 'ci3',
-      variantId: 'v1',
-      unitPriceCop: 42000,
-      createdAt: '2024-01-01T00:00:00.000Z',
-      updatedAt: '2024-06-01T00:00:00.000Z',
-    },
-  ],
-  ct3: [
-    {
-      id: 'ci4',
-      variantId: 'v3',
-      unitPriceCop: 49000,
-      createdAt: '2025-02-01T00:00:00.000Z',
-      updatedAt: '2025-02-02T00:00:00.000Z',
-    },
-  ],
+const DEFAULT_CUSTOMERS_QUERY: ListCustomersQuery = {
+  limit: 100,
+  offset: 0,
 };
 
-const INITIAL_CUSTOMER_ID = MOCK_CUSTOMERS[0]?.id ?? null;
-const INITIAL_CONTRACT_ID =
-  MOCK_CONTRACTS.find((c) => c.customerId === INITIAL_CUSTOMER_ID)?.id ?? null;
+const VARIANTS_QUERY: ListVariantsQuery = {
+  limit: 100,
+  offset: 0,
+  status: 'active',
+  productStatus: 'all',
+};
 
 @Component({
   selector: 'app-contracts-page',
-  imports: [ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './contracts-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContractsPage {
-  private readonly fb = inject(FormBuilder);
+  private readonly authService = inject(AuthService);
+  private readonly contractsService = inject(ContractsService);
+  private readonly queryClient = inject(QueryClient);
+  private readonly formBuilder = inject(FormBuilder);
 
-  // Estado base (mocks)
-  readonly customers = signal<CustomerSummary[]>(MOCK_CUSTOMERS);
-  readonly allContracts = signal<ContractSummary[]>(MOCK_CONTRACTS);
-  readonly allVariants = signal<Variant[]>(MOCK_VARIANTS);
-  readonly contractItems = signal<ContractItem[]>(
-    INITIAL_CONTRACT_ID ? MOCK_CONTRACT_ITEMS_BY_CONTRACT[INITIAL_CONTRACT_ID] ?? [] : []
-  );
-
-  // Estado de seleccion
-  readonly selectedCustomerId = signal<string | null>(INITIAL_CUSTOMER_ID);
-  readonly selectedContractId = signal<string | null>(INITIAL_CONTRACT_ID);
-
-  // Borrador de precios: variantId -> unitPriceCop
+  readonly selectedCustomerId = signal<string | null>(null);
+  readonly selectedContractId = signal<string | null>(null);
+  readonly customerSearch = signal('');
+  readonly debouncedCustomerSearch = signal('');
   readonly pricesDraft = signal<Map<string, number>>(new Map());
   readonly pricesToDelete = signal<Set<string>>(new Set());
+  readonly customerStatusById = signal<Map<string, CustomerContractStatus>>(new Map());
+  readonly pendingContractDeleteId = signal<string | null>(null);
+  readonly pendingPriceDeleteVariantId = signal<string | null>(null);
 
-  // Forms separados para crear y editar
-  readonly createContractForm: FormGroup = this.fb.group({
+  private searchDebounceId: number | null = null;
+
+  readonly createContractForm: FormGroup = this.formBuilder.group({
     startsAt: ['', Validators.required],
     endsAt: [''],
     isActive: [true],
   });
 
-  readonly updateContractForm: FormGroup = this.fb.group({
+  readonly updateContractForm: FormGroup = this.formBuilder.group({
     startsAt: ['', Validators.required],
     endsAt: [''],
     isActive: [true],
   });
 
-  // Computados
+  readonly customerQuery = computed<ListCustomersQuery>(() => {
+    const search = this.debouncedCustomerSearch().trim();
+    if (search) {
+      return {
+        ...DEFAULT_CUSTOMERS_QUERY,
+        q: search,
+      };
+    }
+    return DEFAULT_CUSTOMERS_QUERY;
+  });
 
+  private readonly customersQuery = injectQuery(() => {
+    const query = this.customerQuery();
+    return {
+      queryKey: ['admin', 'customers', query],
+      queryFn: () => firstValueFrom(this.contractsService.listCustomers(query)),
+      enabled: this.authService.isAuthenticated(),
+      staleTime: 5 * 60 * 1000,
+    };
+  });
+
+  private readonly contractsQuery = injectQuery(() => ({
+    queryKey: ['admin', 'contracts', this.selectedCustomerId()],
+    queryFn: () =>
+      firstValueFrom(this.contractsService.listCustomerContracts(this.selectedCustomerId()!)),
+    enabled: this.authService.isAuthenticated() && !!this.selectedCustomerId(),
+    staleTime: 2 * 60 * 1000,
+  }));
+
+  private readonly contractItemsQuery = injectQuery(() => ({
+    queryKey: ['admin', 'contractItems', this.selectedContractId()],
+    queryFn: () =>
+      firstValueFrom(this.contractsService.listContractItems(this.selectedContractId()!)),
+    enabled: this.authService.isAuthenticated() && !!this.selectedContractId(),
+    staleTime: 2 * 60 * 1000,
+  }));
+
+  private readonly variantsQuery = injectQuery(() => ({
+    queryKey: ['admin', 'variants', VARIANTS_QUERY],
+    queryFn: () => firstValueFrom(this.contractsService.listVariants(VARIANTS_QUERY)),
+    enabled: this.authService.isAuthenticated(),
+    staleTime: 5 * 60 * 1000,
+  }));
+
+  private readonly createContractMutation = injectMutation(() => ({
+    mutationFn: (payload: { customerId: string; data: CreateContractPayload }) =>
+      firstValueFrom(this.contractsService.createContract(payload.customerId, payload.data)),
+    onSuccess: (contract, payload) => {
+      this.selectedCustomerId.set(payload.customerId);
+      this.selectedContractId.set(contract.id);
+      this.resetPriceDrafts();
+      this.updateContractsCache(payload.customerId, (current) =>
+        this.mergeContractSummary(current, this.toContractSummary(contract), true)
+      );
+      this.queryClient.invalidateQueries({
+        queryKey: ['admin', 'contracts', payload.customerId],
+      });
+      this.queryClient.invalidateQueries({
+        queryKey: ['admin', 'contractItems', contract.id],
+      });
+    },
+  }));
+
+  private readonly updateContractMutation = injectMutation(() => ({
+    mutationFn: (payload: { contractId: string; data: UpdateContractPayload }) =>
+      firstValueFrom(this.contractsService.updateContract(payload.contractId, payload.data)),
+    onSuccess: (contract, payload) => {
+      const customerId = this.selectedCustomerId();
+      if (customerId) {
+        this.updateContractsCache(customerId, (current) =>
+          this.mergeContractSummary(current, this.toContractSummary(contract), contract.isActive)
+        );
+        this.queryClient.invalidateQueries({
+          queryKey: ['admin', 'contracts', customerId],
+        });
+      }
+      this.queryClient.invalidateQueries({
+        queryKey: ['admin', 'contractItems', payload.contractId],
+      });
+    },
+  }));
+
+  private readonly deleteContractMutation = injectMutation(() => ({
+    mutationFn: (payload: { contractId: string; customerId: string }) =>
+      firstValueFrom(this.contractsService.deleteContract(payload.contractId)),
+    onSuccess: (_, payload) => {
+      this.selectedContractId.set(null);
+      this.resetPriceDrafts();
+      this.updateContractsCache(payload.customerId, (current) =>
+        (current ?? []).filter((contract) => contract.id !== payload.contractId)
+      );
+      this.queryClient.removeQueries({
+        queryKey: ['admin', 'contractItems', payload.contractId],
+      });
+    },
+  }));
+
+  private readonly upsertItemsMutation = injectMutation(() => ({
+    mutationFn: (payload: { contractId: string; items: ContractItemInput[] }) =>
+      firstValueFrom(this.contractsService.upsertContractItems(payload.contractId, payload.items)),
+    onSuccess: (_, payload) => {
+      this.queryClient.invalidateQueries({
+        queryKey: ['admin', 'contractItems', payload.contractId],
+      });
+    },
+  }));
+
+  private readonly deleteItemsMutation = injectMutation(() => ({
+    mutationFn: (payload: { contractId: string; variantIds: string[] }) =>
+      Promise.all(
+        payload.variantIds.map((variantId) =>
+          firstValueFrom(this.contractsService.deleteContractItem(payload.contractId, variantId))
+        )
+      ),
+    onSuccess: (_, payload) => {
+      this.queryClient.invalidateQueries({
+        queryKey: ['admin', 'contractItems', payload.contractId],
+      });
+    },
+  }));
+
+  readonly customers = computed(() => this.customersQuery.data() ?? []);
+  readonly isLoadingCustomers = computed(() => this.customersQuery.isLoading());
+  readonly hasCustomersError = computed(() => this.customersQuery.isError());
   readonly selectedCustomer = computed(() => {
     const id = this.selectedCustomerId();
-    return this.customers().find((c) => c.id === id) ?? null;
-  });
-
-  readonly activeContractByCustomerId = computed(() => {
-    const map = new Map<string, ContractSummary>();
-    for (const contract of this.allContracts()) {
-      if (contract.isActive) {
-        map.set(contract.customerId, contract);
-      }
+    if (!id) {
+      return null;
     }
-    return map;
+    return this.customers().find((customer) => customer.id === id) ?? null;
   });
+  readonly contractsForSelectedCustomer = computed(() => this.contractsQuery.data() ?? []);
+  readonly isLoadingContracts = computed(() => this.contractsQuery.isLoading());
+  readonly hasContractsError = computed(() => this.contractsQuery.isError());
+  readonly variants = computed(() => this.variantsQuery.data() ?? []);
+  readonly isLoadingVariants = computed(() => this.variantsQuery.isLoading());
+  readonly hasVariantsError = computed(() => this.variantsQuery.isError());
+  readonly contractItems = computed(() => this.contractItemsQuery.data() ?? []);
+  readonly isLoadingContractItems = computed(() => this.contractItemsQuery.isLoading());
+  readonly hasContractItemsError = computed(() => this.contractItemsQuery.isError());
 
-  readonly contractsForSelectedCustomer = computed(() => {
-    const customerId = this.selectedCustomerId();
-    if (!customerId) return [];
-    return this.allContracts().filter((c) => c.customerId === customerId);
-  });
-
-  readonly selectedContract = computed(() => {
+  readonly selectedContract = computed<ContractSummary | null>(() => {
     const id = this.selectedContractId();
-    if (!id) return null;
-    return this.allContracts().find((c) => c.id === id) ?? null;
+    if (!id) {
+      return null;
+    }
+    return this.contractsForSelectedCustomer().find((contract) => contract.id === id) ?? null;
   });
 
   readonly contractItemsByVariantId = computed(() => {
     return new Map(this.contractItems().map((item) => [item.variantId, item]));
   });
 
-  // Variantes + precios (base + contrato + draft)
   readonly mergedVariantRows = computed<VariantPriceRow[]>(() => {
-    const variants = this.allVariants();
     const draft = this.pricesDraft();
     const deletes = this.pricesToDelete();
     const itemsByVariant = this.contractItemsByVariantId();
 
-    return variants.map((variant) => {
+    return this.variants().map((variant) => {
       const currentPrice = itemsByVariant.get(variant.id)?.unitPriceCop ?? null;
       const draftPrice = draft.get(variant.id) ?? null;
       return {
@@ -296,111 +258,288 @@ export class ContractsPage {
     });
   });
 
-  // Metodos de UI (solo afectan mocks / estado local)
+  readonly pendingPriceDeleteRow = computed(() => {
+    const variantId = this.pendingPriceDeleteVariantId();
+    if (!variantId) {
+      return null;
+    }
+    return this.mergedVariantRows().find((row) => row.variantId === variantId) ?? null;
+  });
+
+  readonly hasPriceChanges = computed(
+    () => this.pricesDraft().size > 0 || this.pricesToDelete().size > 0
+  );
+  readonly isSavingPrices = computed(
+    () => this.upsertItemsMutation.isPending() || this.deleteItemsMutation.isPending()
+  );
+
+  constructor() {
+    effect(() => {
+      const term = this.customerSearch();
+      if (this.searchDebounceId !== null) {
+        window.clearTimeout(this.searchDebounceId);
+      }
+      this.searchDebounceId = window.setTimeout(() => {
+        this.debouncedCustomerSearch.set(term.trim());
+      }, 300);
+    });
+
+    effect(() => {
+      const customers = this.customers();
+      const selected = this.selectedCustomerId();
+
+      if (!customers.length) {
+        if (selected) {
+          this.selectedCustomerId.set(null);
+          this.selectedContractId.set(null);
+          this.resetPriceDrafts();
+        }
+        return;
+      }
+
+      if (!selected || !customers.some((customer) => customer.id === selected)) {
+        this.onSelectCustomer(customers[0]);
+      }
+    });
+
+    effect(() => {
+      const customers = this.customers();
+      if (!customers.length) {
+        return;
+      }
+      this.customerStatusById.update((current) => {
+        const next = new Map(current);
+        for (const customer of customers) {
+          if (!next.has(customer.id)) {
+            next.set(customer.id, 'unknown');
+          }
+        }
+        return next;
+      });
+    });
+
+    effect(() => {
+      const customerId = this.selectedCustomerId();
+      if (!customerId) {
+        return;
+      }
+      const contracts = this.contractsForSelectedCustomer();
+      const status: CustomerContractStatus = contracts.some((contract) => contract.isActive)
+        ? 'active'
+        : 'inactive';
+      this.customerStatusById.update((current) => {
+        const next = new Map(current);
+        next.set(customerId, status);
+        return next;
+      });
+    });
+
+    effect(() => {
+      const contracts = this.contractsForSelectedCustomer();
+      const selectedId = this.selectedContractId();
+
+      if (!contracts.length) {
+        this.selectedContractId.set(null);
+        return;
+      }
+
+      if (!selectedId || !contracts.some((contract) => contract.id === selectedId)) {
+        this.onSelectContract(contracts[0]);
+      }
+    });
+
+    effect(() => {
+      const contract = this.selectedContract();
+      if (!contract) {
+        this.updateContractForm.reset({
+          startsAt: '',
+          endsAt: '',
+          isActive: true,
+        });
+        return;
+      }
+
+      this.updateContractForm.patchValue(
+        {
+          startsAt: this.toDateInput(contract.startsAt),
+          endsAt: this.toDateInput(contract.endsAt),
+          isActive: contract.isActive,
+        },
+        { emitEvent: false }
+      );
+    });
+  }
 
   onSelectCustomer(customer: CustomerSummary): void {
     this.selectedCustomerId.set(customer.id);
+    this.selectedContractId.set(null);
+    this.resetPriceDrafts();
+    this.createContractForm.reset({
+      startsAt: '',
+      endsAt: '',
+      isActive: true,
+    });
+  }
 
-    const firstForCustomer = this.allContracts().find((c) => c.customerId === customer.id);
-    this.selectedContractId.set(firstForCustomer?.id ?? null);
+  onCustomerSearch(value: string): void {
+    this.customerSearch.set(value);
+  }
 
-    this.pricesDraft.set(new Map());
-    this.pricesToDelete.set(new Set());
-    this.contractItems.set(
-      firstForCustomer ? MOCK_CONTRACT_ITEMS_BY_CONTRACT[firstForCustomer.id] ?? [] : []
-    );
-
-    if (firstForCustomer) {
-      this.updateContractForm.patchValue({
-        startsAt: firstForCustomer.startsAt.slice(0, 10),
-        endsAt: firstForCustomer.endsAt ? firstForCustomer.endsAt.slice(0, 10) : '',
-        isActive: firstForCustomer.isActive,
-      });
-    } else {
-      this.updateContractForm.reset({
-        startsAt: '',
-        endsAt: '',
-        isActive: true,
-      });
+  clearCustomerSearch(): void {
+    if (this.searchDebounceId !== null) {
+      window.clearTimeout(this.searchDebounceId);
+      this.searchDebounceId = null;
     }
+    this.customerSearch.set('');
+    this.debouncedCustomerSearch.set('');
   }
 
   onSelectContract(contract: ContractSummary): void {
     this.selectedContractId.set(contract.id);
-    this.updateContractForm.patchValue({
-      startsAt: contract.startsAt.slice(0, 10),
-      endsAt: contract.endsAt ? contract.endsAt.slice(0, 10) : '',
-      isActive: contract.isActive,
-    });
-    this.pricesDraft.set(new Map());
-    this.pricesToDelete.set(new Set());
-    this.contractItems.set(MOCK_CONTRACT_ITEMS_BY_CONTRACT[contract.id] ?? []);
+    this.resetPriceDrafts();
   }
 
   onPriceChange(variantId: string, value: string): void {
     const parsed = Number(value);
-    const copy = new Map(this.pricesDraft());
-    const deletes = new Set(this.pricesToDelete());
+    const nextDraft = new Map(this.pricesDraft());
+    const nextDeletes = new Set(this.pricesToDelete());
     const existing = this.contractItemsByVariantId().get(variantId);
-    if (!value || isNaN(parsed) || parsed < 0) {
-      copy.delete(variantId);
+
+    if (!value || Number.isNaN(parsed) || parsed < 0) {
+      nextDraft.delete(variantId);
       if (existing) {
-        deletes.add(variantId);
+        nextDeletes.add(variantId);
       }
     } else {
-      copy.set(variantId, parsed);
-      deletes.delete(variantId);
+      nextDraft.set(variantId, parsed);
+      nextDeletes.delete(variantId);
     }
-    this.pricesDraft.set(copy);
-    this.pricesToDelete.set(deletes);
+
+    this.pricesDraft.set(nextDraft);
+    this.pricesToDelete.set(nextDeletes);
   }
 
-  onClearPrice(variantId: string): void {
-    const copy = new Map(this.pricesDraft());
-    const deletes = new Set(this.pricesToDelete());
-    copy.delete(variantId);
-    deletes.add(variantId);
-    this.pricesDraft.set(copy);
-    this.pricesToDelete.set(deletes);
+  requestRemovePrice(variantId: string): void {
+    this.pendingPriceDeleteVariantId.set(variantId);
   }
 
-  onFakeSaveContract(): void {
-    if (this.updateContractForm.invalid || !this.selectedContract()) return;
-    console.log('Guardar contrato (demo):', this.updateContractForm.value);
+  cancelRemovePrice(): void {
+    this.pendingPriceDeleteVariantId.set(null);
   }
 
-  onFakeDeleteContract(): void {
-    if (!this.selectedContract()) return;
-    console.log('Eliminar contrato (demo):', this.selectedContract());
+  confirmRemovePrice(): void {
+    const variantId = this.pendingPriceDeleteVariantId();
+    if (!variantId) {
+      return;
+    }
+    this.pendingPriceDeleteVariantId.set(null);
+    this.markPriceForDelete(variantId);
   }
 
-  onFakeCreateContract(): void {
-    if (this.createContractForm.invalid || !this.selectedCustomer()) return;
-    console.log('Crear contrato (demo):', {
-      customerId: this.selectedCustomer()?.id,
-      form: this.createContractForm.value,
-    });
+  private markPriceForDelete(variantId: string): void {
+    const nextDraft = new Map(this.pricesDraft());
+    const nextDeletes = new Set(this.pricesToDelete());
+    nextDraft.delete(variantId);
+    nextDeletes.add(variantId);
+    this.pricesDraft.set(nextDraft);
+    this.pricesToDelete.set(nextDeletes);
   }
 
-  onFakeSavePrices(): void {
-    const contract = this.selectedContract();
-    if (!contract) return;
+  async onCreateContract(): Promise<void> {
+    const customerId = this.selectedCustomerId();
+    if (!customerId) {
+      return;
+    }
 
-    const items: { variantId: string; unitPriceCop: number }[] = [];
-    this.pricesDraft().forEach((price, variantId) => {
-      items.push({ variantId, unitPriceCop: price });
-    });
+    if (this.createContractForm.invalid) {
+      this.createContractForm.markAllAsTouched();
+      return;
+    }
 
-    console.log('Guardar precios (demo): contrato', contract.id, 'items', items);
-    console.log(
-      'Eliminar precios (demo): contrato',
-      contract.id,
-      'variants',
-      Array.from(this.pricesToDelete())
-    );
+    const payload = this.buildCreatePayload();
+    await this.createContractMutation.mutateAsync({ customerId, data: payload });
   }
 
-  // Helpers de UI
+  async onSaveContract(): Promise<void> {
+    const contractId = this.selectedContractId();
+    if (!contractId) {
+      return;
+    }
+
+    if (this.updateContractForm.invalid) {
+      this.updateContractForm.markAllAsTouched();
+      return;
+    }
+
+    const payload = this.buildUpdatePayload();
+    await this.updateContractMutation.mutateAsync({ contractId, data: payload });
+  }
+
+  requestDeleteContract(): void {
+    const contractId = this.selectedContractId();
+    if (!contractId) {
+      return;
+    }
+    this.pendingContractDeleteId.set(contractId);
+  }
+
+  cancelDeleteContract(): void {
+    this.pendingContractDeleteId.set(null);
+  }
+
+  async confirmDeleteContract(): Promise<void> {
+    const contractId = this.pendingContractDeleteId();
+    const customerId = this.selectedCustomerId();
+    if (!contractId || !customerId) {
+      return;
+    }
+
+    await this.deleteContractMutation.mutateAsync({ contractId, customerId });
+    this.pendingContractDeleteId.set(null);
+  }
+
+  async onSavePrices(): Promise<void> {
+    const contractId = this.selectedContractId();
+    if (!contractId) {
+      return;
+    }
+
+    const items = this.buildContractItemsPayload();
+    const deletes = Array.from(this.pricesToDelete());
+
+    if (!items.length && !deletes.length) {
+      return;
+    }
+
+    if (items.length) {
+      await this.upsertItemsMutation.mutateAsync({ contractId, items });
+    }
+
+    if (deletes.length) {
+      await this.deleteItemsMutation.mutateAsync({ contractId, variantIds: deletes });
+    }
+
+    this.resetPriceDrafts();
+  }
+
+  getCustomerStatusLabel(customerId: string): string {
+    const status = this.customerStatusById().get(customerId) ?? 'unknown';
+    if (status === 'active') {
+      return 'Activo';
+    }
+    if (status === 'inactive') {
+      return 'Sin contrato';
+    }
+    return 'Sin datos';
+  }
+
+  isCustomerStatusActive(customerId: string): boolean {
+    return this.customerStatusById().get(customerId) === 'active';
+  }
+
+  isCustomerStatusInactive(customerId: string): boolean {
+    return this.customerStatusById().get(customerId) === 'inactive';
+  }
 
   formatDate(date?: string | null): string {
     if (!date) return 'Sin fecha';
@@ -411,12 +550,128 @@ export class ContractsPage {
     return isActive ? 'Activo' : 'Inactivo';
   }
 
+  private resetPriceDrafts(): void {
+    this.pricesDraft.set(new Map());
+    this.pricesToDelete.set(new Set());
+  }
+
+  private updateContractsCache(
+    customerId: string,
+    updater: (current?: ContractSummary[]) => ContractSummary[]
+  ): void {
+    this.queryClient.setQueryData(['admin', 'contracts', customerId], updater);
+  }
+
+  private mergeContractSummary(
+    current: ContractSummary[] | undefined,
+    summary: ContractSummary,
+    forceDeactivateOthers: boolean
+  ): ContractSummary[] {
+    const list = current ?? [];
+    const next = list.map((contract) => {
+      if (contract.id === summary.id) {
+        return { ...contract, ...summary };
+      }
+      if (forceDeactivateOthers) {
+        return { ...contract, isActive: false };
+      }
+      return contract;
+    });
+
+    if (!list.some((contract) => contract.id === summary.id)) {
+      return [summary, ...next];
+    }
+
+    return next;
+  }
+
+  private toContractSummary(contract: ContractWithItems): ContractSummary {
+    const itemsCount = Array.isArray(contract.items) ? contract.items.length : 0;
+    return {
+      id: contract.id,
+      customerId: contract.customerId,
+      isActive: contract.isActive,
+      startsAt: contract.startsAt,
+      endsAt: contract.endsAt,
+      createdAt: contract.createdAt,
+      updatedAt: contract.updatedAt,
+      _count: {
+        items: itemsCount,
+      },
+    };
+  }
+
+  private buildContractItemsPayload(): ContractItemInput[] {
+    const items: ContractItemInput[] = [];
+    const current = this.contractItemsByVariantId();
+
+    this.pricesDraft().forEach((price, variantId) => {
+      const currentPrice = current.get(variantId)?.unitPriceCop;
+      if (currentPrice !== price) {
+        items.push({ variantId, unitPriceCop: price });
+      }
+    });
+
+    return items;
+  }
+
+  private buildCreatePayload(): CreateContractPayload {
+    const raw = this.createContractForm.getRawValue();
+    const payload: CreateContractPayload = {};
+
+    const startsAt = this.normalizeDateInput(raw.startsAt as string);
+    const endsAt = this.normalizeDateInput(raw.endsAt as string);
+
+    if (startsAt) {
+      payload.startsAt = startsAt;
+    }
+    if (endsAt) {
+      payload.endsAt = endsAt;
+    }
+
+    return payload;
+  }
+
+  private buildUpdatePayload(): UpdateContractPayload {
+    const raw = this.updateContractForm.getRawValue();
+    const payload: UpdateContractPayload = {
+      isActive: !!raw.isActive,
+    };
+
+    const startsAt = this.normalizeDateInput(raw.startsAt as string);
+    const endsAt = this.normalizeDateInput(raw.endsAt as string);
+
+    if (startsAt) {
+      payload.startsAt = startsAt;
+    }
+    if (endsAt) {
+      payload.endsAt = endsAt;
+    }
+
+    return payload;
+  }
+
+  private normalizeDateInput(value?: string | null): string | undefined {
+    if (!value) {
+      return undefined;
+    }
+    const trimmed = value.trim();
+    return trimmed ? trimmed : undefined;
+  }
+
+  private toDateInput(value?: string | null): string {
+    if (!value) {
+      return '';
+    }
+    return value.slice(0, 10);
+  }
+
   private formatAttributes(attributes?: Record<string, string> | null): string {
     if (!attributes) return '';
     const entries = Object.entries(attributes).filter(
-      ([, value]) => value !== null && value !== undefined && value !== ''
+      ([, entryValue]) => entryValue !== null && entryValue !== undefined && entryValue !== ''
     );
     if (!entries.length) return '';
-    return entries.map(([key, value]) => `${key}: ${value}`).join(', ');
+    return entries.map(([key, entryValue]) => `${key}: ${entryValue}`).join(', ');
   }
 }

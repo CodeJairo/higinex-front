@@ -13,8 +13,8 @@
         Gestion de Contratos y Precios por Cliente
       </h1>
       <p class="text-sm text-slate-600 max-w-3xl">
-        Simulacion con datos de ejemplo: selecciona un cliente, revisa sus contratos y edita los
-        precios por variante definidos en el acuerdo.
+        Selecciona un cliente, revisa sus contratos y edita los precios por variante definidos en el
+        acuerdo.
       </p>
     </div>
 
@@ -26,9 +26,33 @@
         <div class="card bg-base-100 border border-base-200 shadow-sm">
           <div class="card-body">
             <h2 class="text-lg font-medium text-slate-900 mb-2">Clientes</h2>
-            <p class="text-xs text-slate-500 mb-3">
-              Datos de ejemplo. Selecciona un cliente para ver sus contratos.
-            </p>
+            <p class="text-xs text-slate-500 mb-3">Selecciona un cliente para ver sus contratos.</p>
+
+            <div class="mb-3">
+              <div class="join w-full">
+                <input
+                  type="text"
+                  class="input input-bordered input-sm join-item w-full"
+                  placeholder="Buscar por nombre, correo o documento"
+                  [value]="customerSearch()"
+                  (input)="onCustomerSearch($any($event.target).value)"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline btn-sm join-item"
+                  (click)="clearCustomerSearch()"
+                  [disabled]="!customerSearch()"
+                >
+                  Limpiar
+                </button>
+              </div>
+            </div>
+
+            @if (isLoadingCustomers()) {
+            <div class="text-xs text-slate-500 mb-3">Cargando clientes...</div>
+            } @else if (hasCustomersError()) {
+            <div class="text-xs text-red-600 mb-3">No se pudieron cargar los clientes.</div>
+            }
 
             <ul class="menu bg-base-100 rounded-lg border border-base-200 max-h-64 overflow-auto">
               @for (customer of customers(); track customer.id) {
@@ -46,12 +70,14 @@
                       </span>
                       <span
                         class="badge badge-xs"
-                        [class.badge-success]="activeContractByCustomerId().has(customer.id)"
-                        [class.badge-ghost]="!activeContractByCustomerId().has(customer.id)"
+                        [class.badge-success]="isCustomerStatusActive(customer.id)"
+                        [class.badge-ghost]="isCustomerStatusInactive(customer.id)"
+                        [class.badge-outline]="
+                          !isCustomerStatusActive(customer.id) &&
+                          !isCustomerStatusInactive(customer.id)
+                        "
                       >
-                        {{
-                          activeContractByCustomerId().has(customer.id) ? 'Activo' : 'Sin contrato'
-                        }}
+                        {{ getCustomerStatusLabel(customer.id) }}
                       </span>
                     </div>
                     <span class="text-xs text-slate-500">
@@ -62,9 +88,7 @@
                 </button>
               </li>
               } @empty {
-              <li class="text-xs text-slate-500 px-4 py-2">
-                No hay clientes de ejemplo configurados.
-              </li>
+              <li class="text-xs text-slate-500 px-4 py-2">No hay clientes disponibles.</li>
               }
             </ul>
           </div>
@@ -80,6 +104,12 @@
             @if (!selectedCustomer()) {
             <div class="text-xs text-slate-500 py-8 text-center">
               Selecciona un cliente para ver sus contratos.
+            </div>
+            } @else if (isLoadingContracts()) {
+            <div class="text-xs text-slate-500 py-6 text-center">Cargando contratos...</div>
+            } @else if (hasContractsError()) {
+            <div class="text-xs text-red-600 py-6 text-center">
+              No se pudieron cargar los contratos.
             </div>
             } @else {
             <div class="space-y-2 max-h-64 overflow-auto">
@@ -111,17 +141,13 @@
                 </div>
               </button>
               } @empty {
-              <div class="text-xs text-slate-500 py-4">
-                El cliente no tiene contratos de ejemplo.
-              </div>
+              <div class="text-xs text-slate-500 py-4">El cliente no tiene contratos.</div>
               }
             </div>
 
-            <!-- Crear nuevo contrato (demo) -->
+            <!-- Crear nuevo contrato -->
             <div class="mt-4 border-t border-base-200 pt-4">
-              <h3 class="text-sm font-medium text-slate-900 mb-2">
-                Crear nuevo contrato (ejemplo)
-              </h3>
+              <h3 class="text-sm font-medium text-slate-900 mb-2">Crear nuevo contrato</h3>
 
               <form [formGroup]="createContractForm" class="space-y-2">
                 <div class="form-control">
@@ -158,12 +184,8 @@
                 </div>
 
                 <div class="flex justify-end gap-2 pt-2">
-                  <button
-                    type="button"
-                    class="btn btn-success btn-xs"
-                    (click)="onFakeCreateContract()"
-                  >
-                    Crear contrato (demo)
+                  <button type="button" class="btn btn-success btn-xs" (click)="onCreateContract()">
+                    Crear contrato
                   </button>
                 </div>
               </form>
@@ -185,18 +207,18 @@
                 <button
                   type="button"
                   class="btn btn-outline btn-xs"
-                  (click)="onFakeSaveContract()"
+                  (click)="onSaveContract()"
                   [disabled]="!selectedContract()"
                 >
-                  Guardar cambios (demo)
+                  Guardar cambios
                 </button>
                 <button
                   type="button"
                   class="btn btn-error btn-xs"
-                  (click)="onFakeDeleteContract()"
+                  (click)="requestDeleteContract()"
                   [disabled]="!selectedContract()"
                 >
-                  Eliminar (demo)
+                  Eliminar
                 </button>
               </div>
             </div>
@@ -274,16 +296,22 @@
               <button
                 type="button"
                 class="btn btn-primary btn-xs"
-                (click)="onFakeSavePrices()"
-                [disabled]="!selectedContract()"
+                (click)="onSavePrices()"
+                [disabled]="!selectedContract() || !hasPriceChanges() || isSavingPrices()"
               >
-                Guardar precios del contrato (demo)
+                Guardar precios del contrato
               </button>
             </div>
 
             @if (!selectedContract()) {
             <div class="text-xs text-slate-500 py-6">
               Selecciona un contrato para asignar precios a sus variantes.
+            </div>
+            } @else if (isLoadingVariants() || isLoadingContractItems()) {
+            <div class="text-xs text-slate-500 py-6 text-center">Cargando precios...</div>
+            } @else if (hasVariantsError() || hasContractItemsError()) {
+            <div class="text-xs text-red-600 py-6 text-center">
+              No se pudieron cargar las variantes o los precios del contrato.
             </div>
             } @else {
             <div class="overflow-x-auto">
@@ -339,7 +367,7 @@
                       <button
                         type="button"
                         class="btn btn-ghost btn-xs"
-                        (click)="onClearPrice(row.variantId)"
+                        (click)="requestRemovePrice(row.variantId)"
                         [disabled]="row.currentPrice == null"
                       >
                         Quitar
@@ -349,7 +377,7 @@
                   } @empty {
                   <tr>
                     <td colspan="7" class="text-center text-xs text-slate-500 py-6">
-                      No hay variantes de ejemplo configuradas.
+                      No hay variantes disponibles.
                     </td>
                   </tr>
                   }
@@ -363,3 +391,44 @@
     </div>
   </div>
 </div>
+
+@if (pendingContractDeleteId()) {
+<div class="modal modal-open">
+  <div class="modal-box">
+    <h3 class="font-semibold text-lg text-slate-900">Eliminar contrato</h3>
+    <p class="text-sm text-slate-600 mt-2">
+      Este contrato se desactivara y quedara como eliminado. No se borraran los registros
+      historicos. Deseas continuar?
+    </p>
+    <div class="modal-action">
+      <button type="button" class="btn btn-ghost btn-sm" (click)="cancelDeleteContract()">
+        Cancelar
+      </button>
+      <button type="button" class="btn btn-error btn-sm" (click)="confirmDeleteContract()">
+        Eliminar contrato
+      </button>
+    </div>
+  </div>
+  <div class="modal-backdrop" (click)="cancelDeleteContract()"></div>
+</div>
+} @if (pendingPriceDeleteRow(); as pendingRow) {
+<div class="modal modal-open">
+  <div class="modal-box">
+    <h3 class="font-semibold text-lg text-slate-900">Quitar precio</h3>
+    <p class="text-sm text-slate-600 mt-2">
+      Se eliminara el precio de la variante
+      <span class="font-semibold text-slate-900">{{ pendingRow.variantName }}</span>
+      ({{ pendingRow.sku }}). Deseas continuar?
+    </p>
+    <div class="modal-action">
+      <button type="button" class="btn btn-ghost btn-sm" (click)="cancelRemovePrice()">
+        Cancelar
+      </button>
+      <button type="button" class="btn btn-error btn-sm" (click)="confirmRemovePrice()">
+        Quitar precio
+      </button>
+    </div>
+  </div>
+  <div class="modal-backdrop" (click)="cancelRemovePrice()"></div>
+</div>
+}
