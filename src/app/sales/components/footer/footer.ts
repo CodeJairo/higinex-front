@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
+  Check,
   Facebook,
   Instagram,
   Linkedin,
@@ -36,6 +37,7 @@ export class Footer {
   readonly phoneIcon = Phone;
   readonly mapPinIcon = MapPin;
   readonly sendIcon = Send;
+  readonly checkIcon = Check;
 
   // Form state
   formData = signal({
