@@ -10,22 +10,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import {
-  Bell,
-  ChevronDown,
-  CircleQuestionMark,
-  CircleUser,
-  FileText,
-  Heart,
-  LogOut,
-  LucideAngularModule,
-  MapPin,
-  Package,
-  Search,
-  Settings,
-  ShoppingCart,
-  User,
-} from 'lucide-angular';
+import { LucideAngularModule, Search, ShoppingCart } from 'lucide-angular';
 import { Role } from '../../../auth/interfaces';
 import { AuthService } from '../../../auth/services/auth.service';
 import { CartService } from '../../services/cart.service';
@@ -36,19 +21,10 @@ import { CustomerUserMenu } from '../customer-user-menu/customer-user-menu';
 
 @Component({
   selector: 'sales-navbar',
-  imports: [
-    FormsModule,
-    LucideAngularModule,
-    CartDropdown,
-    CustomerUserMenu,
-    AdminUserMenu,
-  ],
+  imports: [FormsModule, LucideAngularModule, CartDropdown, CustomerUserMenu, AdminUserMenu],
   templateUrl: './navbar.html',
   host: {
-    class:
-      'sticky top-0 z-50 bg-base-100 border-b border-slate-200 shadow-sm transition-transform duration-300',
-    '[class.translate-y-0]': 'isVisible()',
-    '[class.-translate-y-full]': '!isVisible()',
+    class: 'block',
   },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -61,20 +37,10 @@ export class Navbar implements OnInit, OnDestroy {
   // Icons
   readonly searchIcon = Search;
   readonly cartIcon = ShoppingCart;
-  readonly userIcon = User;
-  readonly bellIcon = Bell;
-  readonly logoutIcon = LogOut;
-  readonly chevronDownIcon = ChevronDown;
-  readonly userCircleIcon = CircleUser;
-  readonly packageIcon = Package;
-  readonly mapPinIcon = MapPin;
-  readonly fileTextIcon = FileText;
-  readonly heartIcon = Heart;
-  readonly settingsIcon = Settings;
-  readonly helpIcon = CircleQuestionMark;
 
   // State
   isVisible = signal(true);
+  hasScrolled = signal(false);
   showUserMenu = signal(false);
   showCart = signal(false);
   searchQuery = signal('');
@@ -123,9 +89,10 @@ export class Navbar implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.scrollHandler = () => this.handleScroll();
-    this.clickHandler = (event: MouseEvent) => this.handleClickOutside(event);
+    // Usamos bind para no perder el contexto 'this'
+    this.scrollHandler = this.handleScroll.bind(this);
 
+    // { passive: true } mejora el rendimiento del scroll
     window.addEventListener('scroll', this.scrollHandler, { passive: true });
     document.addEventListener('click', this.clickHandler);
   }
@@ -136,26 +103,34 @@ export class Navbar implements OnInit, OnDestroy {
   }
 
   private handleScroll(): void {
-    const currentScrollY = window.scrollY;
+    const currentScrollY = window.scrollY || document.documentElement.scrollTop;
 
-    if (window.innerWidth < 768) {
-      if (currentScrollY < this.lastScrollY) {
+    // Lógica para sombra: Si bajamos más de 10px, activamos sombra
+    this.hasScrolled.set(currentScrollY > 10);
+
+    // Lógica para ocultar/mostrar (Solo Mobile < 1024px o como prefieras)
+    if (window.innerWidth < 1024) {
+      // 1. Siempre mostrar si estamos muy cerca del top (evita rebote en iOS)
+      if (currentScrollY <= 20) {
         this.isVisible.set(true);
-      } else if (currentScrollY > this.lastScrollY && currentScrollY > 80) {
+        this.lastScrollY = currentScrollY;
+        return;
+      }
+
+      // 2. Determinar dirección
+      // Si el scroll actual es mayor al anterior => Bajando => Ocultar
+      if (currentScrollY > this.lastScrollY) {
         this.isVisible.set(false);
+      } else {
+        // Si el scroll actual es menor => Subiendo => Mostrar
+        this.isVisible.set(true);
       }
     } else {
+      // En Desktop siempre visible
       this.isVisible.set(true);
     }
 
     this.lastScrollY = currentScrollY;
-  }
-
-  private handleClickOutside(event: MouseEvent): void {
-    const target = event.target as HTMLElement;
-    if (!target.closest('#user-menu-button') && !target.closest('#user-menu-dropdown')) {
-      this.showUserMenu.set(false);
-    }
   }
 
   toggleUserMenu(): void {
