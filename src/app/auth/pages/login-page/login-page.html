@@ -1,341 +1,158 @@
-<div
-  class="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-cyan-50 flex items-center justify-center p-4"
->
+<div class="min-h-screen bg-slate-50 flex items-center justify-center p-4 sm:p-6 lg:p-8">
   <div
-    class="card lg:card-side w-full max-w-6xl bg-base-100 shadow-2xl rounded-2xl overflow-hidden"
+    class="card lg:card-side w-full max-w-6xl bg-white shadow-[0_32px_64px_-15px_rgba(0,0,0,0.1)] rounded-[2rem] overflow-hidden border border-slate-100"
   >
-    <!-- Left Side - Branding -->
     <div
-      class="hidden lg:flex flex-col justify-between p-12 bg-linear-to-br from-blue-600 via-blue-700 to-cyan-600 text-white relative overflow-hidden lg:w-1/2"
+      class="hidden lg:flex flex-col justify-between p-16 bg-slate-900 text-white relative overflow-hidden lg:w-5/12"
     >
       <div
-        class="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2"
-      ></div>
-      <div
-        class="absolute bottom-0 left-0 w-72 h-72 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2"
+        class="absolute top-0 right-0 w-125 h-125 bg-primary/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2"
       ></div>
 
       <div class="relative z-10">
-        <div class="flex items-center gap-4 mb-6">
+        <div class="flex items-center gap-4 mb-10">
           <div
-            class="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/30"
+            class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-xl p-2"
           >
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 32 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M8 4V28M8 16H24M24 4V28"
-                stroke="white"
-                stroke-width="3"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
+            <img src="/logo.svg" alt="Logo" class="w-full h-full object-cover" />
           </div>
           <div>
-            <h1 class="text-4xl tracking-tight">HIGINEX</h1>
-            <p class="text-sm text-blue-100 mt-1">Tu proveedor de confianza</p>
+            <h1 class="text-3xl font-black tracking-tighter leading-none">HIGINEX</h1>
+            <p class="text-[10px] uppercase tracking-[0.2em] text-primary font-bold mt-1">
+              Premium Hygiene Systems
+            </p>
           </div>
         </div>
-      </div>
 
-      <div class="relative z-10 space-y-6">
-        <div>
-          <h2 class="text-3xl mb-4">Bienvenido de vuelta</h2>
-          <p class="text-blue-100 leading-relaxed">
-            Accede a tu portal de reabastecimiento. Gestiona tus pedidos y consulta nuestro catálogo
-            completo de productos de higiene y cuidado personal de la marca HIGINEX.
+        <div class="space-y-6 max-w-sm">
+          <h2 class="text-4xl font-bold leading-tight">Gestione su negocio con excelencia.</h2>
+          <p class="text-slate-400 text-lg leading-relaxed">
+            Bienvenido al portal exclusivo para distribuidores autorizados.
           </p>
         </div>
+      </div>
 
-        <div class="grid grid-cols-3 gap-6 pt-6">
-          <div class="text-center">
-            <div
-              class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center mx-auto mb-3"
-            >
-              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                />
-              </svg>
-            </div>
-            <h3 class="mb-2">Catálogo Amplio</h3>
-            <p class="text-sm text-blue-100">Nuevos productos cada mes</p>
+      <br />
+
+      <div class="relative z-10 space-y-8">
+        <div class="flex items-start gap-4">
+          <div
+            class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0"
+          >
+            <lucide-icon [img]="searchIcon" class="w-5 h-5 text-primary"></lucide-icon>
           </div>
-
-          <div class="text-center border-l border-white/20 pl-6">
-            <div
-              class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center mx-auto mb-3"
-            >
-              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            </div>
-            <h3 class="mb-2">Precios B2B</h3>
-            <p class="text-sm text-blue-100">Tarifas competitivas al por mayor</p>
+          <div>
+            <h3 class="font-semibold text-white">Catálogo Inteligente</h3>
+            <p class="text-sm text-slate-400">Acceso a más de 500 referencias en tiempo real.</p>
           </div>
-
-          <div class="text-center border-l border-white/20 pl-6">
-            <div
-              class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center mx-auto mb-3"
-            >
-              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M13 10V3L4 14h7v7l9-11h-7z"
-                />
-              </svg>
-            </div>
-            <h3 class="mb-2">Envío Rápido</h3>
-            <p class="text-sm text-blue-100">Despacho en 24-48 horas</p>
+        </div>
+        <div class="flex items-start gap-4">
+          <div
+            class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0"
+          >
+            <lucide-icon [img]="cartIcon" class="w-5 h-5 text-primary"></lucide-icon>
+          </div>
+          <div>
+            <h3 class="font-semibold text-white">Pedidos B2B</h3>
+            <p class="text-sm text-slate-400">Tarifas preferenciales y gestión de facturación.</p>
           </div>
         </div>
       </div>
 
-      <div class="relative z-10 text-sm text-blue-100">
-        © 2025 Higinex. Todos los derechos reservados.
+      <br />
+
+      <div class="relative z-10 text-xs text-slate-500 font-medium tracking-wide">
+        <span class="block">&copy; 2025 HIGINEX PROFESSIONAL.</span>
+        <span class="block font-bold">TODOS LOS DERECHOS RESERVADOS.</span>
       </div>
     </div>
 
-    <!-- Right Side - Login Form -->
-    <div class="p-8 lg:p-12 flex flex-col justify-center lg:w-1/2">
-      <!-- Mobile Logo -->
-      <div class="lg:hidden mb-8 text-center">
-        <div class="inline-flex items-center gap-3 mb-2">
-          <div
-            class="w-12 h-12 bg-linear-to-br from-blue-600 to-cyan-500 rounded-xl flex items-center justify-center"
-          >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 32 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M8 4V28M8 16H24M24 4V28"
-                stroke="white"
-                stroke-width="3"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </div>
-          <h1 class="text-3xl text-slate-900">HIGINEX</h1>
-        </div>
-        <p class="text-sm text-slate-600">Tu proveedor de confianza</p>
+    <div class="p-8 lg:p-20 flex flex-col justify-center lg:w-7/12 bg-white">
+      <div class="lg:hidden mb-12 flex flex-col items-center text-center">
+        <img src="/logo.svg" alt="Logo" class="w-16 h-16 mb-4" />
+        <h1 class="text-3xl font-black tracking-tighter text-slate-900">HIGINEX</h1>
       </div>
 
-      <div class="mb-6">
-        <h2 class="text-2xl font-semibold text-slate-900 mb-1">Iniciar sesión</h2>
-        <p class="text-slate-600 text-sm">Ingresa tus credenciales para acceder a tu cuenta</p>
+      <div class="mb-10">
+        <h2 class="text-3xl font-bold text-slate-900 tracking-tight mb-2">Iniciar Sesión</h2>
+        <p class="text-slate-500">Por favor, ingrese sus credenciales de acceso.</p>
       </div>
 
-      <!-- Alert de error de login (daisyUI) -->
       @if (loginError()) {
-      <div role="alert" class="alert alert-error mb-6">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-6 w-6 shrink-0 stroke-current"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-        <span>{{ loginError() }}</span>
-        <button type="button" (click)="dismissError()" class="btn btn-ghost btn-xs ml-auto">
-          Cerrar
+      <div
+        class="bg-red-50 border border-red-100 text-red-600 p-4 rounded-2xl flex items-center gap-3 mb-8"
+      >
+        <lucide-icon [img]="errorIcon" class="w-5 h-5"></lucide-icon>
+        <span class="text-sm font-medium">{{ loginError() }}</span>
+        <button (click)="dismissError()" class="ml-auto hover:bg-red-100 p-1 rounded-lg">
+          <lucide-icon [img]="closeIcon" class="w-4 h-4"></lucide-icon>
         </button>
       </div>
       }
 
-      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5">
-        <!-- Email -->
-        <div class="form-control">
-          <label for="email" class="mb-1 block text-sm text-slate-700"> Correo electrónico </label>
-
-          <label class="input input-bordered validator flex items-center gap-2 w-full">
-            <!-- Icono email (SVG inline) -->
-            <svg
-              class="h-[1em] opacity-60"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6">
+        <div class="space-y-2">
+          <label class="text-sm font-bold text-slate-700 ml-1">Correo Electrónico</label>
+          <div class="relative group">
+            <div
+              class="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors"
             >
-              <g
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <rect x="3" y="5" width="18" height="14" rx="2" />
-                <path d="M5 7l7 6 7-6" />
-              </g>
-            </svg>
-
+              <lucide-icon [img]="emailIcon" class="w-5 h-5"></lucide-icon>
+            </div>
             <input
-              id="email"
               type="email"
               formControlName="email"
-              name="email"
-              autocomplete="email"
-              required
-              placeholder="tu&#64;email.com"
-              class="grow"
+              placeholder="nombre@empresa.com"
+              class="w-full h-14 bg-slate-50 border-2 border-slate-50 rounded-2xl pl-12 pr-4 outline-none focus:bg-white focus:border-primary/20 transition-all"
             />
-          </label>
-
-          @if (showError('email')) {
-          <p class="validator-hint text-xs text-error mt-1">
-            @if (hasError('email', 'required')) { Correo requerido. } @else { Correo inválido. }
-          </p>
-          }
+          </div>
         </div>
 
-        <!-- Password -->
-        <div class="form-control">
-          <label for="password" class="mb-1 block text-sm text-slate-700"> Contraseña </label>
-
-          <label class="input input-bordered validator flex items-center gap-2 w-full">
-            <!-- Icono candado -->
-            <svg
-              class="h-[1em] opacity-60"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
+        <div class="space-y-2">
+          <div class="flex justify-between items-center px-1">
+            <label class="text-sm font-bold text-slate-700">Contraseña</label>
+            <button
+              type="button"
+              (click)="goToForgotPassword()"
+              class="text-sm font-bold text-primary hover:underline cursor-pointer"
             >
-              <g
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <rect x="4" y="11" width="16" height="9" rx="2" />
-                <path d="M8 11V8a4 4 0 0 1 8 0v3" />
-              </g>
-            </svg>
-
+              ¿Olvidó su contraseña?
+            </button>
+          </div>
+          <div class="relative group">
+            <div
+              class="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors"
+            >
+              <lucide-icon [img]="lockIcon" class="w-5 h-5"></lucide-icon>
+            </div>
             <input
-              id="password"
               [type]="showPassword() ? 'text' : 'password'"
               formControlName="password"
-              name="password"
-              autocomplete="current-password"
-              required
-              placeholder="••••••••"
-              class="grow"
+              placeholder="••••••••••••"
+              class="w-full h-14 bg-slate-50 border-2 border-slate-50 rounded-2xl pl-12 pr-12 outline-none focus:bg-white focus:border-primary/20 transition-all"
             />
-
-            <!-- Botón mostrar/ocultar password con icono SVG simple -->
             <button
               type="button"
               (click)="togglePasswordVisibility()"
-              class="btn btn-ghost btn-xs"
-              aria-label="Mostrar u ocultar contraseña"
-              tabindex="-1"
+              class="absolute inset-y-0 right-4 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer transition-colors"
             >
-              @if (!showPassword()) {
-              <svg
-                class="h-[1em] opacity-70"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <g
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z" />
-                  <circle cx="12" cy="12" r="3" />
-                </g>
-              </svg>
-              } @else {
-              <svg
-                class="h-[1em] opacity-70"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <g
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M3 3l18 18" />
-                  <path d="M10.6 10.6A3 3 0 0 1 13.4 13.4" />
-                  <path d="M9.88 4.15A9.6 9.6 0 0 1 12 4c6.5 0 10 6 10 6a17 17 0 0 1-3.1 4.11" />
-                  <path d="M6.2 6.2A16.5 16.5 0 0 0 2 10s3.5 6 10 6a9.8 9.8 0 0 0 2.2-.25" />
-                </g>
-              </svg>
-              }
+              <lucide-icon
+                [img]="showPassword() ? eyeOffIcon : eyeIcon"
+                class="w-5 h-5"
+              ></lucide-icon>
             </button>
-          </label>
-
-          @if (showError('password')) {
-          <p class="validator-hint text-xs text-error mt-1">Contraseña requerida.</p>
-          }
+          </div>
         </div>
 
-        <!-- Forgot Password link -->
-        <div class="flex items-center justify-end">
-          <button
-            type="button"
-            (click)="goToForgotPassword()"
-            class="link link-primary text-sm cursor-pointer"
-          >
-            ¿Olvidaste tu contraseña?
-          </button>
-        </div>
-
-        <!-- Botón submit -->
         <button
           type="submit"
           [disabled]="isLoginLoading() || form.invalid"
-          class="btn btn-primary w-full justify-center gap-2 disabled:opacity-60"
+          class="w-full h-14 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-bold text-lg shadow-lg shadow-slate-200 transition-all flex items-center justify-center gap-3 cursor-pointer"
         >
-          @if (isLoginLoading()) {
-          <span class="loading loading-spinner loading-sm"></span>
-          <span>Iniciando sesión...</span>
-          } @else {
-          <span>Iniciar sesión</span>
-          }
+          @if (isLoginLoading()) { <span class="loading loading-spinner"></span> } @else {
+          <span>Entrar al Portal</span> }
         </button>
       </form>
-
-      <!-- Info Message -->
-      <div class="mt-8 alert alert-info">
-        <span class="text-sm">
-          <span class="font-semibold">🔒 Portal exclusivo:</span>
-          Este es un portal B2B para distribuidores autorizados de HIGINEX. Si necesitas una cuenta,
-          contacta a nuestro equipo comercial.
-        </span>
-      </div>
     </div>
   </div>
 </div>

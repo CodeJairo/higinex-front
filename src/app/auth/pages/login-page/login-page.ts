@@ -1,11 +1,25 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import {
+  ArrowLeft,
+  CircleAlert,
+  CircleCheck,
+  Eye,
+  EyeOff,
+  LucideAngularModule,
+  Mail,
+  Search,
+  Send,
+  ShoppingCart,
+  X,
+Lock
+} from 'lucide-angular';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'auth-login-page',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, LucideAngularModule],
   templateUrl: './login-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -14,6 +28,18 @@ export class LoginPage {
   private route = inject(ActivatedRoute);
   private authService = inject(AuthService);
   private formBuilder = inject(FormBuilder);
+
+  readonly emailIcon = Mail;
+  readonly lockIcon = Lock;
+  readonly eyeIcon = Eye;
+  readonly eyeOffIcon = EyeOff;
+  readonly searchIcon = Search;
+  readonly cartIcon = ShoppingCart;
+  readonly backIcon = ArrowLeft;
+  readonly sendIcon = Send;
+  readonly successIcon = CircleCheck;
+  readonly errorIcon = CircleAlert;
+  readonly closeIcon = X;
 
   // Form state
   readonly showPassword = signal(false);

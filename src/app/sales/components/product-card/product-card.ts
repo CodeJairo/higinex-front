@@ -4,12 +4,13 @@ import { ImageWithFallback } from '../../../shared/components/image-with-fallbac
 import { CheckoutCartItem, ProductVariant } from '../../interfaces';
 import { CatalogService } from '../../services/catalog.service';
 import { CartService } from '../../services/cart.service';
+import { NgClass } from '@angular/common';
 
 const PLACEHOLDER_IMAGE = '/placeholder-product.svg';
 
 @Component({
   selector: 'sales-product-card',
-  imports: [LucideAngularModule, ImageWithFallback],
+  imports: [LucideAngularModule, ImageWithFallback, NgClass],
   templateUrl: './product-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

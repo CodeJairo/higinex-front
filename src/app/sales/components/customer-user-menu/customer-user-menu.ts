@@ -45,6 +45,10 @@ export class CustomerUserMenu {
     this.router.navigateByUrl('/customer/addresses');
   }
 
+  goToMyAccount(): void {
+    this.router.navigateByUrl('/customer/profile');
+  }
+
   onLogout() {
     this.logout.emit();
   }

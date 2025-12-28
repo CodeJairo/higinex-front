@@ -1,86 +1,118 @@
 <div class="dropdown dropdown-end">
-  <button tabindex="0" type="button" class="btn btn-ghost gap-2 px-2 py-1 h-auto min-h-0">
+  <button
+    tabindex="0"
+    type="button"
+    class="btn btn-ghost hover:bg-slate-100 gap-3 px-2 h-14 rounded-2xl transition-all duration-300 min-w-0"
+  >
     <div
-      class="w-9 h-9 rounded-full bg-linear-to-br from-slate-600 to-slate-800 flex items-center justify-center"
+      class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center shrink-0 shadow-inner border border-slate-200"
     >
-      <lucide-icon [img]="userIcon" class="w-4 h-4 text-white"></lucide-icon>
+      <lucide-icon [img]="userIcon" class="w-5 h-5 text-slate-900"></lucide-icon>
     </div>
 
-    <div class="hidden lg:flex flex-col items-start text-left">
-      <span class="text-sm font-medium text-slate-900 leading-tight">
+    <div class="hidden lg:flex flex-col items-start text-left leading-none min-w-0 max-w-[140px]">
+      <span class="text-sm font-black text-slate-900 uppercase tracking-tighter truncate w-full">
         {{ userName }}
       </span>
-      <span class="text-xs text-slate-500 truncate max-w-45">
-        {{ userDetail }}
-      </span>
+      <div class="flex items-center gap-1.5 mt-1 w-full">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
+        <span class="text-[9px] font-black text-emerald-600 uppercase tracking-widest truncate"
+          >Administrador</span
+        >
+      </div>
     </div>
   </button>
 
   <div
     tabindex="0"
-    class="dropdown-content mt-3 z-60 w-64 shadow-lg bg-base-100 rounded-2xl border border-slate-200"
+    class="dropdown-content mt-4 z-60 w-72 shadow-[0_20px_60px_rgba(0,0,0,0.15)] bg-white rounded-2xl border border-slate-100 overflow-hidden animate-in fade-in slide-in-from-top-2"
   >
-    <!-- Header usuario -->
-    <div class="px-4 pt-3 pb-2 border-b border-slate-200">
-      <p class="text-sm font-medium text-slate-900 truncate">
-        {{ userName }}
-      </p>
-      <p class="text-xs text-slate-500 truncate">
-        {{ userDetail }}
-      </p>
-      <span class="mt-1 inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5">
-        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-        <span class="text-[11px] font-medium text-slate-600 uppercase tracking-wide"> Admin </span>
-      </span>
+    <div class="px-6 py-6 bg-slate-900 text-white relative overflow-hidden min-w-0">
+      <div
+        class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"
+      ></div>
+
+      <div class="relative z-10 min-w-0">
+        <span
+          class="inline-block px-2 py-0.5 rounded bg-emerald-500 text-[9px] font-black uppercase tracking-widest mb-2 shrink-0"
+        >
+          Higinex Staff
+        </span>
+        <p class="text-sm font-black truncate tracking-tight uppercase leading-none w-full">
+          {{ userName }}
+        </p>
+        <p class="text-[11px] text-slate-400 truncate mt-2 font-medium w-full">
+          {{ userDetail }}
+        </p>
+      </div>
     </div>
 
-    <!-- Menu -->
-    <ul class="menu menu-sm p-2 w-full">
-      <li class="menu-title text-[11px] uppercase tracking-wide text-slate-400">Cuenta</li>
-      <li>
-        <button>
-          <lucide-icon [img]="userCircleIcon" class="w-4 h-4"></lucide-icon>
-          Perfil
-        </button>
-      </li>
-      <li>
-        <button>
-          <lucide-icon [img]="settingsIcon" class="w-4 h-4"></lucide-icon>
-          Configuración
-        </button>
-      </li>
-
-      <li class="menu-title mt-2 text-[11px] uppercase tracking-wide text-slate-400">
-        Administración
+    <ul class="menu p-3 space-y-0.5 w-full">
+      <li
+        class="menu-title px-3 pt-3 pb-1 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400"
+      >
+        Gestión Global
       </li>
 
       <li>
-        <button (click)="navigateToDashboard()">
-          <lucide-icon [img]="shieldUserIcon" class="w-4 h-4"></lucide-icon>
-          Panel Administrativo
+        <button
+          (click)="navigateToDashboard()"
+          class="flex items-center gap-3 px-3 py-3 rounded-xl bg-slate-900 text-white hover:bg-slate-800 transition-all shadow-md active:scale-[0.98]"
+        >
+          <lucide-icon [img]="shieldUserIcon" class="w-4 h-4 text-emerald-400"></lucide-icon>
+          <span class="text-xs font-black uppercase tracking-widest">Panel de Control</span>
         </button>
       </li>
 
-      <li>
-        <button>
-          <lucide-icon [img]="packageIcon" class="w-4 h-4"></lucide-icon>
-          Gestión de pedidos
-        </button>
+      <li
+        class="menu-title px-3 pt-4 pb-1 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400"
+      >
+        Operaciones
       </li>
 
       <li>
-        <button>
-          <lucide-icon [img]="fileTextIcon" class="w-4 h-4"></lucide-icon>
-          Reportes y facturación
+        <button
+          class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-colors group"
+        >
+          <lucide-icon
+            [img]="packageIcon"
+            class="w-4 h-4 text-slate-400 group-hover:text-slate-900"
+          ></lucide-icon>
+          <span class="text-xs font-bold text-slate-700">Gestión de Pedidos</span>
+        </button>
+      </li>
+      <li>
+        <button
+          class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-colors group"
+        >
+          <lucide-icon
+            [img]="fileTextIcon"
+            class="w-4 h-4 text-slate-400 group-hover:text-slate-900"
+          ></lucide-icon>
+          <span class="text-xs font-bold text-slate-700">Reportes Financieros</span>
+        </button>
+      </li>
+      <li>
+        <button
+          class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-colors group"
+        >
+          <lucide-icon
+            [img]="settingsIcon"
+            class="w-4 h-4 text-slate-400 group-hover:text-slate-900"
+          ></lucide-icon>
+          <span class="text-xs font-bold text-slate-700">Configuración Global</span>
         </button>
       </li>
 
-      <li><div class="divider my-2 pointer-events-none"></div></li>
+      <div class="h-px bg-slate-100 my-3 mx-3"></div>
 
       <li>
-        <button (click)="onLogout()" class="text-error">
+        <button
+          (click)="onLogout()"
+          class="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-red-50 text-red-500 transition-colors group"
+        >
           <lucide-icon [img]="logoutIcon" class="w-4 h-4"></lucide-icon>
-          Cerrar sesión
+          <span class="text-xs font-black uppercase tracking-widest">Desconectar</span>
         </button>
       </li>
     </ul>
