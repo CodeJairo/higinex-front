@@ -1,36 +1,36 @@
-<section class="min-h-screen">
+<section class="min-h-screen bg-base-100">
   <div class="max-w-7xl mx-auto p-6 lg:p-8">
     <!-- Header -->
     <div class="mb-8">
-      <h1 class="text-slate-900 text-3xl lg:text-4xl font-semibold tracking-tight mb-2">
+      <h1 class="text-base-content text-3xl lg:text-4xl font-semibold tracking-tight mb-2">
         Panel de Gestión Administrativa
       </h1>
 
-      <p class="text-slate-600 max-w-3xl">
+      <p class="text-base-content/70 max-w-3xl">
         Consolida y supervisa las operaciones principales del sistema.
       </p>
     </div>
 
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6 mb-8">
-      <div class="bg-linear-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white shadow-lg">
+      <div class="bg-linear-to-br from-primary to-primary-focus rounded-xl p-6 text-primary-content shadow-lg">
         <div class="flex items-center justify-between mb-4">
           <lucide-icon [img]="packageIcon" class="w-8 h-8 opacity-80"></lucide-icon>
           <span class="text-3xl opacity-90">{{ stats.ordersThisMonth }}</span>
         </div>
-        <h3 class="text-white opacity-90 mb-1">Pedidos este mes</h3>
-        <p class="text-sm text-blue-100">
+        <h3 class="text-primary-content opacity-90 mb-1">Pedidos este mes</h3>
+        <p class="text-sm text-primary-content/80">
           Pedidos creados y confirmados durante el periodo mensual.
         </p>
       </div>
 
-      <div class="bg-linear-to-br from-green-500 to-green-600 rounded-xl p-6 text-white shadow-lg">
+      <div class="bg-linear-to-br from-success to-success/80 rounded-xl p-6 text-success-content shadow-lg">
         <div class="flex items-center justify-between mb-4">
           <lucide-icon [img]="tagIcon" class="w-8 h-8 opacity-80"></lucide-icon>
           <span class="text-3xl opacity-90">{{ formatPrice(stats.totalSavings) }}</span>
         </div>
-        <h3 class="text-white opacity-90 mb-1">Ingresos por Ventas del Mes</h3>
-        <p class="text-sm text-green-100">
+        <h3 class="text-success-content opacity-90 mb-1">Ingresos por Ventas del Mes</h3>
+        <p class="text-sm text-success-content/80">
           Total facturado en ventas durante este mes, sin incluir aún costos ni gastos.
         </p>
       </div>
@@ -38,72 +38,52 @@
 
     <!-- Quick Actions -->
     <div class="mb-8">
-      <h2 class="text-slate-900 mb-4">Accesos Rápidos</h2>
+      <h2 class="text-base-content mb-4">Accesos Rápidos</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <button
-          (click)="navigateToRegister()"
-          class="bg-white border border-slate-200 rounded-xl p-6 hover:shadow-lg hover:border-blue-300 transition-all group text-left cursor-pointer"
-        >
+        <button (click)="navigateToRegister()"
+          class="bg-base-100 border border-base-200 rounded-xl p-6 hover:shadow-lg hover:border-primary transition-all group text-left cursor-pointer">
           <div
-            class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-blue-600 transition-colors"
-          >
-            <lucide-icon
-              [img]="userPlusIcon"
-              class="w-6 h-6 text-blue-600 group-hover:text-white transition-colors"
-            ></lucide-icon>
+            class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary transition-colors">
+            <lucide-icon [img]="userPlusIcon"
+              class="w-6 h-6 text-primary group-hover:text-primary-content transition-colors"></lucide-icon>
           </div>
-          <h3 class="text-slate-900 mb-1">Agregar Usuarios</h3>
-          <p class="text-sm text-slate-600">Gestiona los usuarios y agrega nuevos clientes</p>
+          <h3 class="text-base-content mb-1">Agregar Usuarios</h3>
+          <p class="text-sm text-base-content/70">Gestiona los usuarios y agrega nuevos clientes</p>
         </button>
 
-        <button
-          (click)="navigateToOrders()"
-          class="bg-white border border-slate-200 rounded-xl p-6 hover:shadow-lg hover:border-blue-300 transition-all group text-left cursor-pointer"
-        >
+        <button (click)="navigateToOrders()"
+          class="bg-base-100 border border-base-200 rounded-xl p-6 hover:shadow-lg hover:border-primary transition-all group text-left cursor-pointer">
           <div
-            class="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-slate-600 transition-colors"
-          >
-            <lucide-icon
-              [img]="packageIcon"
-              class="w-6 h-6 text-slate-600 group-hover:text-white transition-colors"
-            ></lucide-icon>
+            class="w-12 h-12 bg-base-200 rounded-lg flex items-center justify-center mb-4 group-hover:bg-neutral group-hover:text-neutral-content transition-colors">
+            <lucide-icon [img]="packageIcon"
+              class="w-6 h-6 text-base-content/70 group-hover:text-neutral-content transition-colors"></lucide-icon>
           </div>
-          <h3 class="text-slate-900 mb-1">Pedidos Recientes</h3>
-          <p class="text-sm text-slate-600">Pedidos pendientes de revisión y confirmación.</p>
+          <h3 class="text-base-content mb-1">Pedidos Recientes</h3>
+          <p class="text-sm text-base-content/70">Pedidos pendientes de revisión y confirmación.</p>
         </button>
 
-        <button
-          (click)="navigateToInventory()"
-          class="bg-white border border-slate-200 rounded-xl p-6 hover:shadow-lg hover:border-blue-300 transition-all group text-left cursor-pointer"
-        >
+        <button (click)="navigateToInventory()"
+          class="bg-base-100 border border-base-200 rounded-xl p-6 hover:shadow-lg hover:border-success transition-all group text-left cursor-pointer">
           <div
-            class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-green-600 transition-colors"
-          >
-            <lucide-icon
-              [img]="warehouseIcon"
-              class="w-6 h-6 text-green-600 group-hover:text-white transition-colors"
-            ></lucide-icon>
+            class="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-success transition-colors">
+            <lucide-icon [img]="warehouseIcon"
+              class="w-6 h-6 text-success group-hover:text-success-content transition-colors"></lucide-icon>
           </div>
-          <h3 class="text-slate-900 mb-1">Manejo de Inventario</h3>
-          <p class="text-sm text-slate-600">
+          <h3 class="text-base-content mb-1">Manejo de Inventario</h3>
+          <p class="text-sm text-base-content/70">
             Gestión de existencias, movimientos y disponibilidad de productos.
           </p>
         </button>
 
-        <button
-          (click)="navigateToBilling()"
-          class="bg-white border border-slate-200 rounded-xl p-6 hover:shadow-lg hover:border-blue-300 transition-all group text-left cursor-pointer"
-        >
+        <button (click)="navigateToBilling()"
+          class="bg-base-100 border border-base-200 rounded-xl p-6 hover:shadow-lg hover:border-error transition-all group text-left cursor-pointer">
           <div
-            class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-red-600 transition-colors"
-          >
-            <lucide-icon
-              [img]="fileTextIcon"
-              class="w-6 h-6 text-red-600 group-hover:text-white transition-colors"
-            ></lucide-icon>
+            class="w-12 h-12 bg-error/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-error transition-colors">
+            <lucide-icon [img]="fileTextIcon"
+              class="w-6 h-6 text-error group-hover:text-error-content transition-colors"></lucide-icon>
           </div>
-          <h3 class="text-slate-900 mb-1">Reportes y Facturación</h3>
-          <p class="text-sm text-slate-600">Consulta y descarga de reportes y facturas.</p>
+          <h3 class="text-base-content mb-1">Reportes y Facturación</h3>
+          <p class="text-sm text-base-content/70">Consulta y descarga de reportes y facturas.</p>
         </button>
       </div>
     </div>
@@ -113,36 +93,32 @@
       <!-- Left Column - 2/3 width -->
       <div class="lg:col-span-2 space-y-6 lg:space-y-8">
         <!-- Recent Orders -->
-        <div class="bg-white rounded-xl border border-slate-200 p-6">
+        <div class="bg-base-100 rounded-xl border border-base-200 p-6">
           <div class="flex items-center justify-between mb-6">
-            <h2 class="text-slate-900">Últimos Pedidos</h2>
-            <button class="text-sm text-blue-600 hover:text-blue-700 cursor-pointer">
+            <h2 class="text-base-content font-bold">Últimos Pedidos</h2>
+            <button class="text-sm text-primary hover:text-primary-focus cursor-pointer font-medium">
               Ver todos
             </button>
           </div>
           <div class="space-y-4">
             @for (order of recentOrders; track order.id) {
             <div
-              class="flex items-center justify-between p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
-            >
+              class="flex items-center justify-between p-4 bg-base-200/50 rounded-lg hover:bg-base-200 transition-colors cursor-pointer">
               <div class="flex-1">
                 <div class="flex items-center gap-3 mb-2">
-                  <h3 class="text-slate-900">{{ order.id }}</h3>
-                  <span
-                    class="px-2 py-1 rounded-full text-xs flex items-center gap-1"
-                    [ngClass]="getOrderStatusInfo(order.status).colorClass"
-                  >
+                  <h3 class="text-base-content font-medium">{{ order.id }}</h3>
+                  <span class="px-2 py-1 rounded-full text-xs flex items-center gap-1"
+                    [ngClass]="getOrderStatusInfo(order.status).colorClass">
                     <lucide-icon [img]="getStatusIcon(order.status)" class="w-3 h-3"></lucide-icon>
                     {{ getOrderStatusInfo(order.status).label }}
                   </span>
                 </div>
-                <p class="text-sm text-slate-600">
+                <p class="text-sm text-base-content/60">
                   {{ order.date }} • {{ order.items }} items • {{ formatPrice(order.total) }}
                 </p>
               </div>
               <button
-                class="px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
-              >
+                class="px-4 py-2 text-sm text-primary hover:bg-primary/10 rounded-lg transition-colors cursor-pointer font-medium">
                 Ver detalles
               </button>
             </div>
@@ -154,30 +130,30 @@
       <!-- Right Column - 1/3 width -->
       <div class="space-y-6 lg:space-y-8">
         <!-- Resumen operativo -->
-        <div class="bg-white rounded-xl border border-slate-200 p-6">
+        <div class="bg-base-100 rounded-xl border border-base-200 p-6">
           <div class="flex items-center gap-2 mb-6">
-            <lucide-icon [img]="clockIcon" class="w-5 h-5 text-blue-600"></lucide-icon>
-            <h2 class="text-slate-900">Resumen Operativo</h2>
+            <lucide-icon [img]="clockIcon" class="w-5 h-5 text-primary"></lucide-icon>
+            <h2 class="text-base-content font-bold">Resumen Operativo</h2>
           </div>
 
           <div class="space-y-3 text-sm">
             <div class="flex items-center justify-between">
-              <span class="text-slate-600">Pedidos pendientes de confirmación</span>
-              <span class="font-medium text-slate-900">
+              <span class="text-base-content/70">Pedidos pendientes de confirmación</span>
+              <span class="font-medium text-base-content">
                 {{ stats.pendingOrders }}
               </span>
             </div>
 
             <div class="flex items-center justify-between">
-              <span class="text-slate-600">Pedidos en preparación</span>
-              <span class="font-medium text-slate-900">
+              <span class="text-base-content/70">Pedidos en preparación</span>
+              <span class="font-medium text-base-content">
                 {{ stats.preparingOrders }}
               </span>
             </div>
 
             <div class="flex items-center justify-between">
-              <span class="text-slate-600">Pedidos listos para despacho</span>
-              <span class="font-medium text-slate-900">
+              <span class="text-base-content/70">Pedidos listos para despacho</span>
+              <span class="font-medium text-base-content">
                 {{ stats.readyToShipOrders }}
               </span>
             </div>
@@ -185,29 +161,29 @@
         </div>
 
         <!-- Alertas de inventario -->
-        <div class="bg-white rounded-xl border border-slate-200 p-6">
+        <div class="bg-base-100 rounded-xl border border-base-200 p-6">
           <div class="flex items-center gap-2 mb-6">
-            <lucide-icon [img]="warehouseIcon" class="w-5 h-5 text-amber-600"></lucide-icon>
-            <h2 class="text-slate-900">Alertas de Inventario</h2>
+            <lucide-icon [img]="warehouseIcon" class="w-5 h-5 text-warning"></lucide-icon>
+            <h2 class="text-base-content font-bold">Alertas de Inventario</h2>
           </div>
 
           <div class="space-y-3 text-sm">
             @if (lowStockProducts?.length) { @for (product of lowStockProducts; track product.id) {
             <div class="flex items-center justify-between">
               <div class="min-w-0">
-                <p class="text-slate-900 truncate">
+                <p class="text-base-content truncate font-medium">
                   {{ product.name }}
                 </p>
-                <p class="text-xs text-slate-500 truncate">
+                <p class="text-xs text-base-content/60 truncate">
                   Stock actual: {{ product.stock }} unidades
                 </p>
               </div>
-              <span class="px-2 py-1 rounded-full text-xs bg-amber-100 text-amber-700">
+              <span class="px-2 py-1 rounded-full text-xs bg-warning/20 text-warning-content font-bold">
                 Stock bajo
               </span>
             </div>
             } } @else {
-            <p class="text-sm text-slate-500">No hay alertas de stock crítico por ahora.</p>
+            <p class="text-sm text-base-content/60">No hay alertas de stock crítico por ahora.</p>
             }
           </div>
         </div>

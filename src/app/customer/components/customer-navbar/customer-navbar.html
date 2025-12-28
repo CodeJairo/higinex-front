@@ -1,21 +1,17 @@
-<nav class="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-slate-100">
+<nav class="sticky top-0 z-40 w-full bg-base-100/80 backdrop-blur-md border-b border-base-200">
   <div class="max-w-7xl mx-auto navbar h-16 px-4 lg:px-8">
     <div class="navbar-start">
-      <button
-        (click)="goToHome()"
-        class="group flex items-center gap-3 hover:opacity-90 transition-all duration-300"
-      >
+      <button (click)="goToHome()" class="group flex items-center gap-3 hover:opacity-90 transition-all duration-300">
         <div
-          class="w-10 h-10 bg-white flex items-center justify-center rounded-xl border border-slate-100 shadow-sm group-hover:shadow-md group-hover:-translate-y-0.5 transition-all duration-300"
-        >
+          class="w-10 h-10 bg-base-100 flex items-center justify-center rounded-xl border border-base-200 shadow-sm group-hover:shadow-md group-hover:-translate-y-0.5 transition-all duration-300">
           <img src="/logo.svg" alt="Higinex" class="w-full h-full object-cover" />
         </div>
 
         <div class="flex flex-col items-start leading-none">
-          <span class="text-base font-black text-slate-900 uppercase tracking-tight">Higinex</span>
+          <span class="text-base font-black text-base-content uppercase tracking-tight">Higinex</span>
           <div class="flex items-center gap-1.5 mt-0.5">
             <span class="w-1 h-1 rounded-full bg-primary"></span>
-            <span class="text-[9px] font-bold text-slate-500 uppercase tracking-[0.15em]">
+            <span class="text-[9px] font-bold text-base-content/60 uppercase tracking-[0.15em]">
               Panel Cliente
             </span>
           </div>
@@ -25,15 +21,12 @@
 
     <div class="navbar-center hidden md:flex">
       <div
-        class="flex items-center gap-2 px-3 py-1.5 bg-slate-50/80 rounded-full border border-slate-200/60 backdrop-blur-sm"
-      >
+        class="flex items-center gap-2 px-3 py-1.5 bg-base-200/50 rounded-full border border-base-300 backdrop-blur-sm">
         <div class="relative flex h-2 w-2">
-          <span
-            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"
-          ></span>
-          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-success"></span>
         </div>
-        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+        <span class="text-[10px] font-bold text-base-content/60 uppercase tracking-widest">
           Conexión Segura
         </span>
       </div>
@@ -41,27 +34,20 @@
 
     <div class="navbar-end gap-2">
       <button
-        class="btn btn-ghost btn-circle btn-sm text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-all"
-        title="Centro de Ayuda"
-      >
+        class="btn btn-ghost btn-circle btn-sm text-base-content/40 hover:text-base-content hover:bg-base-200 transition-all"
+        title="Centro de Ayuda">
         <lucide-icon [img]="helpIcon" class="w-5 h-5 stroke-[1.5]"></lucide-icon>
       </button>
 
-      <div class="hidden sm:block w-px h-6 bg-slate-200 mx-1"></div>
+      <div class="hidden sm:block w-px h-6 bg-base-300 mx-1"></div>
 
       <div class="pl-1">
         @if (hasUser()) { @if (isAdmin()) {
-        <sales-admin-user-menu
-          [userName]="userDisplayName()"
-          [userDetail]="userDisplayDetail()"
-          (logout)="logout()"
-        ></sales-admin-user-menu>
+        <sales-admin-user-menu [userName]="userDisplayName()" [userDetail]="userDisplayDetail()"
+          (logout)="logout()"></sales-admin-user-menu>
         } @else {
-        <sales-customer-user-menu
-          [userName]="userDisplayName()"
-          [userDetail]="userDisplayDetail()"
-          (logout)="logout()"
-        ></sales-customer-user-menu>
+        <sales-customer-user-menu [userName]="userDisplayName()" [userDetail]="userDisplayDetail()"
+          (logout)="logout()"></sales-customer-user-menu>
         } }
       </div>
     </div>

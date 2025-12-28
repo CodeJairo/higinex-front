@@ -1,24 +1,22 @@
 <div
   class="hidden md:flex navbar z-50 glass mx-auto w-fit rounded-xl mt-2 fixed top-2 right-1 sm:right-2 transition-transform duration-300"
-  [class.translate-y-0]="isVisible()"
-  [class.-translate-y-full]="!isVisible()"
->
+  [class.translate-y-0]="isVisible()" [class.-translate-y-full]="!isVisible()">
   <div class="navbar-center">
     <ul class="menu menu-horizontal px-1">
       <li routerLinkActive="link-primary">
-        <a routerLink="/admin/dashboard">Inicio</a>
+        <a routerLink="/admin/dashboard" class="text-base-content">Inicio</a>
       </li>
       <li routerLinkActive="link-primary">
-        <a routerLink="/admin/inventory">Inventario</a>
+        <a routerLink="/admin/inventory" class="text-base-content">Inventario</a>
       </li>
       <li routerLinkActive="link-primary">
-        <a routerLink="/admin/orders">Pedidos</a>
+        <a routerLink="/admin/orders" class="text-base-content">Pedidos</a>
       </li>
       <li routerLinkActive="link-primary">
-        <a routerLink="/admin/contracts">Contratos</a>
+        <a routerLink="/admin/contracts" class="text-base-content">Contratos</a>
       </li>
       <li routerLinkActive="link-primary">
-        <a routerLink="/admin/billing">Facturación</a>
+        <a routerLink="/admin/billing" class="text-base-content">Facturación</a>
       </li>
     </ul>
   </div>
@@ -26,42 +24,32 @@
 
 <div class="dock hidden not-md:flex">
   <button routerLink="/admin/dashboard" routerLinkActive="dock-active">
-    <lucide-icon
-      [img]="houseIcon"
-      class="w-6 h-6 text-blue-600 group-hover:text-white transition-colors"
-    ></lucide-icon>
-    <span class="dock-label">Inicio</span>
+    <lucide-icon [img]="houseIcon"
+      class="w-6 h-6 text-primary group-hover:text-primary-content transition-colors"></lucide-icon>
+    <span class="dock-label text-base-content">Inicio</span>
   </button>
 
   <button routerLink="/admin/inventory" routerLinkActive="dock-active">
-    <lucide-icon
-      [img]="warehouseIcon"
-      class="w-6 h-6 text-green-600 group-hover:text-white transition-colors"
-    ></lucide-icon>
-    <span class="dock-label">Inventario</span>
+    <lucide-icon [img]="warehouseIcon"
+      class="w-6 h-6 text-success group-hover:text-success-content transition-colors"></lucide-icon>
+    <span class="dock-label text-base-content">Inventario</span>
   </button>
 
   <button routerLink="/admin/orders" routerLinkActive="dock-active">
-    <lucide-icon
-      [img]="packageIcon"
-      class="w-6 h-6 text-slate-600 group-hover:text-white transition-colors"
-    ></lucide-icon>
-    <span class="dock-label">Pedidos</span>
+    <lucide-icon [img]="packageIcon"
+      class="w-6 h-6 text-base-content group-hover:text-base-content/80 transition-colors"></lucide-icon>
+    <span class="dock-label text-base-content">Pedidos</span>
   </button>
 
   <button routerLink="/admin/contracts" routerLinkActive="dock-active">
-    <lucide-icon
-      [img]="dolarSignIcon"
-      class="w-6 h-6 text-amber-600 group-hover:text-white transition-colors"
-    ></lucide-icon>
-    <span class="dock-label">Contratos</span>
+    <lucide-icon [img]="dolarSignIcon"
+      class="w-6 h-6 text-warning group-hover:text-warning-content transition-colors"></lucide-icon>
+    <span class="dock-label text-base-content">Contratos</span>
   </button>
 
   <button routerLink="/admin/billing" routerLinkActive="dock-active">
-    <lucide-icon
-      [img]="fileTextIcon"
-      class="w-6 h-6 text-red-600 group-hover:text-white transition-colors"
-    ></lucide-icon>
-    <span class="dock-label">Facturación</span>
+    <lucide-icon [img]="fileTextIcon"
+      class="w-6 h-6 text-error group-hover:text-error-content transition-colors"></lucide-icon>
+    <span class="dock-label text-base-content">Facturación</span>
   </button>
 </div>

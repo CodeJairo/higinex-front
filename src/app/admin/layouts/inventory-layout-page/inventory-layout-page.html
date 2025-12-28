@@ -1,34 +1,20 @@
-<div class="drawer lg:drawer-open min-h-screen">
+<div class="drawer lg:drawer-open min-h-screen bg-base-100">
   <input id="inventory-drawer" type="checkbox" class="drawer-toggle" />
 
   <!-- CONTENIDO PRINCIPAL -->
   <div class="drawer-content flex flex-col">
     <!-- Top bar solo en móvil -->
-    <div class="w-full navbar bg-base-100 border-b border-slate-200 lg:hidden">
+    <div class="w-full navbar bg-base-100 border-b border-base-200 lg:hidden">
       <div class="flex-none">
-        <label
-          for="inventory-drawer"
-          class="btn btn-ghost btn-square"
-          aria-label="Abrir menú de inventario"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M4 6h16M4 12h16M4 18h16"
-            />
+        <label for="inventory-drawer" class="btn btn-ghost btn-square text-base-content"
+          aria-label="Abrir menú de inventario">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </label>
       </div>
       <div class="flex-1">
-        <span class="font-semibold text-slate-800">Manejo de Inventario</span>
+        <span class="font-semibold text-base-content">Manejo de Inventario</span>
       </div>
     </div>
 
@@ -42,36 +28,28 @@
   <div class="drawer-side z-100">
     <label for="inventory-drawer" class="drawer-overlay"></label>
 
-    <aside class="w-64 min-h-screen bg-base-100 border-r border-slate-200 p-4 flex flex-col">
+    <aside class="w-64 min-h-screen bg-base-100 border-r border-base-200 p-4 flex flex-col">
       <!-- Header / Branding -->
       <div class="mb-6">
-        <h2 class="text-lg font-semibold text-slate-800">Manejo de Inventario</h2>
-        <p class="text-sm text-slate-500">Gestión de existencias y productos</p>
+        <h2 class="text-lg font-semibold text-base-content">Manejo de Inventario</h2>
+        <p class="text-sm text-base-content/60">Gestión de existencias y productos</p>
       </div>
 
       <!-- Menu -->
-      <ul class="menu flex-1 gap-3 text-sm">
+      <ul class="menu flex-1 gap-3 text-sm text-base-content">
         <!-- Bloque Inventario -->
         <li>
-          <h3 class="menu-title text-xs uppercase tracking-wide text-slate-400">Inventario</h3>
+          <h3 class="menu-title text-xs uppercase tracking-wide text-base-content/40">Inventario</h3>
           <ul class="mt-1 space-y-1">
             <li>
-              <a
-                routerLink="/admin/inventory"
-                routerLinkActive="bg-base-200"
-                [routerLinkActiveOptions]="{ exact: true }"
-                class="rounded-lg"
-              >
+              <a routerLink="/admin/inventory" routerLinkActive="bg-base-200"
+                [routerLinkActiveOptions]="{ exact: true }" class="rounded-lg">
                 Resumen de inventario
               </a>
             </li>
             <li>
-              <a
-                routerLink="/admin/inventory/movements"
-                routerLinkActive="bg-base-200"
-                [routerLinkActiveOptions]="{ exact: true }"
-                class="rounded-lg"
-              >
+              <a routerLink="/admin/inventory/movements" routerLinkActive="bg-base-200"
+                [routerLinkActiveOptions]="{ exact: true }" class="rounded-lg">
                 Movimientos de stock
               </a>
             </li>
@@ -79,29 +57,23 @@
         </li>
 
         <!-- Divider visual opcional -->
-        <li><div class="divider my-1 pointer-events-none"></div></li>
+        <li>
+          <div class="divider my-1 pointer-events-none"></div>
+        </li>
 
         <!-- Bloque Productos -->
         <li>
-          <h3 class="menu-title text-xs uppercase tracking-wide text-slate-400">Productos</h3>
+          <h3 class="menu-title text-xs uppercase tracking-wide text-base-content/40">Productos</h3>
           <ul class="mt-1 space-y-1">
             <li>
-              <a
-                routerLink="/admin/inventory/products"
-                routerLinkActive="bg-base-200"
-                [routerLinkActiveOptions]="{ exact: true }"
-                class="rounded-lg"
-              >
+              <a routerLink="/admin/inventory/products" routerLinkActive="bg-base-200"
+                [routerLinkActiveOptions]="{ exact: true }" class="rounded-lg">
                 Lista de productos
               </a>
             </li>
             <li>
-              <a
-                routerLink="/admin/inventory/create-product"
-                routerLinkActive="bg-base-200"
-                [routerLinkActiveOptions]="{ exact: true }"
-                class="rounded-lg"
-              >
+              <a routerLink="/admin/inventory/create-product" routerLinkActive="bg-base-200"
+                [routerLinkActiveOptions]="{ exact: true }" class="rounded-lg">
                 Crear producto
               </a>
             </li>
@@ -110,25 +82,17 @@
 
         <!-- Bloque Variantes -->
         <li>
-          <h3 class="menu-title text-xs uppercase tracking-wide text-slate-400">Variantes</h3>
+          <h3 class="menu-title text-xs uppercase tracking-wide text-base-content/40">Variantes</h3>
           <ul class="mt-1 space-y-1">
             <li>
-              <a
-                routerLink="/admin/inventory/variants"
-                routerLinkActive="bg-base-200"
-                [routerLinkActiveOptions]="{ exact: true }"
-                class="rounded-lg"
-              >
+              <a routerLink="/admin/inventory/variants" routerLinkActive="bg-base-200"
+                [routerLinkActiveOptions]="{ exact: true }" class="rounded-lg">
                 Lista de variantes
               </a>
             </li>
             <li>
-              <a
-                routerLink="/admin/inventory/create-variant"
-                routerLinkActive="bg-base-200"
-                [routerLinkActiveOptions]="{ exact: true }"
-                class="rounded-lg"
-              >
+              <a routerLink="/admin/inventory/create-variant" routerLinkActive="bg-base-200"
+                [routerLinkActiveOptions]="{ exact: true }" class="rounded-lg">
                 Crear variante
               </a>
             </li>
@@ -137,7 +101,7 @@
       </ul>
 
       <!-- Footer / espacio inferior -->
-      <div class="mt-6 text-xs text-slate-500">Administración del sistema</div>
+      <div class="mt-6 text-xs text-base-content/50">Administración del sistema</div>
     </aside>
   </div>
 </div>

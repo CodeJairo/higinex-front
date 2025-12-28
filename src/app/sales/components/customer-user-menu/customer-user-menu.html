@@ -1,112 +1,79 @@
 <div class="dropdown dropdown-end">
-  <button
-    tabindex="0"
-    type="button"
-    class="btn btn-ghost hover:bg-slate-50 gap-3 px-2 h-14 rounded-2xl transition-all duration-300 min-w-0"
-  >
+  <button tabindex="0" type="button"
+    class="btn btn-ghost hover:bg-base-200 gap-3 px-2 h-14 rounded-2xl transition-all duration-300 min-w-0">
     <div
-      class="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center shrink-0 shadow-sm border border-slate-800"
-    >
-      <lucide-icon [img]="userIcon" class="w-5 h-5 text-white"></lucide-icon>
+      class="w-10 h-10 rounded-xl bg-neutral flex items-center justify-center shrink-0 shadow-sm border border-neutral">
+      <lucide-icon [img]="userIcon" class="w-5 h-5 text-neutral-content"></lucide-icon>
     </div>
 
     <div class="hidden lg:flex flex-col items-start text-left leading-none min-w-0 max-w-35">
-      <span class="text-sm font-black text-slate-900 uppercase tracking-tighter truncate w-full">
+      <span class="text-sm font-black text-base-content uppercase tracking-tighter truncate w-full">
         {{ userName }}
       </span>
-      <span
-        class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1 truncate w-full"
-      >
+      <span class="text-[10px] font-bold text-base-content/40 uppercase tracking-widest mt-1 truncate w-full">
         Cliente Autorizado
       </span>
     </div>
   </button>
 
-  <div
-    tabindex="0"
-    class="dropdown-content mt-4 z-60 w-72 shadow-[0_20px_50px_rgba(0,0,0,0.1)] bg-white rounded-2xl border border-slate-100 overflow-hidden animate-in fade-in slide-in-from-top-2"
-  >
-    <div class="px-6 py-5 bg-slate-50/50 border-b border-slate-100 min-w-0">
+  <div tabindex="0"
+    class="dropdown-content mt-4 z-60 w-72 shadow-[0_20px_50px_rgba(0,0,0,0.1)] bg-base-100 rounded-2xl border border-base-200 overflow-hidden animate-in fade-in slide-in-from-top-2">
+    <div class="px-6 py-5 bg-base-200/50 border-b border-base-200 min-w-0">
       <div class="flex items-center gap-3 mb-3">
         <div class="w-2 h-2 rounded-full bg-primary animate-pulse shrink-0"></div>
-        <span class="text-[10px] font-black text-primary uppercase tracking-[0.2em]"
-          >Cuenta Activa</span
-        >
+        <span class="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Cuenta Activa</span>
       </div>
-      <p class="text-sm font-black text-slate-900 truncate tracking-tight uppercase w-full">
+      <p class="text-sm font-black text-base-content truncate tracking-tight uppercase w-full">
         {{ userName }}
       </p>
-      <p class="text-xs font-medium text-slate-400 truncate mt-0.5 w-full">
+      <p class="text-xs font-medium text-base-content/40 truncate mt-0.5 w-full">
         {{ userDetail }}
       </p>
     </div>
 
     <ul class="menu p-3 space-y-1 w-full">
-      <li
-        class="menu-title px-3 py-2 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400"
-      >
+      <li class="menu-title px-3 py-2 text-[10px] font-black uppercase tracking-[0.15em] text-base-content/40">
         Mi Cuenta
       </li>
 
       <li>
-        <button
-          (click)="goToMyAccount()"
-          class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-colors group"
-        >
-          <lucide-icon
-            [img]="userCircleIcon"
-            class="w-4 h-4 text-slate-400 group-hover:text-primary"
-          ></lucide-icon>
-          <span class="text-xs font-bold text-slate-700">Mi Cuenta</span>
+        <button (click)="goToMyAccount()"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-base-200 transition-colors group">
+          <lucide-icon [img]="userCircleIcon"
+            class="w-4 h-4 text-base-content/40 group-hover:text-primary"></lucide-icon>
+          <span class="text-xs font-bold text-base-content">Mi Cuenta</span>
         </button>
       </li>
 
       <li>
-        <button
-          class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-colors group"
-        >
-          <lucide-icon
-            [img]="packageIcon"
-            class="w-4 h-4 text-slate-400 group-hover:text-primary"
-          ></lucide-icon>
-          <span class="text-xs font-bold text-slate-700">Historial de Pedidos</span>
+        <button class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-base-200 transition-colors group">
+          <lucide-icon [img]="packageIcon" class="w-4 h-4 text-base-content/40 group-hover:text-primary"></lucide-icon>
+          <span class="text-xs font-bold text-base-content">Historial de Pedidos</span>
         </button>
       </li>
 
       <li>
-        <button
-          (click)="goToMyAddresses()"
-          class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-colors group"
-        >
-          <lucide-icon
-            [img]="mapPinIcon"
-            class="w-4 h-4 text-slate-400 group-hover:text-primary"
-          ></lucide-icon>
-          <span class="text-xs font-bold text-slate-700">Puntos de Entrega</span>
+        <button (click)="goToMyAddresses()"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-base-200 transition-colors group">
+          <lucide-icon [img]="mapPinIcon" class="w-4 h-4 text-base-content/40 group-hover:text-primary"></lucide-icon>
+          <span class="text-xs font-bold text-base-content">Puntos de Entrega</span>
         </button>
       </li>
 
-      <div class="h-px bg-slate-100 my-2 mx-3"></div>
+      <div class="h-px bg-base-200 my-2 mx-3"></div>
 
       <li>
-        <button
-          class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-colors group"
-        >
-          <lucide-icon
-            [img]="helpIcon"
-            class="w-4 h-4 text-slate-400 group-hover:text-primary"
-          ></lucide-icon>
-          <span class="text-xs font-bold text-slate-700">Centro de Soporte</span>
+        <button class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-base-200 transition-colors group">
+          <lucide-icon [img]="helpIcon" class="w-4 h-4 text-base-content/40 group-hover:text-primary"></lucide-icon>
+          <span class="text-xs font-bold text-base-content">Centro de Soporte</span>
         </button>
       </li>
 
-      <div class="h-px bg-slate-100 my-2 mx-3"></div>
+      <div class="h-px bg-base-200 my-2 mx-3"></div>
 
       <li>
-        <button
-          (click)="onLogout()"
-          class="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-red-50 text-red-500 transition-colors group"
-        >
+        <button (click)="onLogout()"
+          class="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-error/10 text-error transition-colors group">
           <lucide-icon [img]="logoutIcon" class="w-4 h-4"></lucide-icon>
           <span class="text-xs font-black uppercase tracking-widest">Cerrar Sesión</span>
         </button>

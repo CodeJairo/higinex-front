@@ -1,43 +1,37 @@
-<footer class="w-full bg-white border-t border-slate-200 mt-auto py-3 px-6">
+<footer class="w-full bg-base-100 border-t border-base-200 mt-auto py-3 px-6">
   <div class="max-w-480 mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
     <div class="flex items-center gap-3">
       <div
-        class="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center border border-slate-200 grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all"
-      >
+        class="w-8 h-8 bg-base-200 rounded-lg flex items-center justify-center border border-base-300 grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all">
         <img src="/logo.svg" alt="Higinex Admin" class="w-full h-full object-cover p-1" />
       </div>
 
       <div class="flex flex-col leading-none">
-        <span class="text-[10px] font-black text-slate-700 uppercase tracking-[0.15em]">
+        <span class="text-[10px] font-black text-base-content uppercase tracking-[0.15em]">
           Higinex SAS
         </span>
-        <span class="text-[10px] text-slate-400 font-medium mt-0.5">
+        <span class="text-[10px] text-base-content/60 font-medium mt-0.5">
           &copy; {{ actualYear() }} Panel Administrativo
         </span>
       </div>
     </div>
 
     <div class="flex items-center gap-4 sm:gap-6">
-      <div
-        class="flex items-center gap-2 px-2.5 py-1 bg-emerald-50 border border-emerald-100 rounded-md"
-      >
+      <div class="flex items-center gap-2 px-2.5 py-1 bg-success/10 border border-success/20 rounded-md">
         <div class="relative flex h-1.5 w-1.5">
-          <span
-            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"
-          ></span>
-          <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-success"></span>
         </div>
-        <span class="text-[9px] font-bold text-emerald-700 uppercase tracking-widest">
+        <span class="text-[9px] font-bold text-success uppercase tracking-widest">
           Sistema Online
         </span>
       </div>
 
       <div
-        class="hidden sm:flex items-center gap-4 text-[10px] font-bold text-slate-300 uppercase tracking-wider"
-      >
+        class="hidden sm:flex items-center gap-4 text-[10px] font-bold text-base-content/40 uppercase tracking-wider">
         <span>v1.0.0 (Stable)</span>
-        <span class="w-px h-3 bg-slate-200"></span>
-        <a href="#" class="hover:text-slate-500 transition-colors">Soporte TI</a>
+        <span class="w-px h-3 bg-base-300"></span>
+        <a href="#" class="hover:text-base-content transition-colors">Soporte TI</a>
       </div>
     </div>
   </div>

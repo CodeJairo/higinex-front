@@ -15,11 +15,11 @@ export class ImageWithFallback {
   isLoading = signal(true);
 
   readonly errorClass = computed(
-    () => `flex items-center justify-center bg-gray-100 ${this.class}`
+    () => `flex items-center justify-center bg-base-200 ${this.class}`
   );
 
   readonly loadingClass = computed(
-    () => `flex items-center justify-center bg-gray-100 animate-pulse ${this.class}`
+    () => `flex items-center justify-center bg-base-200 animate-pulse ${this.class}`
   );
 
   readonly imageClass = computed(() => `${this.class}${this.isLoading() ? ' hidden' : ''}`);

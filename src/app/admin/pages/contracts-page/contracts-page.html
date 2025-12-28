@@ -9,10 +9,10 @@
         </ul>
       </div>
 
-      <h1 class="text-3xl font-semibold text-slate-900 mb-1">
+      <h1 class="text-3xl font-semibold text-base-content mb-1">
         Gestion de Contratos y Precios por Cliente
       </h1>
-      <p class="text-sm text-slate-600 max-w-3xl">
+      <p class="text-sm text-base-content/60 max-w-3xl">
         Selecciona un cliente, revisa sus contratos y edita los precios por variante definidos en el
         acuerdo.
       </p>
@@ -25,62 +25,46 @@
         <!-- Lista de clientes (ejemplo) -->
         <div class="card bg-base-100 border border-base-200 shadow-sm">
           <div class="card-body">
-            <h2 class="text-lg font-medium text-slate-900 mb-2">Clientes</h2>
-            <p class="text-xs text-slate-500 mb-3">Selecciona un cliente para ver sus contratos.</p>
+            <h2 class="text-lg font-medium text-base-content mb-2">Clientes</h2>
+            <p class="text-xs text-base-content/50 mb-3">Selecciona un cliente para ver sus contratos.</p>
 
             <div class="mb-3">
               <div class="join w-full">
-                <input
-                  type="text"
-                  class="input input-bordered input-sm join-item w-full"
-                  placeholder="Buscar por nombre, correo o documento"
-                  [value]="customerSearch()"
-                  (input)="onCustomerSearch($any($event.target).value)"
-                />
-                <button
-                  type="button"
-                  class="btn btn-outline btn-sm join-item"
-                  (click)="clearCustomerSearch()"
-                  [disabled]="!customerSearch()"
-                >
+                <input type="text" class="input input-bordered input-sm join-item w-full"
+                  placeholder="Buscar por nombre, correo o documento" [value]="customerSearch()"
+                  (input)="onCustomerSearch($any($event.target).value)" />
+                <button type="button" class="btn btn-outline btn-sm join-item" (click)="clearCustomerSearch()"
+                  [disabled]="!customerSearch()">
                   Limpiar
                 </button>
               </div>
             </div>
 
             @if (isLoadingCustomers()) {
-            <div class="text-xs text-slate-500 mb-3">Cargando clientes...</div>
+            <div class="text-xs text-base-content/50 mb-3">Cargando clientes...</div>
             } @else if (hasCustomersError()) {
-            <div class="text-xs text-red-600 mb-3">No se pudieron cargar los clientes.</div>
+            <div class="text-xs text-error mb-3">No se pudieron cargar los clientes.</div>
             }
 
             <ul class="menu bg-base-100 rounded-lg border border-base-200 max-h-64 overflow-auto">
               @for (customer of customers(); track customer.id) {
               <li>
-                <button
-                  type="button"
-                  class="justify-start"
-                  [class.active]="selectedCustomer()?.id === customer.id"
-                  (click)="onSelectCustomer(customer)"
-                >
+                <button type="button" class="justify-start" [class.active]="selectedCustomer()?.id === customer.id"
+                  (click)="onSelectCustomer(customer)">
                   <div class="flex flex-col items-start gap-1">
                     <div class="flex items-center gap-2">
                       <span class="font-medium text-sm">
                         {{ customer.name }}
                       </span>
-                      <span
-                        class="badge badge-xs"
-                        [class.badge-success]="isCustomerStatusActive(customer.id)"
-                        [class.badge-ghost]="isCustomerStatusInactive(customer.id)"
-                        [class.badge-outline]="
+                      <span class="badge badge-xs" [class.badge-success]="isCustomerStatusActive(customer.id)"
+                        [class.badge-ghost]="isCustomerStatusInactive(customer.id)" [class.badge-outline]="
                           !isCustomerStatusActive(customer.id) &&
                           !isCustomerStatusInactive(customer.id)
-                        "
-                      >
+                        ">
                         {{ getCustomerStatusLabel(customer.id) }}
                       </span>
                     </div>
-                    <span class="text-xs text-slate-500">
+                    <span class="text-xs text-base-content/50">
                       {{ customer.documentType }} {{ customer.documentNumber }} |
                       {{ customer.email }}
                     </span>
@@ -88,7 +72,7 @@
                 </button>
               </li>
               } @empty {
-              <li class="text-xs text-slate-500 px-4 py-2">No hay clientes disponibles.</li>
+              <li class="text-xs text-base-content/50 px-4 py-2">No hay clientes disponibles.</li>
               }
             </ul>
           </div>
@@ -98,87 +82,69 @@
         <div class="card bg-base-100 border border-base-200 shadow-sm">
           <div class="card-body">
             <div class="flex items-center justify-between mb-2">
-              <h2 class="text-lg font-medium text-slate-900">Contratos del cliente</h2>
+              <h2 class="text-lg font-medium text-base-content">Contratos del cliente</h2>
             </div>
 
             @if (!selectedCustomer()) {
-            <div class="text-xs text-slate-500 py-8 text-center">
+            <div class="text-xs text-base-content/50 py-8 text-center">
               Selecciona un cliente para ver sus contratos.
             </div>
             } @else if (isLoadingContracts()) {
-            <div class="text-xs text-slate-500 py-6 text-center">Cargando contratos...</div>
+            <div class="text-xs text-base-content/50 py-6 text-center">Cargando contratos...</div>
             } @else if (hasContractsError()) {
-            <div class="text-xs text-red-600 py-6 text-center">
+            <div class="text-xs text-error py-6 text-center">
               No se pudieron cargar los contratos.
             </div>
             } @else {
             <div class="space-y-2 max-h-64 overflow-auto">
               @for (contract of contractsForSelectedCustomer(); track contract.id) {
-              <button
-                type="button"
+              <button type="button"
                 class="w-full text-left border rounded-lg px-3 py-2 text-sm hover:bg-base-200 transition-colors"
-                [class.border-blue-500]="selectedContractId() === contract.id"
-                (click)="onSelectContract(contract)"
-              >
+                [class.border-primary]="selectedContractId() === contract.id" (click)="onSelectContract(contract)">
                 <div class="flex items-center justify-between mb-1">
-                  <span class="font-medium text-slate-900 text-xs">
+                  <span class="font-medium text-base-content text-xs">
                     Contrato {{ contract.id }}
                   </span>
-                  <span
-                    class="badge badge-xs"
-                    [class.badge-success]="contract.isActive"
-                    [class.badge-ghost]="!contract.isActive"
-                  >
+                  <span class="badge badge-xs" [class.badge-success]="contract.isActive"
+                    [class.badge-ghost]="!contract.isActive">
                     {{ formatContractStatus(contract.isActive) }}
                   </span>
                 </div>
-                <div class="text-[11px] text-slate-500">
+                <div class="text-[11px] text-base-content/50">
                   Inicio: {{ formatDate(contract.startsAt) }} | Fin:
                   {{ formatDate(contract.endsAt) }}
                 </div>
-                <div class="text-[11px] text-slate-500 mt-1">
+                <div class="text-[11px] text-base-content/50 mt-1">
                   Items: {{ contract._count.items }}
                 </div>
               </button>
               } @empty {
-              <div class="text-xs text-slate-500 py-4">El cliente no tiene contratos.</div>
+              <div class="text-xs text-base-content/50 py-4">El cliente no tiene contratos.</div>
               }
             </div>
 
             <!-- Crear nuevo contrato -->
             <div class="mt-4 border-t border-base-200 pt-4">
-              <h3 class="text-sm font-medium text-slate-900 mb-2">Crear nuevo contrato</h3>
+              <h3 class="text-sm font-medium text-base-content mb-2">Crear nuevo contrato</h3>
 
               <form [formGroup]="createContractForm" class="space-y-2">
                 <div class="form-control">
                   <label class="label">
                     <span class="label-text text-xs">Fecha de inicio</span>
                   </label>
-                  <input
-                    type="date"
-                    class="input input-bordered input-xs"
-                    formControlName="startsAt"
-                  />
+                  <input type="date" class="input input-bordered input-xs" formControlName="startsAt" />
                 </div>
 
                 <div class="form-control">
                   <label class="label">
                     <span class="label-text text-xs">Fecha de fin (opcional)</span>
                   </label>
-                  <input
-                    type="date"
-                    class="input input-bordered input-xs"
-                    formControlName="endsAt"
-                  />
+                  <input type="date" class="input input-bordered input-xs" formControlName="endsAt" />
                 </div>
 
                 <div class="form-control">
                   <label class="label cursor-pointer justify-start gap-2">
-                    <input
-                      type="checkbox"
-                      class="checkbox checkbox-xs"
-                      formControlName="isActive"
-                    />
+                    <input type="checkbox" class="checkbox checkbox-xs" formControlName="isActive" />
                     <span class="label-text text-xs">Marcar como activo</span>
                   </label>
                 </div>
@@ -201,77 +167,56 @@
         <div class="card bg-base-100 border border-base-200 shadow-sm">
           <div class="card-body">
             <div class="flex items-center justify-between mb-3">
-              <h2 class="text-lg font-medium text-slate-900">Detalle del contrato</h2>
+              <h2 class="text-lg font-medium text-base-content">Detalle del contrato</h2>
 
               <div class="flex gap-2">
-                <button
-                  type="button"
-                  class="btn btn-outline btn-xs"
-                  (click)="onSaveContract()"
-                  [disabled]="!selectedContract()"
-                >
+                <button type="button" class="btn btn-outline btn-xs" (click)="onSaveContract()"
+                  [disabled]="!selectedContract()">
                   Guardar cambios
                 </button>
-                <button
-                  type="button"
-                  class="btn btn-error btn-xs"
-                  (click)="requestDeleteContract()"
-                  [disabled]="!selectedContract()"
-                >
+                <button type="button" class="btn btn-error btn-xs" (click)="requestDeleteContract()"
+                  [disabled]="!selectedContract()">
                   Eliminar
                 </button>
               </div>
             </div>
 
             @if (!selectedContract()) {
-            <div class="text-xs text-slate-500 py-6">
+            <div class="text-xs text-base-content/50 py-6">
               Selecciona un contrato para ver y actualizar sus detalles.
             </div>
             } @else {
-            <div
-              [formGroup]="updateContractForm"
-              class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-slate-600"
-            >
+            <div [formGroup]="updateContractForm"
+              class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-base-content/60">
               <div>
-                <div class="font-semibold text-slate-900 text-xs mb-1">Cliente</div>
+                <div class="font-semibold text-base-content text-xs mb-1">Cliente</div>
                 <div>
                   {{ selectedCustomer()?.name }}
                 </div>
-                <div class="text-xs text-slate-500">
+                <div class="text-xs text-base-content/50">
                   {{ selectedCustomer()?.documentType }}
                   {{ selectedCustomer()?.documentNumber }}
                 </div>
               </div>
 
               <div>
-                <div class="font-semibold text-slate-900 text-xs mb-1">Estado</div>
+                <div class="font-semibold text-base-content text-xs mb-1">Estado</div>
                 <div class="flex items-center gap-2">
-                  <span
-                    class="badge badge-sm"
-                    [class.badge-success]="selectedContract()?.isActive"
-                    [class.badge-ghost]="!selectedContract()?.isActive"
-                  >
+                  <span class="badge badge-sm" [class.badge-success]="selectedContract()?.isActive"
+                    [class.badge-ghost]="!selectedContract()?.isActive">
                     {{ formatContractStatus(selectedContract()?.isActive ?? false) }}
                   </span>
                 </div>
               </div>
 
               <div>
-                <div class="font-semibold text-slate-900 text-xs mb-1">Fecha de inicio</div>
-                <input
-                  type="date"
-                  class="input input-bordered input-xs w-full"
-                  formControlName="startsAt"
-                />
+                <div class="font-semibold text-base-content text-xs mb-1">Fecha de inicio</div>
+                <input type="date" class="input input-bordered input-xs w-full" formControlName="startsAt" />
               </div>
 
               <div>
-                <div class="font-semibold text-slate-900 text-xs mb-1">Fecha de fin</div>
-                <input
-                  type="date"
-                  class="input input-bordered input-xs w-full"
-                  formControlName="endsAt"
-                />
+                <div class="font-semibold text-base-content text-xs mb-1">Fecha de fin</div>
+                <input type="date" class="input input-bordered input-xs w-full" formControlName="endsAt" />
               </div>
 
               <div class="sm:col-span-2">
@@ -292,32 +237,28 @@
         <div class="card bg-base-100 border border-base-200 shadow-sm">
           <div class="card-body">
             <div class="flex items-center justify-between mb-3">
-              <h2 class="text-lg font-medium text-slate-900">Precios por variante</h2>
-              <button
-                type="button"
-                class="btn btn-primary btn-xs"
-                (click)="onSavePrices()"
-                [disabled]="!selectedContract() || !hasPriceChanges() || isSavingPrices()"
-              >
+              <h2 class="text-lg font-medium text-base-content">Precios por variante</h2>
+              <button type="button" class="btn btn-primary btn-xs" (click)="onSavePrices()"
+                [disabled]="!selectedContract() || !hasPriceChanges() || isSavingPrices()">
                 Guardar precios del contrato
               </button>
             </div>
 
             @if (!selectedContract()) {
-            <div class="text-xs text-slate-500 py-6">
+            <div class="text-xs text-base-content/50 py-6">
               Selecciona un contrato para asignar precios a sus variantes.
             </div>
             } @else if (isLoadingVariants() || isLoadingContractItems()) {
-            <div class="text-xs text-slate-500 py-6 text-center">Cargando precios...</div>
+            <div class="text-xs text-base-content/50 py-6 text-center">Cargando precios...</div>
             } @else if (hasVariantsError() || hasContractItemsError()) {
-            <div class="text-xs text-red-600 py-6 text-center">
+            <div class="text-xs text-error py-6 text-center">
               No se pudieron cargar las variantes o los precios del contrato.
             </div>
             } @else {
             <div class="overflow-x-auto">
               <table class="table table-zebra text-sm">
                 <thead>
-                  <tr class="text-xs text-slate-500">
+                  <tr class="text-xs text-base-content/50">
                     <th>SKU</th>
                     <th>Producto</th>
                     <th>Variante</th>
@@ -333,50 +274,42 @@
                     <td class="font-mono text-xs">
                       {{ row.sku }}
                     </td>
-                    <td class="text-xs text-slate-900">
+                    <td class="text-xs text-base-content">
                       {{ row.productName }}
                     </td>
                     <td>
                       <div class="flex flex-col">
-                        <span class="text-slate-900 text-xs">
+                        <span class="text-base-content text-xs">
                           {{ row.variantName }}
                         </span>
                       </div>
                     </td>
-                    <td class="text-xs text-slate-500">
+                    <td class="text-xs text-base-content/50">
                       {{ row.attributesLabel || '--' }}
                     </td>
                     <td class="text-right text-xs">
                       @if (row.markedForDelete) {
-                      <span class="text-amber-600">Se eliminara</span>
+                      <span class="text-warning">Se eliminara</span>
                       } @else {
                       <span>{{ row.currentPrice ?? '--' }}</span>
                       }
                     </td>
                     <td class="text-right">
-                      <input
-                        type="number"
-                        class="input input-bordered input-xs w-32 text-right"
+                      <input type="number" class="input input-bordered input-xs w-32 text-right"
                         [value]="row.draftPrice ?? row.currentPrice ?? ''"
-                        (input)="onPriceChange(row.variantId, $any($event.target).value)"
-                        placeholder="Ej. 45000"
-                        min="0"
-                      />
+                        (input)="onPriceChange(row.variantId, $any($event.target).value)" placeholder="Ej. 45000"
+                        min="0" />
                     </td>
                     <td class="text-right">
-                      <button
-                        type="button"
-                        class="btn btn-ghost btn-xs"
-                        (click)="requestRemovePrice(row.variantId)"
-                        [disabled]="row.currentPrice == null"
-                      >
+                      <button type="button" class="btn btn-ghost btn-xs" (click)="requestRemovePrice(row.variantId)"
+                        [disabled]="row.currentPrice == null">
                         Quitar
                       </button>
                     </td>
                   </tr>
                   } @empty {
                   <tr>
-                    <td colspan="7" class="text-center text-xs text-slate-500 py-6">
+                    <td colspan="7" class="text-center text-xs text-base-content/50 py-6">
                       No hay variantes disponibles.
                     </td>
                   </tr>
@@ -394,9 +327,9 @@
 
 @if (pendingContractDeleteId()) {
 <div class="modal modal-open">
-  <div class="modal-box">
-    <h3 class="font-semibold text-lg text-slate-900">Eliminar contrato</h3>
-    <p class="text-sm text-slate-600 mt-2">
+  <div class="modal-box bg-base-100">
+    <h3 class="font-semibold text-lg text-base-content">Eliminar contrato</h3>
+    <p class="text-sm text-base-content/70 mt-2">
       Este contrato se desactivara y quedara como eliminado. No se borraran los registros
       historicos. Deseas continuar?
     </p>
@@ -413,11 +346,11 @@
 </div>
 } @if (pendingPriceDeleteRow(); as pendingRow) {
 <div class="modal modal-open">
-  <div class="modal-box">
-    <h3 class="font-semibold text-lg text-slate-900">Quitar precio</h3>
-    <p class="text-sm text-slate-600 mt-2">
+  <div class="modal-box bg-base-100">
+    <h3 class="font-semibold text-lg text-base-content">Quitar precio</h3>
+    <p class="text-sm text-base-content/70 mt-2">
       Se eliminara el precio de la variante
-      <span class="font-semibold text-slate-900">{{ pendingRow.variantName }}</span>
+      <span class="font-semibold text-base-content">{{ pendingRow.variantName }}</span>
       ({{ pendingRow.sku }}). Deseas continuar?
     </p>
     <div class="modal-action">

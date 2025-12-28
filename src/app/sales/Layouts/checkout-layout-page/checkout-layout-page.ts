@@ -23,9 +23,9 @@ export class CheckoutLayoutPage {
 
   getStepClass(step: number) {
     if (this.currentStep === step)
-      return 'bg-primary text-white shadow-lg shadow-primary/30 scale-110';
-    if (this.currentStep > step) return 'bg-green-500 text-white';
-    return 'bg-slate-100 text-slate-400';
+      return 'bg-primary text-primary-content shadow-lg shadow-primary/30 scale-110';
+    if (this.currentStep > step) return 'bg-success text-success-content';
+    return 'bg-base-200 text-base-content/40';
   }
 
   goToCatalog() {

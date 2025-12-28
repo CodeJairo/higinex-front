@@ -74,13 +74,13 @@ export class DashboardPage {
   getOrderStatusInfo(status: string): { label: string; colorClass: string } {
     switch (status) {
       case 'delivered':
-        return { label: 'Entregado', colorClass: 'text-green-600 bg-green-50' };
+        return { label: 'Entregado', colorClass: 'text-success bg-success/10' };
       case 'in-transit':
-        return { label: 'En camino', colorClass: 'text-blue-600 bg-blue-50' };
+        return { label: 'En camino', colorClass: 'text-info bg-info/10' };
       case 'processing':
-        return { label: 'Procesando', colorClass: 'text-amber-600 bg-amber-50' };
+        return { label: 'Procesando', colorClass: 'text-warning bg-warning/10' };
       default:
-        return { label: 'Desconocido', colorClass: 'text-slate-600 bg-slate-50' };
+        return { label: 'Desconocido', colorClass: 'text-base-content/60 bg-base-200' };
     }
   }
 

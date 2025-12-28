@@ -1,37 +1,31 @@
-<aside class="hidden lg:block w-80 bg-white border-r border-slate-200 h-full overflow-y-auto">
+<aside class="hidden lg:block w-80 bg-base-100 border-r border-base-300 h-full overflow-y-auto">
   <div class="p-6">
     <div class="flex items-center gap-2 mb-6">
-      <lucide-icon [img]="filterIcon" class="w-5 h-5 text-blue-600"></lucide-icon>
-      <h2 class="text-slate-900">Filtros</h2>
+      <lucide-icon [img]="filterIcon" class="w-5 h-5 text-primary"></lucide-icon>
+      <h2 class="text-base-content font-bold">Filtros</h2>
     </div>
 
     <div class="space-y-4">
       <!-- Products -->
-      <div class="border-b border-slate-200 pb-4">
-        <button
-          (click)="toggleSection('products')"
-          class="w-full flex items-center justify-between py-3 hover:text-blue-600 transition-colors cursor-pointer"
-        >
-          <span class="text-slate-900">Productos</span>
+      <div class="border-b border-base-200 pb-4">
+        <button (click)="toggleSection('products')"
+          class="w-full flex items-center justify-between py-3 hover:text-primary transition-colors cursor-pointer">
+          <span class="text-base-content">Productos</span>
           @if (isSectionExpanded('products')) {
-          <lucide-icon [img]="chevronUpIcon" class="w-4 h-4 text-slate-400"></lucide-icon>
+          <lucide-icon [img]="chevronUpIcon" class="w-4 h-4 text-base-content/50"></lucide-icon>
           } @else {
-          <lucide-icon [img]="chevronDownIcon" class="w-4 h-4 text-slate-400"></lucide-icon>
+          <lucide-icon [img]="chevronDownIcon" class="w-4 h-4 text-base-content/50"></lucide-icon>
           }
         </button>
         @if (isSectionExpanded('products')) {
         <div class="mt-2 space-y-2">
           @if (sortedProducts().length === 0) {
-          <p class="text-sm text-slate-500">No hay productos disponibles.</p>
+          <p class="text-sm text-base-content/60">No hay productos disponibles.</p>
           } @else { @for (product of sortedProducts(); track product.id) {
           <label class="flex items-center gap-3 cursor-pointer group">
-            <input
-              type="checkbox"
-              [checked]="isProductSelected(product.id)"
-              (change)="toggleProduct(product.id)"
-              class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-            />
-            <span class="flex-1 text-sm text-slate-700 group-hover:text-slate-900">
+            <input type="checkbox" [checked]="isProductSelected(product.id)" (change)="toggleProduct(product.id)"
+              class="checkbox checkbox-primary checkbox-sm" />
+            <span class="flex-1 text-sm text-base-content/80 group-hover:text-base-content transition-colors">
               {{ product.name }}
             </span>
           </label>
@@ -42,10 +36,8 @@
     </div>
 
     <!-- Clear Filters -->
-    <button
-      (click)="clearFilters()"
-      class="w-full mt-6 py-2 text-sm text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
-    >
+    <button (click)="clearFilters()"
+      class="w-full mt-6 py-2 text-sm text-primary hover:text-primary-focus hover:bg-primary/10 rounded-lg transition-colors cursor-pointer">
       Limpiar filtros
     </button>
   </div>

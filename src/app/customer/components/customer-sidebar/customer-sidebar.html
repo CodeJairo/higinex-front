@@ -1,27 +1,22 @@
 <aside class="hidden md:flex flex-col w-72 shrink-0 gap-6">
   <div class="bg-base-100 border border-base-200 rounded-2xl overflow-hidden shadow-sm">
-    <div class="p-5 border-b border-base-100 bg-slate-50/50">
-      <h2 class="text-xs font-bold uppercase text-slate-400 tracking-widest">Ajustes generales</h2>
+    <div class="p-5 border-b border-base-100 bg-base-200/50">
+      <h2 class="text-xs font-bold uppercase text-base-content/40 tracking-widest">Ajustes generales</h2>
     </div>
 
     <nav class="p-2">
       <ul class="space-y-1">
         <li *ngFor="let item of navItems">
-          <a
-            [routerLink]="item.route"
-            routerLinkActive="bg-primary/5 text-primary !font-semibold shadow-[inset_3px_0_0_0_#0EA5E9]"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all group"
-          >
-            <lucide-icon
-              [img]="item.icon"
-              class="w-5 h-5 transition-colors group-hover:text-primary"
-              routerLinkActive="text-primary"
-            ></lucide-icon>
+          <a [routerLink]="item.route"
+            routerLinkActive="bg-primary/5 text-primary !font-semibold shadow-[inset_3px_0_0_0_currentColor]"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl text-base-content/60 hover:bg-base-200 hover:text-base-content transition-all group">
+            <lucide-icon [img]="item.icon" class="w-5 h-5 transition-colors group-hover:text-primary"
+              routerLinkActive="text-primary"></lucide-icon>
 
             <div class="flex flex-col min-w-0">
               <span class="text-sm leading-none">{{ item.label }}</span>
               @if (item.description) {
-              <span class="text-[11px] text-slate-400 font-normal mt-1 truncate">
+              <span class="text-[11px] text-base-content/40 font-normal mt-1 truncate">
                 {{ item.description }}
               </span>
               }
@@ -31,20 +26,13 @@
       </ul>
     </nav>
 
-    <div class="mt-4 p-4 border-t border-slate-100 bg-blue-50/30">
+    <div class="mt-4 p-4 border-t border-base-200 bg-info/10">
       <div class="flex flex-col gap-2">
-        <p class="text-[11px] text-blue-600 font-medium px-1">¿Necesitas ayuda?</p>
-        <button class="btn btn-sm btn-ghost justify-start gap-2 text-blue-700 hover:bg-blue-100/50">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="w-4 h-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
+        <p class="text-[11px] text-info font-medium px-1">¿Necesitas ayuda?</p>
+        <button class="btn btn-sm btn-ghost justify-start gap-2 text-info hover:bg-info/20">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path
-              d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a.75.75 0 01-1.074-.765 1.99 1.99 0 01.11-.723 8.51 8.51 0 01-1.446-4.232C3.03 12.03 7.03 8.25 12 8.25s9 3.78 9 8.25z"
-            />
+              d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a.75.75 0 01-1.074-.765 1.99 1.99 0 01.11-.723 8.51 8.51 0 01-1.446-4.232C3.03 12.03 7.03 8.25 12 8.25s9 3.78 9 8.25z" />
           </svg>
           Contactar soporte
         </button>
@@ -54,14 +42,10 @@
 </aside>
 
 <nav
-  class="md:hidden sticky top-16.25 z-20 bg-base-200/95 backdrop-blur-sm -mx-4 px-4 py-3 mb-6 border-b border-base-300 overflow-x-auto flex gap-2 no-scrollbar"
->
-  <a
-    *ngFor="let item of navItems"
-    [routerLink]="item.route"
+  class="md:hidden sticky top-16.25 z-20 bg-base-200/95 backdrop-blur-sm -mx-4 px-4 py-3 mb-6 border-b border-base-300 overflow-x-auto flex gap-2 no-scrollbar">
+  <a *ngFor="let item of navItems" [routerLink]="item.route"
     routerLinkActive="!bg-primary !text-white !border-primary shadow-md shadow-primary/20"
-    class="px-4 py-2 rounded-full bg-white border border-base-300 text-xs font-bold text-slate-600 whitespace-nowrap transition-all"
-  >
+    class="px-4 py-2 rounded-full bg-base-100 border border-base-300 text-xs font-bold text-base-content/60 whitespace-nowrap transition-all">
     {{ item.label }}
   </a>
 </nav>

@@ -1,4 +1,4 @@
-<div class="bg-base-200">
+<div class="bg-base-200 min-h-screen">
   <div class="max-w-4xl mx-auto px-4 py-8">
     <!-- Header -->
     <div class="mb-6">
@@ -9,10 +9,10 @@
           <li>Nuevo producto</li>
         </ul>
       </div>
-      <h1 class="text-2xl lg:text-3xl font-semibold text-slate-900 tracking-tight mb-1">
+      <h1 class="text-2xl lg:text-3xl font-semibold text-base-content tracking-tight mb-1">
         Crear nuevo producto
       </h1>
-      <p class="text-sm text-slate-600">
+      <p class="text-sm text-base-content/70">
         Registra la información base del producto. Las variantes y precios se configurarán en pasos
         posteriores.
       </p>
@@ -23,19 +23,10 @@
       <div class="card-body gap-6">
         @if (createError()) {
         <div role="alert" class="alert alert-error">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6 shrink-0 stroke-current"
-            fill="none"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none"
+            viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           <span>{{ createError() }}</span>
           <button type="button" (click)="dismissError()" class="btn btn-ghost btn-xs ml-auto">
@@ -44,19 +35,10 @@
         </div>
         } @if (saveSuccess()) {
         <div role="alert" class="alert alert-success">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6 shrink-0 stroke-current"
-            fill="none"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9 12.5l2 2.5 4-5M12 3a9 9 0 1 1 0 18 9 9 0 0 1 0-18z"
-            />
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none"
+            viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 12.5l2 2.5 4-5M12 3a9 9 0 1 1 0 18 9 9 0 0 1 0-18z" />
           </svg>
           <span>Producto creado correctamente.</span>
         </div>
@@ -66,22 +48,16 @@
           <!-- Product Name -->
           <div class="form-control">
             <label for="productName" class="label">
-              <span class="label-text font-medium text-slate-800">Nombre del producto</span>
-              <span class="label-text-alt text-xs text-slate-400">Obligatorio</span>
+              <span class="label-text font-medium text-base-content">Nombre del producto</span>
+              <span class="label-text-alt text-xs text-base-content/40">Obligatorio</span>
             </label>
-            <input
-              id="productName"
-              type="text"
-              formControlName="name"
-              class="input input-bordered w-full"
-              placeholder="Ej. Pantalón Cargo"
-              required
-            />
+            <input id="productName" type="text" formControlName="name" class="input input-bordered w-full"
+              placeholder="Ej. Pantalón Cargo" required />
             @if (showError('name')) {
             <p class="validator-hint text-xs text-error mt-1">Nombre requerido.</p>
             }
             <label class="label">
-              <span class="label-text-alt text-slate-500 text-wrap">
+              <span class="label-text-alt text-base-content/50 text-wrap">
                 Nombre comercial que verán los clientes en el catálogo.
               </span>
             </label>
@@ -90,29 +66,18 @@
           <!-- Slug -->
           <div class="form-control">
             <label for="productSlug" class="label">
-              <span class="label-text font-medium text-slate-800">Slug</span>
-              <span class="label-text-alt text-xs text-slate-400">Obligatorio</span>
+              <span class="label-text font-medium text-base-content">Slug</span>
+              <span class="label-text-alt text-xs text-base-content/40">Obligatorio</span>
             </label>
 
             <div class="join w-full">
-              <span
-                class="join-item px-3 bg-base-200 text-sm text-slate-500 hidden sm:inline-flex items-center"
-              >
+              <span class="join-item px-3 bg-base-200 text-sm text-base-content/60 hidden sm:inline-flex items-center">
                 /productos/
               </span>
-              <input
-                id="productSlug"
-                type="text"
-                formControlName="slug"
-                class="input input-bordered join-item w-full"
-                placeholder="pantalon-cargo"
-                required
-              />
-              <button
-                type="button"
-                (click)="onGenerateSlug()"
-                class="btn btn-ghost join-item text-xs sm:text-sm whitespace-nowrap"
-              >
+              <input id="productSlug" type="text" formControlName="slug" class="input input-bordered join-item w-full"
+                placeholder="pantalon-cargo" required />
+              <button type="button" (click)="onGenerateSlug()"
+                class="btn btn-ghost join-item text-xs sm:text-sm whitespace-nowrap text-base-content/70">
                 Generar
               </button>
             </div>
@@ -122,7 +87,7 @@
             }
 
             <label class="label">
-              <span class="label-text-alt text-slate-500 text-wrap">
+              <span class="label-text-alt text-base-content/50 text-wrap">
                 Identificador URL en minúsculas, sin espacios (usa guiones).
               </span>
             </label>
@@ -131,17 +96,14 @@
           <!-- Description -->
           <div class="form-control">
             <label for="productDescription" class="label">
-              <span class="label-text font-medium text-slate-800">Descripción</span>
-              <span class="label-text-alt text-xs text-slate-400">Opcional</span>
+              <span class="label-text font-medium text-base-content">Descripción</span>
+              <span class="label-text-alt text-xs text-base-content/40">Opcional</span>
             </label>
-            <textarea
-              id="productDescription"
-              formControlName="description"
+            <textarea id="productDescription" formControlName="description"
               class="textarea textarea-bordered w-full min-h-28"
-              placeholder="Pantalón cargo resistente, ideal para uso diario."
-            ></textarea>
+              placeholder="Pantalón cargo resistente, ideal para uso diario."></textarea>
             <label class="label">
-              <span class="label-text-alt text-slate-500 text-wrap">
+              <span class="label-text-alt text-base-content/50 text-wrap">
                 Describe brevemente el producto, materiales, usos o beneficios principales.
               </span>
             </label>
@@ -152,16 +114,12 @@
 
           <!-- Actions -->
           <div class="flex flex-col sm:flex-row gap-3 justify-between items-stretch sm:items-center">
-            <div class="text-xs text-slate-500">
+            <div class="text-xs text-base-content/50">
               Podrás añadir variantes, imágenes y precios cuando guardes este producto.
             </div>
             <div class="flex gap-3 justify-end">
-              <button type="button" (click)="cancel()" class="btn btn-ghost">Cancelar</button>
-              <button
-                type="submit"
-                [disabled]="isLoading()"
-                class="btn btn-primary gap-2 disabled:opacity-60"
-              >
+              <button type="button" (click)="cancel()" class="btn btn-ghost text-base-content/70">Cancelar</button>
+              <button type="submit" [disabled]="isLoading()" class="btn btn-primary gap-2 disabled:opacity-60">
                 @if (isLoading()) {
                 <span class="loading loading-spinner loading-sm"></span>
                 <span>Guardando...</span>

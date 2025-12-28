@@ -1,84 +1,71 @@
-<div
-  class="min-h-screen bg-linear-to-br from-slate-50 via-red-50 to-slate-50 flex items-center justify-center p-4"
->
+<div class="min-h-screen bg-linear-to-br from-base-200 via-error/10 to-base-200 flex items-center justify-center p-4">
   <div class="max-w-2xl w-full">
     <!-- Logo pequeño arriba -->
     <div class="flex justify-center mb-8">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 bg-white flex items-center justify-center rounded-lg shadow-sm">
-          <svg
-            width="40"
-            height="40"
-            viewBox="0 0 40 40"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <rect width="40" height="40" fill="white" />
-            <path d="M8 8H12V32H8V8Z" fill="#0EA5E9" />
-            <path d="M16 8H20V32H16V8Z" fill="#0EA5E9" />
-            <path d="M24 8H28V32H24V8Z" fill="#0EA5E9" />
-            <path d="M8 18H28V22H8V18Z" fill="#0EA5E9" />
-            <circle cx="32" cy="12" r="3" fill="#10B981" />
-            <circle cx="32" cy="28" r="3" fill="#10B981" />
+        <div class="w-10 h-10 bg-base-100 flex items-center justify-center rounded-lg shadow-sm text-primary">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="40" height="40" fill="currentColor" class="text-base-100" />
+            <path d="M8 8H12V32H8V8Z" fill="currentColor" class="text-primary" />
+            <path d="M16 8H20V32H16V8Z" fill="currentColor" class="text-primary" />
+            <path d="M24 8H28V32H24V8Z" fill="currentColor" class="text-primary" />
+            <path d="M8 18H28V22H8V18Z" fill="currentColor" class="text-primary" />
+            <circle cx="32" cy="12" r="3" fill="currentColor" class="text-success" />
+            <circle cx="32" cy="28" r="3" fill="currentColor" class="text-success" />
           </svg>
         </div>
-        <span class="text-slate-900">Higinex</span>
+        <span class="text-base-content font-bold">Higinex</span>
       </div>
     </div>
 
     <!-- Main Content -->
-    <div class="bg-white rounded-2xl shadow-xl p-8 md:p-12 text-center">
+    <div class="bg-base-100 rounded-2xl shadow-xl p-8 md:p-12 text-center">
       <!-- Error illustration -->
       <div class="mb-8">
         <div class="relative inline-block">
           <div class="flex items-center justify-center gap-4">
-            <span class="text-red-600 opacity-20" style="font-size: 8rem; line-height: 1">5</span>
+            <span class="text-error opacity-20" style="font-size: 8rem; line-height: 1">5</span>
 
             <div class="relative">
               <div
-                class="w-24 h-24 bg-linear-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center animate-pulse"
-              >
-                <lucide-icon [img]="alertIcon" class="w-12 h-12 text-white"></lucide-icon>
+                class="w-24 h-24 bg-linear-to-br from-error to-error/80 rounded-2xl flex items-center justify-center animate-pulse">
+                <lucide-icon [img]="alertIcon" class="w-12 h-12 text-error-content"></lucide-icon>
               </div>
             </div>
 
-            <span class="text-red-600 opacity-20" style="font-size: 8rem; line-height: 1">0</span>
+            <span class="text-error opacity-20" style="font-size: 8rem; line-height: 1">0</span>
           </div>
         </div>
       </div>
 
       <!-- Title -->
-      <h1 class="text-slate-900 mb-4">Error del Servidor</h1>
+      <h1 class="text-base-content font-bold text-2xl mb-4">Error del Servidor</h1>
 
       <!-- Description -->
-      <p class="text-slate-600 mb-8 max-w-md mx-auto">
+      <p class="text-base-content/60 mb-8 max-w-md mx-auto">
         Lo sentimos, algo salió mal en nuestros servidores. Nuestro equipo técnico ha sido
         notificado y está trabajando para resolver el problema.
       </p>
 
       <!-- Action Buttons -->
       <div class="flex flex-col sm:flex-row gap-3 justify-center mb-8">
-        <button
-          (click)="refresh()"
-          class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 cursor-pointer"
-        >
+        <button (click)="refresh()"
+          class="px-6 py-3 btn btn-primary text-primary-content rounded-lg flex items-center justify-center gap-2 cursor-pointer">
           <lucide-icon [img]="refreshIcon" class="w-5 h-5"></lucide-icon>
           Intentar de nuevo
         </button>
 
-        <button
-          (click)="goToDashboard()"
-          class="px-6 py-3 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors flex items-center justify-center gap-2 cursor-pointer"
-        >
+        <button (click)="goToDashboard()"
+          class="px-6 py-3 btn btn-ghost bg-base-200 text-base-content rounded-lg hover:bg-base-300 transition-colors flex items-center justify-center gap-2 cursor-pointer">
           <lucide-icon [img]="homeIcon" class="w-5 h-5"></lucide-icon>
           Ir al Inicio
         </button>
       </div>
 
       <!-- Error details -->
-      <div class="border-t border-slate-200 pt-8">
-        <p class="text-sm text-slate-500 mb-4">¿El problema persiste?</p>
-        <p class="text-xs text-slate-400">
+      <div class="border-t border-base-200 pt-8">
+        <p class="text-sm text-base-content/60 mb-4">¿El problema persiste?</p>
+        <p class="text-xs text-base-content/40">
           Si el error continúa después de unos minutos, por favor contacta a nuestro equipo de
           soporte.
         </p>
@@ -87,9 +74,9 @@
 
     <!-- Footer info -->
     <div class="text-center mt-6">
-      <p class="text-sm text-slate-500">
+      <p class="text-sm text-base-content/60">
         ¿Necesitas ayuda? Contáctanos en
-        <a href="mailto:soporte&#64;higinex.com" class="text-blue-600 hover:underline">
+        <a href="mailto:soporte&#64;higinex.com" class="text-primary hover:underline">
           soporte&#64;higinex.com
         </a>
       </p>

@@ -30,7 +30,7 @@ import { CustomerUserMenu } from '../../../sales/components/customer-user-menu/c
   templateUrl: './customer-navbar.html',
   host: {
     class:
-      'sticky top-0 z-40 bg-base-100 border-b border-slate-200 shadow-sm transition-transform duration-300',
+      'sticky top-0 z-40 bg-base-100 border-b border-base-200 shadow-sm transition-transform duration-300',
     '[class.translate-y-0]': 'isVisible()',
     '[class.-translate-y-full]': '!isVisible()',
   },

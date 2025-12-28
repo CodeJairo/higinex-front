@@ -45,18 +45,18 @@ export class OrderConfirmationPage {
 
   getStatusBadgeClass(status: OrderStatus): string {
     if (status === 'CREATED' || status === 'PENDING_PAYMENT') {
-      return 'bg-amber-100 text-amber-700';
+      return 'badge badge-warning badge-lg text-warning-content';
     }
     if (status === 'PAID' || status === 'PREPARING') {
-      return 'bg-blue-100 text-blue-700';
+      return 'badge badge-info badge-lg text-info-content';
     }
     if (status === 'DELIVERED') {
-      return 'bg-green-100 text-green-700';
+      return 'badge badge-success badge-lg text-success-content';
     }
     if (status === 'CANCELED') {
-      return 'bg-red-100 text-red-700';
+      return 'badge badge-error badge-lg text-error-content';
     }
-    return 'bg-slate-100 text-slate-700';
+    return 'badge badge-ghost badge-lg text-base-content/70';
   }
 
   toAmount(value: string | number | null | undefined): number {

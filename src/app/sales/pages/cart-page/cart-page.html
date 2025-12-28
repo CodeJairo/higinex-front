@@ -2,15 +2,13 @@
   <div class="lg:col-span-8 space-y-6">
     <div class="flex items-center justify-between mb-2">
       <div>
-        <h2 class="text-xl font-bold text-slate-800">Productos para reservar</h2>
-        <p class="text-xs text-slate-500 font-medium">
+        <h2 class="text-xl font-bold text-base-content">Productos para reservar</h2>
+        <p class="text-xs text-base-content/60 font-medium">
           Revisa tu selección antes de confirmar la orden.
         </p>
       </div>
-      <button
-        (click)="clearCart()"
-        class="btn btn-ghost btn-xs text-slate-400 hover:text-error gap-1 transition-colors"
-      >
+      <button (click)="clearCart()"
+        class="btn btn-ghost btn-xs text-base-content/40 hover:text-error gap-1 transition-colors">
         <lucide-icon [img]="trashIcon" class="w-3 h-3"></lucide-icon>
         Limpiar bolsa
       </button>
@@ -19,19 +17,16 @@
     <div class="space-y-4">
       @for (item of cartItems(); track item.variantId) {
       <div
-        class="card bg-white border border-slate-200 shadow-sm overflow-hidden hover:border-primary/30 transition-all duration-300 group"
-      >
+        class="card bg-base-100 border border-base-200 shadow-sm overflow-hidden hover:border-primary/30 transition-all duration-300 group">
         <div class="p-4 sm:p-6 flex flex-col sm:flex-row gap-6">
           <div
-            class="w-full sm:w-32 h-32 bg-slate-50 rounded-2xl shrink-0 border border-slate-100 flex items-center justify-center relative overflow-hidden"
-          >
+            class="w-full sm:w-32 h-32 bg-base-200/50 rounded-2xl shrink-0 border border-base-200 flex items-center justify-center relative overflow-hidden">
             <div
-              class="absolute inset-0 opacity-10 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] bg-size-[16px_16px]"
-            ></div>
-            <lucide-icon [img]="packageIcon" class="w-8 h-8 text-slate-300"></lucide-icon>
+              class="absolute inset-0 opacity-10 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] bg-size-[16px_16px]">
+            </div>
+            <lucide-icon [img]="packageIcon" class="w-8 h-8 text-base-content/20"></lucide-icon>
             <div
-              class="absolute bottom-2 left-2 badge badge-ghost text-[8px] font-bold opacity-50 uppercase border-none"
-            >
+              class="absolute bottom-2 left-2 badge badge-ghost text-[8px] font-bold opacity-50 uppercase border-none">
               Higinex
             </div>
           </div>
@@ -40,64 +35,54 @@
             <div class="flex justify-between items-start gap-4">
               <div>
                 <h3
-                  class="font-bold text-slate-800 text-lg leading-tight group-hover:text-primary transition-colors"
-                >
+                  class="font-bold text-base-content text-lg leading-tight group-hover:text-primary transition-colors">
                   {{ item.productName }}
                 </h3>
                 <div class="flex items-center gap-2 mt-1">
-                  <span class="text-xs text-slate-500 font-medium">{{ item.variantName }}</span>
-                  <span class="w-1 h-1 rounded-full bg-slate-300"></span>
-                  <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest"
-                    >SKU: {{ item.sku }}</span
-                  >
+                  <span class="text-xs text-base-content/60 font-medium">{{ item.variantName }}</span>
+                  <span class="w-1 h-1 rounded-full bg-base-content/20"></span>
+                  <span class="text-[10px] text-base-content/40 font-bold uppercase tracking-widest">SKU: {{ item.sku
+                    }}</span>
                 </div>
               </div>
               <div class="text-right">
-                <p class="text-lg font-black text-slate-900 tracking-tighter">
+                <p class="text-lg font-black text-base-content tracking-tighter">
                   {{
-                    item.unitPriceCop ?? 0
-                      | currency : cartSummary().currency : 'symbol-narrow' : '1.0-0'
+                  item.unitPriceCop ?? 0
+                  | currency : cartSummary().currency : 'symbol-narrow' : '1.0-0'
                   }}
                 </p>
-                <p class="text-[10px] text-slate-400 font-bold uppercase">Unitario</p>
+                <p class="text-[10px] text-base-content/40 font-bold uppercase">Unitario</p>
               </div>
             </div>
 
             <div class="flex justify-between items-center mt-6">
-              <div
-                class="flex items-center bg-slate-50 rounded-xl p-1 border border-slate-200 shadow-sm"
-              >
-                <button
-                  (click)="decreaseQty(item)"
-                  class="btn btn-ghost btn-sm btn-square hover:bg-white text-slate-600 shadow-none"
-                >
+              <div class="flex items-center bg-base-200/50 rounded-xl p-1 border border-base-200 shadow-sm">
+                <button (click)="decreaseQty(item)"
+                  class="btn btn-ghost btn-sm btn-square hover:bg-base-100 text-base-content/60 shadow-none">
                   -
                 </button>
-                <span class="px-5 text-sm font-black text-slate-800">{{ item.quantity }}</span>
-                <button
-                  (click)="increaseQty(item)"
-                  class="btn btn-ghost btn-sm btn-square hover:bg-white text-slate-600 shadow-none"
-                >
+                <span class="px-5 text-sm font-black text-base-content">{{ item.quantity }}</span>
+                <button (click)="increaseQty(item)"
+                  class="btn btn-ghost btn-sm btn-square hover:bg-base-100 text-base-content/60 shadow-none">
                   +
                 </button>
               </div>
 
               <div class="flex items-center gap-6">
                 <div class="text-right">
-                  <p class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">
+                  <p class="text-[10px] text-base-content/40 font-bold uppercase tracking-tighter">
                     Subtotal
                   </p>
                   <p class="font-black text-primary text-lg">
                     {{
-                      (item.unitPriceCop ?? 0) * item.quantity
-                        | currency : cartSummary().currency : 'symbol-narrow' : '1.0-0'
+                    (item.unitPriceCop ?? 0) * item.quantity
+                    | currency : cartSummary().currency : 'symbol-narrow' : '1.0-0'
                     }}
                   </p>
                 </div>
-                <button
-                  (click)="removeItem(item)"
-                  class="btn btn-circle btn-ghost btn-sm text-slate-300 hover:text-error hover:bg-red-50 transition-all"
-                >
+                <button (click)="removeItem(item)"
+                  class="btn btn-circle btn-ghost btn-sm text-base-content/30 hover:text-error hover:bg-error/10 transition-all">
                   <lucide-icon [img]="xIcon" class="w-4 h-4"></lucide-icon>
                 </button>
               </div>
@@ -108,13 +93,12 @@
       }
     </div>
 
-    <div class="bg-blue-50/50 border border-blue-100 rounded-2xl p-4 flex gap-4 items-center">
+    <div class="bg-info/10 border border-info/20 rounded-2xl p-4 flex gap-4 items-center">
       <div
-        class="w-10 h-10 bg-blue-500 text-white rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-blue-100"
-      >
+        class="w-10 h-10 bg-info text-info-content rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-info/20">
         <lucide-icon [img]="infoIcon" class="w-5 h-5"></lucide-icon>
       </div>
-      <p class="text-xs text-blue-800 font-medium leading-relaxed">
+      <p class="text-xs text-base-content/80 font-medium leading-relaxed">
         <strong>Nota:</strong> Al continuar, generarás una solicitud de pedido. No realizaremos
         ningún cobro automático. Un asesor te contactará para formalizar la transacción.
       </p>
@@ -124,79 +108,65 @@
   <aside class="lg:col-span-4">
     <div class="sticky top-24 space-y-4">
       <div
-        class="bg-white rounded-4xl border border-slate-200 p-8 shadow-xl shadow-slate-200/40 relative overflow-hidden"
-      >
-        <div
-          class="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-full -mr-16 -mt-16 opacity-50"
-        ></div>
+        class="bg-base-100 rounded-4xl border border-base-200 p-8 shadow-xl shadow-base-200/40 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-base-200/50 rounded-full -mr-16 -mt-16 opacity-50"></div>
 
-        <h3 class="text-sm font-black text-slate-400 mb-6 uppercase tracking-[0.2em] relative">
+        <h3 class="text-sm font-black text-base-content/40 mb-6 uppercase tracking-[0.2em] relative">
           Resumen de Orden
         </h3>
 
         <div class="space-y-4 mb-8 relative">
-          <div class="flex justify-between text-slate-500 font-medium text-sm">
+          <div class="flex justify-between text-base-content/60 font-medium text-sm">
             <span>Valor productos</span>
-            <span class="text-slate-900 font-bold">{{
+            <span class="text-base-content font-bold">{{
               cartSummary().subtotalAmount
-                | currency : cartSummary().currency : 'symbol-narrow' : '1.0-0'
-            }}</span>
+              | currency : cartSummary().currency : 'symbol-narrow' : '1.0-0'
+              }}</span>
           </div>
-          <div class="flex justify-between text-slate-500 font-medium text-sm">
+          <div class="flex justify-between text-base-content/60 font-medium text-sm">
             <span>Envío</span>
             <span
-              class="text-emerald-500 font-black uppercase text-[10px] tracking-widest bg-emerald-50 px-2 py-0.5 rounded-md"
-              >Gratis</span
-            >
+              class="text-success font-black uppercase text-[10px] tracking-widest bg-success/10 px-2 py-0.5 rounded-md">Gratis</span>
           </div>
-          <div class="divider before:bg-slate-100 after:bg-slate-100 my-2"></div>
+          <div class="divider before:bg-base-200 after:bg-base-200 my-2"></div>
           <div class="flex justify-between items-end">
             <div>
-              <span class="text-slate-400 font-bold text-[10px] uppercase">Total Estimado</span>
-              <p class="text-3xl font-black text-slate-900 tracking-tighter">
+              <span class="text-base-content/40 font-bold text-[10px] uppercase">Total Estimado</span>
+              <p class="text-3xl font-black text-base-content tracking-tighter">
                 {{
-                  cartSummary().totalAmount
-                    | currency : cartSummary().currency : 'symbol-narrow' : '1.0-0'
+                cartSummary().totalAmount
+                | currency : cartSummary().currency : 'symbol-narrow' : '1.0-0'
                 }}
               </p>
             </div>
-            <div class="text-[10px] text-slate-400 font-bold mb-1">
+            <div class="text-[10px] text-base-content/40 font-bold mb-1">
               {{ cartSummary().currency }}
             </div>
           </div>
         </div>
 
-        <button
-          (click)="goToCheckout()"
-          class="btn btn-primary w-full h-16 rounded-2xl border-none text-white font-black text-lg shadow-lg shadow-primary/30 hover:shadow-primary/40 hover:-translate-y-0.5 active:translate-y-0 transition-all"
-        >
+        <button (click)="goToCheckout()"
+          class="btn btn-primary w-full h-16 rounded-2xl border-none text-primary-content font-black text-lg shadow-lg shadow-primary/30 hover:shadow-primary/40 hover:-translate-y-0.5 active:translate-y-0 transition-all">
           CONTINUAR PEDIDO
           <lucide-icon [img]="arrowRightIcon" class="w-5 h-5 ml-2"></lucide-icon>
         </button>
 
         <div class="mt-6 flex flex-col gap-3">
           <div
-            class="flex items-center justify-center gap-2 text-[10px] text-slate-400 font-bold uppercase tracking-widest"
-          >
-            <lucide-icon [img]="shieldCheckIcon" class="w-3 h-3 text-emerald-500"></lucide-icon>
+            class="flex items-center justify-center gap-2 text-[10px] text-base-content/40 font-bold uppercase tracking-widest">
+            <lucide-icon [img]="shieldCheckIcon" class="w-3 h-3 text-success"></lucide-icon>
             Pedido Verificado
           </div>
         </div>
       </div>
 
-      <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
-        <label class="block text-[10px] font-black text-slate-400 uppercase mb-3 tracking-widest"
-          >¿Tienes un cupón?</label
-        >
+      <div class="bg-base-100 rounded-2xl p-5 border border-base-200 shadow-sm">
+        <label class="block text-[10px] font-black text-base-content/40 uppercase mb-3 tracking-widest">¿Tienes un
+          cupón?</label>
         <div class="flex gap-2">
-          <input
-            type="text"
-            placeholder="Código"
-            class="input input-bordered bg-slate-50 w-full rounded-xl text-sm border-slate-200 focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all"
-          />
-          <button
-            class="btn btn-slate-900 text-white rounded-xl px-4 border-none hover:bg-slate-800"
-          >
+          <input type="text" placeholder="Código"
+            class="input input-bordered bg-base-200/50 w-full rounded-xl text-sm border-base-200 focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all" />
+          <button class="btn btn-neutral text-neutral-content rounded-xl px-4 border-none hover:bg-neutral-focus">
             OK
           </button>
         </div>

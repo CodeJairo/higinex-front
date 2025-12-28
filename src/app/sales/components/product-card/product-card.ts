@@ -51,8 +51,8 @@ export class ProductCard {
     if (!inventory) {
       return {
         label: 'Disponibilidad no informada',
-        className: 'mt-3 text-xs text-slate-500 flex items-center gap-1',
-        dotClass: 'w-2 h-2 bg-slate-400 rounded-full shrink-0',
+        className: 'mt-3 text-xs text-base-content/50 flex items-center gap-1',
+        dotClass: 'w-2 h-2 bg-base-content/40 rounded-full shrink-0',
       };
     }
 
@@ -60,27 +60,27 @@ export class ProductCard {
     if (availableUnits > 0) {
       return {
         label: 'Disponible en stock',
-        className: 'mt-3 text-xs text-green-600 flex items-center gap-1',
-        dotClass: 'w-2 h-2 bg-green-600 rounded-full shrink-0',
+        className: 'mt-3 text-xs text-success flex items-center gap-1',
+        dotClass: 'w-2 h-2 bg-success rounded-full shrink-0',
       };
     }
 
     return {
       label: 'Sin stock',
-      className: 'mt-3 text-xs text-amber-600 flex items-center gap-1',
-      dotClass: 'w-2 h-2 bg-amber-600 rounded-full shrink-0',
+      className: 'mt-3 text-xs text-warning flex items-center gap-1',
+      dotClass: 'w-2 h-2 bg-warning rounded-full shrink-0',
     };
   });
   readonly addButtonClass = computed(() => {
     const base =
       'px-3 py-2 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 shrink-0';
     if (this.priceUnavailable()) {
-      return `${base} bg-slate-200 text-slate-500 cursor-not-allowed`;
+      return `${base} bg-base-300 text-base-content/40 cursor-not-allowed`;
     }
     if (this.isAdded()) {
-      return `${base} bg-green-500 text-white cursor-pointer`;
+      return `${base} bg-success text-success-content cursor-pointer`;
     }
-    return `${base} bg-blue-600 hover:bg-blue-700 text-white cursor-pointer`;
+    return `${base} btn-primary text-primary-content cursor-pointer`;
   });
 
   formatPrice(price: number): string {
