@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -38,7 +37,6 @@ import { CustomerUserMenu } from '../customer-user-menu/customer-user-menu';
 @Component({
   selector: 'sales-navbar',
   imports: [
-    CommonModule,
     FormsModule,
     LucideAngularModule,
     CartDropdown,
@@ -185,12 +183,12 @@ export class Navbar implements OnInit, OnDestroy {
     window.location.reload();
   }
 
-  updateQuantity(id: string, quantity: number): void {
-    this.cartService.updateQuantity(id, quantity);
+  updateQuantity(variantId: string, quantity: number): void {
+    this.cartService.updateQuantity(variantId, quantity);
   }
 
-  removeItem(id: string): void {
-    this.cartService.removeItem(id);
+  removeItem(variantId: string): void {
+    this.cartService.removeItem(variantId);
   }
 
   clearCart(): void {

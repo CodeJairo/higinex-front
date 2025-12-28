@@ -1,8 +1,3 @@
-export interface CartItem {
-  id: string;
-  name: string;
-  presentation: string;
-  unitPrice: number;
-  quantity: number;
-  image: string;
-}
+import { CheckoutCartItem } from './checkout.interface';
+
+export type CartItem = CheckoutCartItem;

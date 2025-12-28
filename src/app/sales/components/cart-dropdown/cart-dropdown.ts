@@ -1,12 +1,4 @@
-import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  inject,
-  Input,
-  Output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import {
   ArrowRight,
   LucideAngularModule,
@@ -17,24 +9,28 @@ import {
   X,
 } from 'lucide-angular';
 import { ImageWithFallback } from '../../../shared/components/image-with-fallback/image-with-fallback';
-import { CartItem } from '../../interfaces';
+import { CheckoutCartItem } from '../../interfaces';
 import { Router } from '@angular/router';
+import { CatalogService } from '../../services/catalog.service';
+
+const PLACEHOLDER_IMAGE = '/placeholder-product.svg';
 
 @Component({
   selector: 'sales-cart-dropdown',
-  imports: [CommonModule, LucideAngularModule, ImageWithFallback],
+  imports: [LucideAngularModule, ImageWithFallback],
   templateUrl: './cart-dropdown.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CartDropdown {
   private readonly router = inject(Router);
+  private readonly catalogService = inject(CatalogService);
 
-  @Input() isOpen = false;
-  @Input() items: CartItem[] = [];
-  @Output() closeCart = new EventEmitter<void>();
-  @Output() updateQuantity = new EventEmitter<{ id: string; quantity: number }>();
-  @Output() removeItem = new EventEmitter<string>();
-  @Output() clearCart = new EventEmitter<void>();
+  readonly isOpen = input(false);
+  readonly items = input<CheckoutCartItem[]>([]);
+  readonly closeCart = output<void>();
+  readonly updateQuantity = output<{ variantId: string; quantity: number }>();
+  readonly removeItem = output<string>();
+  readonly clearCart = output<void>();
 
   // Icons
   readonly xIcon = X;
@@ -44,21 +40,17 @@ export class CartDropdown {
   readonly bagIcon = ShoppingBag;
   readonly arrowRightIcon = ArrowRight;
 
-  get subtotal(): number {
-    return this.items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
-  }
+  readonly subtotal = computed(() =>
+    this.items().reduce((sum, item) => sum + (item.unitPriceCop ?? 0) * item.quantity, 0)
+  );
 
-  get tax(): number {
-    return this.subtotal * 0.19;
-  }
+  readonly tax = computed(() => this.subtotal() * 0.19);
 
-  get total(): number {
-    return this.subtotal + this.tax;
-  }
+  readonly total = computed(() => this.subtotal() + this.tax());
 
-  get totalItems(): number {
-    return this.items.reduce((sum, item) => sum + item.quantity, 0);
-  }
+  readonly totalItems = computed(() =>
+    this.items().reduce((sum, item) => sum + item.quantity, 0)
+  );
 
   formatPrice(price: number): string {
     return new Intl.NumberFormat('es-CO', {
@@ -68,19 +60,32 @@ export class CartDropdown {
     }).format(price);
   }
 
+  getItemImageUrl(item: CheckoutCartItem): string {
+    const image = item.images?.[0];
+    if (image?.id) {
+      return this.catalogService.buildVariantImageUrl(item.variantId, image.id);
+    }
+    return PLACEHOLDER_IMAGE;
+  }
+
+  getItemImageAlt(item: CheckoutCartItem): string {
+    const image = item.images?.[0];
+    return image?.altText ?? item.productName;
+  }
+
   goToCart(): void {
-    this.router.navigateByUrl('/sales/cart');
+    this.router.navigateByUrl('/sales/checkout/cart');
   }
 
   goToCheckout(): void {
-    this.router.navigateByUrl('/sales/checkout');
+    this.router.navigateByUrl('/sales/checkout/confirm');
   }
 
-  onUpdateQuantity(id: string, quantity: number): void {
-    this.updateQuantity.emit({ id, quantity: Math.max(1, quantity) });
+  onUpdateQuantity(variantId: string, quantity: number): void {
+    this.updateQuantity.emit({ variantId, quantity: Math.max(1, quantity) });
   }
-  onRemove(id: string): void {
-    this.removeItem.emit(id);
+  onRemove(variantId: string): void {
+    this.removeItem.emit(variantId);
   }
 
   onClear(): void {

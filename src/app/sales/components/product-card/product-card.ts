@@ -1,8 +1,7 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { Check, LucideAngularModule, Package, ShoppingCart } from 'lucide-angular';
 import { ImageWithFallback } from '../../../shared/components/image-with-fallback/image-with-fallback';
-import { ProductVariant } from '../../interfaces';
+import { CheckoutCartItem, ProductVariant } from '../../interfaces';
 import { CatalogService } from '../../services/catalog.service';
 import { CartService } from '../../services/cart.service';
 
@@ -10,7 +9,7 @@ const PLACEHOLDER_IMAGE = '/placeholder-product.svg';
 
 @Component({
   selector: 'sales-product-card',
-  imports: [CommonModule, LucideAngularModule, ImageWithFallback],
+  imports: [LucideAngularModule, ImageWithFallback],
   templateUrl: './product-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -97,14 +96,22 @@ export class ProductCard {
     }
 
     const variant = this.variant();
-    const unitPrice = variant.unitPriceCop ?? 0;
-    this.cartService.addItem({
-      id: variant.id,
-      name: variant.product?.name ?? variant.name,
-      presentation: variant.product?.name ? variant.name : variant.sku,
-      unitPrice,
-      image: this.imageUrl(),
-    });
+    const cartItem: Omit<CheckoutCartItem, 'quantity'> = {
+      variantId: variant.id,
+      productName: variant.product?.name ?? variant.name,
+      variantName: variant.product?.name ? variant.name : variant.sku,
+      sku: variant.sku,
+      gtin: variant.gtin ?? null,
+      attributesJson: variant.attributesJson ?? null,
+      images: variant.images ?? [],
+      unitPriceCop: variant.unitPriceCop ?? null,
+      inventory: {
+        onHand: variant.inventory?.onHand ?? 0,
+        reserved: variant.inventory?.reserved ?? 0,
+        updatedAt: variant.inventory?.updatedAt,
+      },
+    };
+    this.cartService.addItem(cartItem);
 
     this.isAdded.set(true);
     setTimeout(() => this.isAdded.set(false), 2000);

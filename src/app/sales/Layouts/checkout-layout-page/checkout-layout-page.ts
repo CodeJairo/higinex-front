@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { Check, LucideAngularModule } from 'lucide-angular';
 
@@ -28,8 +28,7 @@ export class CheckoutLayoutPage {
     return 'bg-slate-100 text-slate-400';
   }
 
-  cancelarCompra(): void {
-    console.log('Compra cancelada');
-    return;
+  goToCatalog() {
+    this.router.navigateByUrl('/sales/catalog');
   }
 }

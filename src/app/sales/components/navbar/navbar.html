@@ -55,9 +55,11 @@
   <div class="navbar-end gap-2 sm:gap-3">
     <!-- Cart (DaisyUI indicator) -->
     <div class="indicator">
-      <span *ngIf="totalItems() > 0" class="indicator-item badge badge-sm badge-primary">
-        {{ totalItems() }}
-      </span>
+      @if (totalItems() > 0) {
+        <span class="indicator-item badge badge-sm badge-primary">
+          {{ totalItems() }}
+        </span>
+      }
       <button type="button" class="btn btn-ghost btn-square" (click)="toggleCart()">
         <lucide-icon [img]="cartIcon" class="w-5 h-5 text-slate-700"></lucide-icon>
       </button>
@@ -107,7 +109,7 @@
   [isOpen]="showCart()"
   [items]="cartItems()"
   (closeCart)="closeCart()"
-  (updateQuantity)="updateQuantity($event.id, $event.quantity)"
+  (updateQuantity)="updateQuantity($event.variantId, $event.quantity)"
   (removeItem)="removeItem($event)"
   (clearCart)="clearCart()"
 ></sales-cart-dropdown>

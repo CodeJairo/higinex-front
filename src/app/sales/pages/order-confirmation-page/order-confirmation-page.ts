@@ -1,98 +1,74 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { CurrencyPipe, DatePipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { injectQuery } from '@tanstack/angular-query-experimental';
 import { CircleCheckBig, Clock, LucideAngularModule, Phone, X } from 'lucide-angular';
-
-interface OrderConfirmationItem {
-  productName: string;
-  variantName: string;
-  sku: string;
-  unitPrice: number;
-  quantity: number;
-  lineTotal: number;
-}
-
-interface OrderConfirmationTotals {
-  subtotal: number;
-  shipping: number;
-  discount: number;
-  total: number;
-  currency: string;
-}
-
-interface OrderConfirmation {
-  id: string;
-  orderNumber: string;
-  status: string;
-  reservationExpiresAt: string;
-  customer: {
-    name: string;
-    email: string;
-    phone: string;
-  };
-  totals: OrderConfirmationTotals;
-  items: OrderConfirmationItem[];
-}
+import { CheckoutOrder, OrderStatus } from '../../interfaces';
+import { CheckoutService } from '../../services/checkout.service';
 
 @Component({
   selector: 'app-order-confirmation-page',
-  standalone: true,
-  imports: [CommonModule, LucideAngularModule],
+  imports: [CurrencyPipe, LucideAngularModule, DatePipe],
   templateUrl: './order-confirmation-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrderConfirmationPage {
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly checkoutService = inject(CheckoutService);
 
   readonly checkCircleIcon = CircleCheckBig;
   readonly clockIcon = Clock;
   readonly xIcon = X;
   readonly phoneIcon = Phone;
 
-  mockOrderConfirmation: OrderConfirmation = {
-    id: 'order-001',
-    orderNumber: 'ORD-9B1C2D3E4F5A',
-    status: 'PENDING_PAYMENT',
-    reservationExpiresAt: '2025-01-05T12:30:00.000Z',
-    customer: {
-      name: 'María Gómez',
-      email: 'maria@empresa.com',
-      phone: '3001234567',
-    },
-    totals: {
-      subtotal: 179000,
-      shipping: 0,
-      discount: 0,
-      total: 179000,
-      currency: 'COP',
-    },
-    items: [
-      {
-        productName: 'Camiseta Básica',
-        variantName: 'Talla M',
-        sku: 'TSHIRT-M-BLK',
-        unitPrice: 45000,
-        quantity: 2,
-        lineTotal: 90000,
-      },
-      {
-        productName: 'Pantalón Cargo',
-        variantName: 'Talla 32',
-        sku: 'PANT-32-OLV',
-        unitPrice: 89000,
-        quantity: 1,
-        lineTotal: 89000,
-      },
-    ],
-  };
+  readonly orderId = signal(this.route.snapshot.paramMap.get('orderId') ?? '');
 
-  // Helpers de ejemplo si los quieres usar después
-  onGoToCatalog(): void {
-    console.log('Volver al catálogo (mock)');
+  private readonly orderQuery = injectQuery(() => ({
+    queryKey: ['orders', this.orderId()],
+    queryFn: () => this.checkoutService.getOrder(this.orderId()),
+    enabled: !!this.orderId(),
+    retry: false,
+    staleTime: 60 * 1000,
+  }));
+
+  readonly order = computed<CheckoutOrder | null>(() => this.orderQuery.data() ?? null);
+  readonly isLoading = computed(() => this.orderQuery.isLoading());
+  readonly hasError = computed(() => this.orderQuery.isError());
+  readonly shouldShowReservationExpiresAt = computed(() => {
+    const order = this.order();
+    if (!order) {
+      return false;
+    }
+    return order.status === 'CREATED' || order.status === 'PENDING_PAYMENT';
+  });
+
+  getStatusBadgeClass(status: OrderStatus): string {
+    if (status === 'CREATED' || status === 'PENDING_PAYMENT') {
+      return 'bg-amber-100 text-amber-700';
+    }
+    if (status === 'PAID' || status === 'PREPARING') {
+      return 'bg-blue-100 text-blue-700';
+    }
+    if (status === 'DELIVERED') {
+      return 'bg-green-100 text-green-700';
+    }
+    if (status === 'CANCELED') {
+      return 'bg-red-100 text-red-700';
+    }
+    return 'bg-slate-100 text-slate-700';
   }
 
-  onCancelOrder(): void {
-    console.log('Cancelar pedido (mock)');
+  toAmount(value: string | number | null | undefined): number {
+    if (value == null) {
+      return 0;
+    }
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+
+  retryLoad(): void {
+    this.orderQuery.refetch();
   }
 
   goToCatalog(): void {
