@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
-import { Check, LucideAngularModule, Package, ShoppingCart } from 'lucide-angular';
+import { Check, Info, LucideAngularModule, Package, ShoppingCart } from 'lucide-angular';
 import { ImageWithFallback } from '../../../shared/components/image-with-fallback/image-with-fallback';
 import { CheckoutCartItem, ProductVariant } from '../../interfaces';
 import { CatalogService } from '../../services/catalog.service';
@@ -24,7 +24,7 @@ export class ProductCard {
   readonly cartIcon = ShoppingCart;
   readonly packageIcon = Package;
   readonly checkIcon = Check;
-
+  readonly infoIcon = Info;
   readonly isAdded = signal(false);
 
   readonly priceUnavailable = computed(() => this.variant().unitPriceCop == null);
@@ -51,8 +51,8 @@ export class ProductCard {
     if (!inventory) {
       return {
         label: 'Disponibilidad no informada',
-        className: 'mt-3 text-xs text-base-content/50 flex items-center gap-1',
-        dotClass: 'w-2 h-2 bg-base-content/40 rounded-full shrink-0',
+        className: 'text-base-content/50',
+        dotClass: 'bg-base-content/40',
       };
     }
 
@@ -60,15 +60,15 @@ export class ProductCard {
     if (availableUnits > 0) {
       return {
         label: 'Disponible en stock',
-        className: 'mt-3 text-xs text-success flex items-center gap-1',
-        dotClass: 'w-2 h-2 bg-success rounded-full shrink-0',
+        className: 'text-success',
+        dotClass: 'bg-success',
       };
     }
 
     return {
       label: 'Sin stock',
-      className: 'mt-3 text-xs text-warning flex items-center gap-1',
-      dotClass: 'w-2 h-2 bg-warning rounded-full shrink-0',
+      className: 'text-warning',
+      dotClass: 'bg-warning',
     };
   });
   readonly addButtonClass = computed(() => {

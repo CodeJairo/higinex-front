@@ -4,10 +4,10 @@
     <div class="absolute top-4 left-4 z-10">
       <div [class]="
           availability().className +
-          ' px-3 py-1.5 rounded-xl backdrop-blur-md border flex items-center gap-2 shadow-sm'
+          ' px-3 py-1.5 rounded-xl backdrop-blur-md border border-base-200/50 bg-base-100/60 flex items-center gap-2 shadow-sm'
         ">
         <div [class]="
-            availability().dotClass + ' w-1.5 h-1.5 rounded-full shadow-[0_0_8px_currentColor]'
+            availability().dotClass + ' w-2 h-2 rounded-full shadow-[0_0_8px_currentColor]'
           "></div>
         <span class="text-[10px] font-black uppercase tracking-widest">{{
           availability().label
@@ -16,9 +16,10 @@
     </div>
 
     @if (priceUnavailable()) {
-    <div class="absolute top-4 right-4 z-10">
+    <div class="absolute bottom-4 right-4 z-10">
       <span
-        class="px-3 py-1.5 bg-warning/10 border border-warning/20 text-warning text-[10px] font-black uppercase tracking-widest rounded-xl backdrop-blur-md">
+        class="px-3 py-1.5 bg-base-100/90 border border-warning/30 text-warning shadow-sm text-[10px] font-black uppercase tracking-widest rounded-xl backdrop-blur-md flex items-center gap-1.5">
+        <lucide-icon [img]="infoIcon" class="w-3 h-3"></lucide-icon>
         Consultar Precio
       </span>
     </div>
