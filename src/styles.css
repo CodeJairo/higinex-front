@@ -1,16 +1,66 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 @import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+
+  --color-primary: #0ea5e9;
+  --color-primary-content: #ffffff;
+
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
+}
+
 @plugin "daisyui" {
   themes: corporate --default, dark --prefersdark;
 }
 
-/* apply a natural box layout model to all elements, but allowing components to change */
-html {
-  box-sizing: border-box;
+/* Reset y Estilos Globales */
+@layer base {
+  html {
+    box-sizing: border-box;
+    font-family: var(--font-sans);
+    scroll-behavior: smooth;
+  }
+
+  *,
+  *:before,
+  *:after {
+    box-sizing: inherit;
+  }
+
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    @apply bg-slate-50 text-slate-900;
+  }
+
+  input,
+  button,
+  textarea,
+  select {
+    font-family: inherit;
+  }
 }
-*,
-*:before,
-*:after {
-  box-sizing: inherit;
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-slate-200 rounded-full;
+  }
 }
