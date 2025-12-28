@@ -5,16 +5,13 @@
 @theme {
   --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
 
-  --color-primary: #0ea5e9;
-  --color-primary-content: #ffffff;
-
   --radius-xl: 1rem;
   --radius-2xl: 1.5rem;
   --radius-3xl: 2rem;
 }
 
 @plugin "daisyui" {
-  themes: corporate --default, dark --prefersdark;
+  themes: corporate --default, business --prefersdark, retro;
 }
 
 /* Reset y Estilos Globales */
@@ -34,7 +31,7 @@
   body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    @apply bg-slate-50 text-slate-900;
+    @apply bg-base-100 text-base-content;
   }
 
   input,
@@ -49,6 +46,7 @@
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -57,11 +55,13 @@
   .custom-scrollbar::-webkit-scrollbar {
     width: 4px;
   }
+
   .custom-scrollbar::-webkit-scrollbar-track {
     background: transparent;
   }
+
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-slate-200 rounded-full;
+    @apply bg-base-300 rounded-full;
   }
 
   .layout-compact .card-body {
