@@ -63,4 +63,36 @@
   .custom-scrollbar::-webkit-scrollbar-thumb {
     @apply bg-slate-200 rounded-full;
   }
+
+  .layout-compact .card-body {
+    padding: 1rem;
+  }
+
+  .layout-compact .btn {
+    min-height: 2.25rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  .layout-compact .btn-sm {
+    min-height: 2rem;
+  }
+
+  .layout-compact .input,
+  .layout-compact .select,
+  .layout-compact .textarea {
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+  }
+
+  .layout-compact .form-control {
+    gap: 0.5rem;
+  }
+
+  .no-rounded,
+  .no-rounded *,
+  .no-rounded *::before,
+  .no-rounded *::after {
+    border-radius: 0 !important;
+  }
 }

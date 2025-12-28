@@ -1,133 +1,159 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-
-type ThemeId = 'light' | 'dark' | 'system';
-type AccentId = 'emerald' | 'sky' | 'violet' | 'amber' | 'rose';
+import { DOCUMENT } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { AppearanceService } from '../../services/appearance.service';
 
 interface ThemeOption {
-  id: ThemeId;
+  id: string;
   label: string;
   description: string;
 }
 
 interface AccentOption {
-  id: AccentId;
+  id: string;
   label: string;
 }
 
+const ACCENT_SWATCHES: Record<string, string> = {
+  emerald: 'bg-emerald-500',
+  sky: 'bg-sky-500',
+  violet: 'bg-violet-500',
+  amber: 'bg-amber-400',
+  rose: 'bg-rose-500',
+};
+
 @Component({
-  selector: 'customer-appearance-settings',
-  imports: [CommonModule, FormsModule],
+  selector: 'customer-appearance-page',
   templateUrl: './appearance-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppearancePage {
-  // Opciones mock
+  readonly appearanceService = inject(AppearanceService);
+  private readonly document = inject(DOCUMENT);
+
   readonly themeOptions: ThemeOption[] = [
     {
-      id: 'light',
-      label: 'Claro',
-      description: 'Fondo claro, ideal para ambientes bien iluminados.',
+      id: 'corporate',
+      label: 'Corporativo',
+      description: 'Equilibrio limpio y profesional para el dia a dia.',
     },
     {
       id: 'dark',
       label: 'Oscuro',
-      description: 'Fondo oscuro, cuida tus ojos en ambientes con poca luz.',
-    },
-    {
-      id: 'system',
-      label: 'Según el sistema',
-      description: 'Usa automáticamente el tema configurado en tu dispositivo.',
+      description: 'Ideal para ambientes con poca luz y enfoque nocturno.',
     },
   ];
 
   readonly accentOptions: AccentOption[] = [
-    { id: 'emerald', label: 'Esmeralda' },
-    { id: 'sky', label: 'Cian' },
-    { id: 'violet', label: 'Violeta' },
-    { id: 'amber', label: 'Ámbar' },
-    { id: 'rose', label: 'Rosa' },
+    { id: 'emerald', label: 'Emerald' },
+    { id: 'sky', label: 'Sky' },
+    { id: 'violet', label: 'Violet' },
+    { id: 'amber', label: 'Amber' },
+    { id: 'rose', label: 'Rose' },
   ];
 
-  // Estado mock (luego lo podrás leer/escribir desde un servicio / backend)
-  selectedTheme = signal<ThemeId>('light');
-  selectedAccent = signal<AccentId>('emerald');
-  roundedCorners = signal(true);
-  compactLayout = signal(false);
-  subtleAnimations = signal(true);
+  readonly selectedTheme = computed(() => this.appearanceService.theme());
+  readonly selectedAccent = computed(() => this.appearanceService.accent());
 
-  // Helpers para la vista previa (solo estilos, sin persistir nada real)
-  readonly previewAccentClasses = computed(() => {
-    const accent = this.selectedAccent();
-    switch (accent) {
-      case 'emerald':
-        return 'border-emerald-200 bg-emerald-500/10 text-emerald-700';
-      case 'sky':
-        return 'border-sky-200 bg-sky-500/10 text-sky-700';
-      case 'violet':
-        return 'border-violet-200 bg-violet-500/10 text-violet-700';
-      case 'amber':
-        return 'border-amber-200 bg-amber-500/10 text-amber-700';
-      case 'rose':
-        return 'border-rose-200 bg-rose-500/10 text-rose-700';
-      default:
-        return 'border-primary/20 bg-primary/10 text-primary';
-    }
+  readonly roundedCorners = this.appearanceService.rounded;
+  readonly compactLayout = this.appearanceService.compact;
+  readonly subtleAnimations = signal(true);
+
+  readonly previewCardClasses = computed(() => {
+    const accent = this.appearanceService.accent();
+    const radius = this.appearanceService.rounded() ? 'rounded-2xl' : 'rounded-none';
+    const border = accent ? 'border-primary/30' : 'border-base-300';
+    return `border bg-base-200/70 ${radius} ${border}`;
+  });
+
+  readonly previewContentClasses = computed(() => {
+    const compact = this.appearanceService.compact();
+    const density = compact ? 'gap-2 p-3' : 'gap-4 p-5';
+    const motion = this.subtleAnimations() ? 'transition-all duration-200' : 'transition-none';
+    return `flex flex-col ${density} ${motion}`;
+  });
+
+  readonly previewStackClasses = computed(() => {
+    const compact = this.appearanceService.compact();
+    return compact ? 'space-y-2' : 'space-y-3';
   });
 
   readonly previewButtonClasses = computed(() => {
-    const accent = this.selectedAccent();
-    switch (accent) {
-      case 'emerald':
-        return 'btn-sm bg-emerald-500 hover:bg-emerald-600 text-white border-none';
-      case 'sky':
-        return 'btn-sm bg-sky-500 hover:bg-sky-600 text-white border-none';
-      case 'violet':
-        return 'btn-sm bg-violet-500 hover:bg-violet-600 text-white border-none';
-      case 'amber':
-        return 'btn-sm bg-amber-500 hover:bg-amber-600 text-white border-none';
-      case 'rose':
-        return 'btn-sm bg-rose-500 hover:bg-rose-600 text-white border-none';
-      default:
-        return 'btn-sm btn-primary';
-    }
+    const radius = this.appearanceService.rounded() ? 'rounded-xl' : 'rounded-none';
+    const motion = this.subtleAnimations() ? 'transition-all duration-200' : 'transition-none';
+    return `btn btn-primary ${radius} ${motion}`;
   });
 
-  readonly previewRadiusClasses = computed(() =>
-    this.roundedCorners() ? 'rounded-2xl' : 'rounded-md'
-  );
+  readonly previewGhostButtonClasses = computed(() => {
+    const radius = this.appearanceService.rounded() ? 'rounded-xl' : 'rounded-none';
+    const motion = this.subtleAnimations() ? 'transition-all duration-200' : 'transition-none';
+    return `btn btn-ghost btn-xs ${radius} ${motion}`;
+  });
 
-  readonly previewDensityClasses = computed(() =>
-    this.compactLayout() ? 'p-3 space-y-2 text-sm' : 'p-4 space-y-3'
-  );
+  readonly saveNotice = signal(false);
 
-  // Acciones UI (mock)
-  selectTheme(theme: ThemeId) {
-    this.selectedTheme.set(theme);
-    // Aquí luego llamarías al servicio que setea el theme global
+  private saveTimeoutId: number | null = null;
+
+  selectTheme(id: string): void {
+    this.appearanceService.theme.set(id);
   }
 
-  selectAccent(accent: AccentId) {
-    this.selectedAccent.set(accent);
+  selectAccent(id: string): void {
+    this.appearanceService.accent.set(id);
   }
 
-  saveAppearance() {
-    // Aquí luego se hará la llamada real al backend / servicio de preferencias
-    console.log('Guardar apariencia (mock)', {
-      theme: this.selectedTheme(),
-      accent: this.selectedAccent(),
-      roundedCorners: this.roundedCorners(),
-      compactLayout: this.compactLayout(),
-      subtleAnimations: this.subtleAnimations(),
-    });
+  onRoundedChange(event: Event): void {
+    this.roundedCorners.set(this.readCheckbox(event));
   }
 
-  resetAppearance() {
-    this.selectedTheme.set('light');
-    this.selectedAccent.set('emerald');
-    this.roundedCorners.set(true);
-    this.compactLayout.set(false);
-    this.subtleAnimations.set(true);
+  onCompactChange(event: Event): void {
+    this.compactLayout.set(this.readCheckbox(event));
+  }
+
+  onSubtleAnimationsChange(event: Event): void {
+    this.subtleAnimations.set(this.readCheckbox(event));
+  }
+
+  themeCardClasses(id: string): string {
+    const base =
+      'card border cursor-pointer transition-all text-left hover:border-primary hover:bg-base-200/60';
+    return this.selectedTheme() === id ? `${base} border-primary/70 ring-2 ring-primary/40` : base;
+  }
+
+  accentButtonClasses(id: string): string {
+    const base =
+      'flex items-center gap-2 px-3 py-2 rounded-xl border text-xs hover:bg-base-200/70 transition-all';
+    return this.selectedAccent() === id
+      ? `${base} border-primary ring-1 ring-primary/50 bg-base-200/80`
+      : `${base} border-base-300`;
+  }
+
+  accentSwatchClasses(id: string): string {
+    const swatch = ACCENT_SWATCHES[id] ?? 'bg-slate-300';
+    return `inline-block w-4 h-4 rounded-full ${swatch}`;
+  }
+
+  saveAppearance(): void {
+    this.saveNotice.set(true);
+
+    const view = this.document.defaultView;
+    if (!view) return;
+
+    if (this.saveTimeoutId !== null) {
+      view.clearTimeout(this.saveTimeoutId);
+    }
+
+    this.saveTimeoutId = view.setTimeout(() => {
+      this.saveNotice.set(false);
+      this.saveTimeoutId = null;
+    }, 1600);
+  }
+
+  resetAppearance(): void {
+    this.appearanceService.reset();
+  }
+
+  private readCheckbox(event: Event): boolean {
+    const target = event.target as HTMLInputElement | null;
+    return target?.checked ?? false;
   }
 }
