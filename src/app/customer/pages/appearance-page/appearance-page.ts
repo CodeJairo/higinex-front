@@ -37,9 +37,14 @@ export class AppearancePage {
       description: 'Equilibrio limpio y profesional para el dia a dia.',
     },
     {
-      id: 'dark',
-      label: 'Oscuro',
-      description: 'Ideal para ambientes con poca luz y enfoque nocturno.',
+      id: 'business',
+      label: 'Negocios',
+      description: 'Estilo oscuro y elegante perfecto para entornos profesionales.',
+    },
+    {
+      id: 'retro',
+      label: 'Retro',
+      description: 'Toques clásicos y cálidos con personalidad única.',
     },
   ];
 

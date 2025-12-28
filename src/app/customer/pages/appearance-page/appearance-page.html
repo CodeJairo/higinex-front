@@ -1,8 +1,8 @@
 <section class="space-y-6">
   <!-- Encabezado de la sección -->
   <header>
-    <h1 class="text-2xl font-semibold text-slate-900">Apariencia y estilo</h1>
-    <p class="text-sm text-slate-500 mt-1">
+    <h1 class="text-2xl font-semibold text-base-content">Apariencia y estilo</h1>
+    <p class="text-sm text-base-content/60 mt-1">
       Personaliza cómo ves Higinex: tema claro u oscuro, colores y detalles visuales. Estos cambios
       solo afectan tu experiencia.
     </p>
@@ -12,7 +12,7 @@
   <div class="card bg-base-100 border border-base-200 shadow-sm">
     <div class="card-body">
       <h2 class="card-title text-base">Tema de la interfaz</h2>
-      <p class="text-sm text-slate-500">Elige el esquema de color principal para la aplicación.</p>
+      <p class="text-sm text-base-content/60">Elige el esquema de color principal para la aplicación.</p>
 
       <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
         @for (theme of themeOptions; track theme.id) {
@@ -26,7 +26,7 @@
               <span class="badge badge-xs"> Activo </span>
               }
             </div>
-            <p class="text-xs text-slate-500">
+            <p class="text-xs text-base-content/60">
               {{ theme.description }}
             </p>
           </div>
@@ -40,19 +40,15 @@
   <div class="card bg-base-100 border border-base-200 shadow-sm">
     <div class="card-body">
       <h2 class="card-title text-base">Color de acento</h2>
-      <p class="text-sm text-slate-500">
+      <p class="text-sm text-base-content/60">
         Define el color principal para botones, enlaces y elementos destacados.
       </p>
 
       <div class="mt-4 flex flex-wrap gap-3">
         @for (accent of accentOptions; track accent.id) {
-        <button
-          type="button"
-          [class]="accentButtonClasses(accent.id)"
-          (click)="selectAccent(accent.id)"
-        >
+        <button type="button" [class]="accentButtonClasses(accent.id)" (click)="selectAccent(accent.id)">
           <span [class]="accentSwatchClasses(accent.id)"></span>
-          <span class="font-medium text-slate-700">
+          <span class="font-medium text-base-content/80">
             {{ accent.label }}
           </span>
         </button>
@@ -65,7 +61,7 @@
   <div class="card bg-base-100 border border-base-200 shadow-sm">
     <div class="card-body">
       <h2 class="card-title text-base">Detalles de la interfaz</h2>
-      <p class="text-sm text-slate-500">
+      <p class="text-sm text-base-content/60">
         Ajusta qué tan compacto se ve todo y otros detalles visuales.
       </p>
 
@@ -73,15 +69,11 @@
         <!-- Bordes redondeados -->
         <div class="form-control">
           <label class="label cursor-pointer justify-start gap-3">
-            <input
-              type="checkbox"
-              class="checkbox checkbox-sm"
-              [checked]="roundedCorners()"
-              (change)="onRoundedChange($event)"
-            />
+            <input type="checkbox" class="checkbox checkbox-sm" [checked]="roundedCorners()"
+              (change)="onRoundedChange($event)" />
             <div>
               <span class="label-text text-sm font-medium"> Bordes redondeados </span>
-              <p class="text-xs text-slate-500">
+              <p class="text-xs text-base-content/60">
                 Usa esquinas más suaves en tarjetas, botones y campos.
               </p>
             </div>
@@ -91,15 +83,11 @@
         <!-- Layout compacto -->
         <div class="form-control">
           <label class="label cursor-pointer justify-start gap-3">
-            <input
-              type="checkbox"
-              class="checkbox checkbox-sm"
-              [checked]="compactLayout()"
-              (change)="onCompactChange($event)"
-            />
+            <input type="checkbox" class="checkbox checkbox-sm" [checked]="compactLayout()"
+              (change)="onCompactChange($event)" />
             <div>
               <span class="label-text text-sm font-medium"> Diseño compacto </span>
-              <p class="text-xs text-slate-500">
+              <p class="text-xs text-base-content/60">
                 Reduce espacios internos para ver más contenido en pantalla.
               </p>
             </div>
@@ -109,15 +97,11 @@
         <!-- Animaciones sutiles -->
         <div class="form-control">
           <label class="label cursor-pointer justify-start gap-3">
-            <input
-              type="checkbox"
-              class="checkbox checkbox-sm"
-              [checked]="subtleAnimations()"
-              (change)="onSubtleAnimationsChange($event)"
-            />
+            <input type="checkbox" class="checkbox checkbox-sm" [checked]="subtleAnimations()"
+              (change)="onSubtleAnimationsChange($event)" />
             <div>
               <span class="label-text text-sm font-medium"> Animaciones sutiles </span>
-              <p class="text-xs text-slate-500">
+              <p class="text-xs text-base-content/60">
                 Transiciones suaves en hover y cambios de estado.
               </p>
             </div>
@@ -131,7 +115,7 @@
   <div class="card bg-base-100 border border-dashed border-base-300">
     <div class="card-body">
       <h2 class="card-title text-base">Vista previa rápida</h2>
-      <p class="text-sm text-slate-500">
+      <p class="text-sm text-base-content/60">
         Así se verán algunos elementos de la interfaz con tu configuración.
       </p>
 
@@ -145,7 +129,7 @@
             </div>
 
             <p class="font-semibold text-sm">Tus pedidos y preferencias en un solo lugar</p>
-            <p class="text-xs text-slate-600/90">
+            <p class="text-xs text-base-content/70">
               Este bloque simula cómo se verán las tarjetas principales con la combinación de tema,
               acento y densidad que elijas.
             </p>
@@ -163,11 +147,7 @@
             <label class="label py-1">
               <span class="label-text text-xs">Campo de ejemplo</span>
             </label>
-            <input
-              type="text"
-              class="input input-bordered input-sm"
-              placeholder="Texto de muestra"
-            />
+            <input type="text" class="input input-bordered input-sm" placeholder="Texto de muestra" />
           </div>
 
           <div class="form-control">
@@ -191,8 +171,7 @@
   <div class="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
     @if (saveNotice()) {
     <span
-      class="text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full"
-    >
+      class="text-xs font-medium text-success-content bg-success/10 border border-success/20 px-3 py-1 rounded-full">
       Cambios guardados
     </span>
     }
