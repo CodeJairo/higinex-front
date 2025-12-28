@@ -12,6 +12,7 @@ import { provideTanStackQuery, QueryClient } from '@tanstack/angular-query-exper
 import { withDevtools } from '@tanstack/angular-query-experimental/devtools';
 import { routes } from './app.routes';
 import { AuthService } from './auth/services/auth.service';
+import { AppearanceService } from './customer/services/appearance.service';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -29,6 +30,9 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withViewTransitions()),
     provideHttpClient(),
     provideTanStackQuery(queryClient, ...(isDevMode() ? [withDevtools()] : [])),
-    provideAppInitializer(() => inject(AuthService).initialize()),
+    provideAppInitializer(() => {
+      inject(AuthService).initialize();
+      inject(AppearanceService); // Ensure service starts to apply theme
+    }),
   ],
 };
