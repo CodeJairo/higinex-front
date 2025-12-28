@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { injectQuery } from '@tanstack/angular-query-experimental';
-import { Funnel, LucideAngularModule } from 'lucide-angular';
+import { ChevronDown, Funnel, LucideAngularModule, Search, TriangleAlert, X } from 'lucide-angular';
 import { AuthService } from '../../../auth/services/auth.service';
 import { MobileFilters } from '../../components/mobile-filters/mobile-filters';
 import { ProductCard } from '../../components/product-card/product-card';
@@ -21,6 +21,11 @@ export class CatalogPage {
   private readonly authService = inject(AuthService);
 
   readonly filterIcon = Funnel;
+  readonly chevronDownIcon = ChevronDown;
+  readonly alertIcon = TriangleAlert;
+  readonly searchIcon = Search;
+  readonly xIcon = X;
+
   readonly showMobileFilters = signal(false);
 
   private readonly productsQuery = injectQuery(() => ({

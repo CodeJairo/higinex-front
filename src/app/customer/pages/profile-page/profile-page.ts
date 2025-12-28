@@ -80,14 +80,14 @@ export class ProfilePage implements OnInit {
   }
 
   goToChangePassword() {
-    this.router.navigateByUrl('/account/change-password');
+    // this.router.navigateByUrl('/account/change-password');
   }
 
   goToAddresses() {
-    this.router.navigateByUrl('/account/addresses');
+    this.router.navigateByUrl('/customer/addresses');
   }
 
   goToAppearance() {
-    this.router.navigateByUrl('/account/appearance');
+    this.router.navigateByUrl('/customer/appearance');
   }
 }
