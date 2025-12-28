@@ -1,73 +1,68 @@
-<div class="navbar px-4 lg:px-6 h-16">
-  <!-- LEFT: Logo -->
-  <div class="navbar-start">
-    <button
-      (click)="goToHome()"
-      class="btn btn-ghost gap-3 px-0 min-h-0 h-auto hover:opacity-80 transition-opacity"
-    >
-      <div
-        class="w-9 h-9 bg-white flex items-center justify-center shrink-0 rounded-xl overflow-hidden border border-slate-100"
+<div
+  class="sticky top-0 z-100 w-full bg-base-100/80 backdrop-blur-md border-b border-base-200 shadow-sm"
+>
+  <div class="max-w-7xl mx-auto navbar h-16 px-4">
+    <div class="navbar-start">
+      <button
+        (click)="goToHome()"
+        class="group flex items-center gap-3 hover:opacity-90 transition-all"
       >
-        <!-- Puedes reutilizar tu logo SVG -->
-        <svg
-          width="36"
-          height="36"
-          viewBox="0 0 40 40"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
+        <div
+          class="w-10 h-10 bg-primary/10 flex items-center justify-center rounded-xl border border-primary/20 group-hover:scale-105 transition-transform"
         >
-          <rect width="40" height="40" fill="white" />
-          <path d="M8 8H12V32H8V8Z" fill="#0EA5E9" />
-          <path d="M16 8H20V32H16V8Z" fill="#0EA5E9" />
-          <path d="M24 8H28V32H24V8Z" fill="#0EA5E9" />
-          <path d="M8 18H28V22H8V18Z" fill="#0EA5E9" />
-        </svg>
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 40 40"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M8 8H12V32H8V8Z" fill="currentColor" class="text-primary" />
+            <path d="M16 8H20V32H16V8Z" fill="currentColor" class="text-primary" opacity="0.7" />
+            <path d="M24 8H28V32H24V8Z" fill="currentColor" class="text-primary" opacity="0.4" />
+            <path d="M8 18H28V22H8V18Z" fill="currentColor" class="text-primary" />
+          </svg>
+        </div>
+        <div class="flex flex-col items-start leading-tight">
+          <span class="text-base font-bold text-slate-900 tracking-tight">Higinex</span>
+          <span class="text-[10px] uppercase font-bold text-slate-400 tracking-widest"
+            >Panel Cliente</span
+          >
+        </div>
+      </button>
+    </div>
+
+    <div class="navbar-center hidden lg:flex">
+      <div
+        class="flex items-center gap-2 px-4 py-1.5 bg-slate-50 rounded-full border border-slate-100"
+      >
+        <div class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
+        <span class="text-xs font-medium text-slate-500">Configuración de cuenta</span>
       </div>
-      <div class="flex flex-col items-start min-w-0">
-        <span class="text-sm font-semibold text-slate-900 leading-tight truncate"> Higinex </span>
-        <span class="text-[11px] text-slate-500 truncate"> Mi cuenta </span>
+    </div>
+
+    <div class="navbar-end gap-2">
+      <button class="btn btn-ghost btn-circle btn-sm text-slate-500 hover:text-primary">
+        <lucide-icon [img]="helpIcon" class="w-5 h-5"></lucide-icon>
+      </button>
+
+      <div class="hidden sm:block w-px h-6 bg-slate-200 mx-1"></div>
+
+      <div class="pl-1">
+        @if (hasUser()) { @if (isAdmin()) {
+        <sales-admin-user-menu
+          [userName]="userDisplayName()"
+          [userDetail]="userDisplayDetail()"
+          (logout)="logout()"
+        />
+        } @else {
+        <sales-customer-user-menu
+          [userName]="userDisplayName()"
+          [userDetail]="userDisplayDetail()"
+          (logout)="logout()"
+        />
+        } }
       </div>
-    </button>
-  </div>
-
-  <!-- CENTER: título sección (desktop) -->
-  <div class="navbar-center hidden md:flex">
-    <span class="text-sm text-slate-500"> Configura tus datos y direcciones </span>
-  </div>
-
-  <!-- RIGHT: acciones -->
-  <div class="navbar-end gap-1 sm:gap-2">
-    <!-- Help -->
-    <button
-      type="button"
-      class="btn btn-ghost btn-square btn-sm hidden sm:inline-flex"
-      (click)="goToHelp()"
-    >
-      <lucide-icon [img]="helpIcon" class="w-4 h-4 text-slate-600"></lucide-icon>
-    </button>
-
-    <!-- Settings -->
-    <button
-      type="button"
-      class="btn btn-ghost btn-square btn-sm hidden sm:inline-flex"
-      (click)="goToSettings()"
-    >
-      <lucide-icon [img]="settingsIcon" class="w-4 h-4 text-slate-600"></lucide-icon>
-    </button>
-
-    <!-- User menu (mismo patrón que ya tienes) -->
-    @if (hasUser()) { @if (isAdmin()) {
-    <sales-admin-user-menu
-      [userName]="userDisplayName()"
-      [userDetail]="userDisplayDetail()"
-      (logout)="logout()"
-    ></sales-admin-user-menu>
-    } @else {
-    <sales-customer-user-menu
-      [userName]="userDisplayName()"
-      [userDetail]="userDisplayDetail()"
-      (logout)="logout()"
-    ></sales-customer-user-menu>
-    } }
+    </div>
   </div>
 </div>

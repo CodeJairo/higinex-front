@@ -17,7 +17,7 @@ import {
   X,
 } from 'lucide-angular';
 import { ImageWithFallback } from '../../../shared/components/image-with-fallback/image-with-fallback';
-import { CartItem } from '../../interface';
+import { CartItem } from '../../interfaces';
 import { Router } from '@angular/router';
 
 @Component({

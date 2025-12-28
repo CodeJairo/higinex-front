@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { FilterState, ProductVariant } from '../interface';
+import { FilterState, ProductVariant } from '../interfaces';
 
 const DEFAULT_FILTERS: FilterState = {
   productIds: [],

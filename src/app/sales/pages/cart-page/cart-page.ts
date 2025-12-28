@@ -1,6 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Info,
+  Lock,
+  LucideAngularComponent,
+  LucideAngularModule,
+  Package,
+  Shield,
+  Trash,
+  X,
+} from 'lucide-angular';
 
 interface CartItem {
   variantId: string;
@@ -29,12 +41,21 @@ interface CartSummary {
 @Component({
   selector: 'app-cart-page',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LucideAngularModule],
   templateUrl: './cart-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CartPage {
   private router = inject(Router);
+
+  readonly arrowLeftIcon = ArrowLeft;
+  readonly trashIcon = Trash;
+  readonly arrowRightIcon = ArrowRight;
+  readonly lockIcon = Lock;
+  readonly xIcon = X;
+  readonly infoIcon = Info;
+  readonly shieldCheckIcon = Shield;
+  readonly packageIcon = Package;
 
   // Data de ejemplo (mock)
   mockCartItems: CartItem[] = [
@@ -115,5 +136,30 @@ export class CartPage {
       return;
     }
     this.router.navigateByUrl('/sales/checkout');
+  }
+
+  clearCart(): void {
+    this.mockCartItems = [];
+  }
+
+  decreaseQty(item: any): void {
+    this.mockCartItems.forEach((cartItem) => {
+      if (cartItem.variantId === item.variantId && cartItem.quantity > 1) {
+        cartItem.quantity--;
+      }
+    });
+  }
+  increaseQty(item: any): void {
+    this.mockCartItems.forEach((cartItem) => {
+      if (cartItem.variantId === item.variantId) {
+        cartItem.quantity++;
+      }
+    });
+  }
+
+  removeItem(item: any): void {
+    this.mockCartItems = this.mockCartItems.filter(
+      (cartItem) => cartItem.variantId !== item.variantId
+    );
   }
 }

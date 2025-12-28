@@ -1,6 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import {
+  ArrowLeft,
+  CircleAlert,
+  Info,
+  LucideAngularModule,
+  Map,
+  NotebookPen,
+  Shield,
+  Truck,
+  User,
+} from 'lucide-angular';
 
 interface CartItem {
   variantId: string;
@@ -47,14 +58,21 @@ interface CheckoutSummary {
 
 @Component({
   selector: 'app-checkout-page',
-  standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LucideAngularModule],
   templateUrl: './checkout-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CheckoutPage {
   private readonly router = inject(Router);
 
+  readonly alertIcon = CircleAlert;
+  readonly userIcon = User;
+  readonly mapIcon = Map;
+  readonly infoIcon = Info;
+  readonly noteIcon = NotebookPen;
+  readonly shieldIcon = Shield;
+  readonly truckIcon = Truck;
+  readonly arrowLeftIcon = ArrowLeft;
   // Items de ejemplo (puedes reutilizar los del carrito)
   mockCartItems: CartItem[] = [
     {
@@ -90,7 +108,7 @@ export class CheckoutPage {
     documentNumber: '10203040',
   };
 
-  mockCheckoutAddress: CheckoutAddress | null = {
+  mockCheckoutAddress: CheckoutAddress = {
     id: 'addr-001',
     label: 'Oficina principal',
     line1: 'Cra 10 #20-30',
@@ -101,8 +119,6 @@ export class CheckoutPage {
     postalCode: '110111',
     notes: 'Entregar en recepción',
   };
-  // Si quieres simular sin dirección, pon null:
-  // mockCheckoutAddress: CheckoutAddress | null = null;
 
   mockCheckoutNotes: string = 'Entregar después de las 3pm.';
 

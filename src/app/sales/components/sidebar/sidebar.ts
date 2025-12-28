@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { ChevronDown, ChevronUp, Funnel, LucideAngularModule } from 'lucide-angular';
-import { Product } from '../../interface';
+import { Product } from '../../interfaces';
 import { FilterService } from '../../services/filter.service';
 
 interface ExpandedSections {

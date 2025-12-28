@@ -1,211 +1,141 @@
-<div class="min-h-screen bg-base-200 font-sans pb-10">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
 
-    <header class="mb-8">
-      <h1 class="text-3xl font-bold text-base-content flex items-center gap-3">
-        Carrito de Compras
-        <span class="badge badge-lg badge-primary" *ngIf="mockCartItems.length">
-          {{ mockCartItems.length }} items
-        </span>
-      </h1>
-      <p class="text-base-content/60 mt-2">
-        Revisa los detalles de tus productos antes de finalizar la orden.
-      </p>
-    </header>
+  <div class="lg:col-span-8 space-y-6">
+    <div class="flex items-center justify-between mb-2">
+      <div>
+        <h2 class="text-xl font-bold text-slate-800">Productos para reservar</h2>
+        <p class="text-xs text-slate-500 font-medium">Revisa tu selección antes de confirmar la orden.</p>
+      </div>
+      <button (click)="clearCart()" class="btn btn-ghost btn-xs text-slate-400 hover:text-error gap-1 transition-colors">
+        <lucide-icon [img]="trashIcon" class="w-3 h-3"></lucide-icon>
+        Limpiar bolsa
+      </button>
+    </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    <div class="space-y-4">
+      @for (item of mockCartItems; track item.variantId) {
+        <div class="card bg-white border border-slate-200 shadow-sm overflow-hidden hover:border-primary/30 transition-all duration-300 group">
+          <div class="p-4 sm:p-6 flex flex-col sm:flex-row gap-6">
 
-      <section class="lg:col-span-8 space-y-6">
-
-        @if (mockCartSummary.hasPriceIssues || mockCartSummary.hasStockIssues) {
-          <div role="alert" class="alert shadow-sm"
-               [ngClass]="{'alert-warning': mockCartSummary.hasPriceIssues, 'alert-error': mockCartSummary.hasStockIssues}">
-            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-            <div class="flex flex-col">
-              <span class="font-bold">Atención requerida</span>
-              <span class="text-sm" *ngIf="mockCartSummary.hasPriceIssues">Algunos ítems no tienen precio asignado.</span>
-              <span class="text-sm" *ngIf="mockCartSummary.hasStockIssues">Existen productos sin disponibilidad.</span>
+            <div class="w-full sm:w-32 h-32 bg-slate-50 rounded-2xl flex-shrink-0 border border-slate-100 flex items-center justify-center relative overflow-hidden">
+              <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:16px_16px]"></div>
+              <lucide-icon [img]="packageIcon" class="w-8 h-8 text-slate-300"></lucide-icon>
+              <div class="absolute bottom-2 left-2 badge badge-ghost text-[8px] font-bold opacity-50 uppercase border-none">Higinex</div>
             </div>
-          </div>
-        }
 
-        @if (!mockCartItems.length) {
-          <div class="card bg-base-100 shadow-sm border border-base-300 py-12 text-center">
-            <div class="card-body items-center justify-center">
-              <div class="w-24 h-24 bg-base-200 rounded-full flex items-center justify-center mb-4 text-base-content/30">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
-                </svg>
-              </div>
-              <h3 class="text-lg font-bold">Tu carrito está vacío</h3>
-              <p class="text-base-content/60 max-w-xs mx-auto">Parece que aún no has agregado nada. Explora nuestro catálogo para encontrar lo que buscas.</p>
-              <div class="card-actions mt-6">
-                <button class="btn btn-primary" (click)="goToCatalog()">
-                  Volver al catálogo
-                </button>
-              </div>
-            </div>
-          </div>
-        }
-
-        <div class="flex flex-col gap-4">
-          @for (item of mockCartItems; track item.variantId) {
-            <div class="card card-compact sm:card-side bg-base-100 shadow-sm border border-base-200 hover:shadow-md transition-shadow group">
-
-              <figure class="w-full sm:w-40 h-48 sm:h-auto bg-base-200 shrink-0 relative overflow-hidden">
-                <img [src]="item.imageUrl"
-                     [alt]="item.productName"
-                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-
-                @let available = item.inventory.onHand - item.inventory.reserved;
-                 <div class="absolute top-2 left-2 sm:hidden">
-                    <span class="badge badge-error shadow-sm" *ngIf="available <= 0">Sin Stock</span>
-                    <span class="badge badge-warning shadow-sm" *ngIf="available > 0 && available <= 5">¡Quedan {{available}}!</span>
-                 </div>
-              </figure>
-
-              <div class="card-body w-full">
-                <div class="flex flex-col sm:flex-row justify-between gap-4 h-full">
-
-                  <div class="flex-1 space-y-2">
-                    <div>
-                      <h3 class="card-title text-base sm:text-lg font-bold text-base-content">
-                        {{ item.productName }}
-                      </h3>
-                      <p class="text-sm font-medium text-base-content/70">
-                        {{ item.variantName }} <span class="opacity-50 mx-1">|</span> SKU: {{ item.sku }}
-                      </p>
-                    </div>
-
-                    <div class="flex flex-wrap gap-1.5">
-                      @for (key of (item.attributes | keyvalue); track key.key) {
-                        <div class="badge badge-ghost badge-sm text-xs">
-                          <span class="opacity-60 mr-1">{{ key.key }}:</span> {{ key.value }}
-                        </div>
-                      }
-                    </div>
-
-                    <div class="hidden sm:flex items-center gap-2 text-xs font-medium mt-1">
-                      <span class="text-success flex items-center gap-1" *ngIf="available > 5">
-                        <span class="badge badge-xs badge-success"></span> Disponible
-                      </span>
-                      <span class="text-warning flex items-center gap-1" *ngIf="available > 0 && available <= 5">
-                        <span class="badge badge-xs badge-warning"></span> Stock Bajo ({{ available }})
-                      </span>
-                      <span class="text-error flex items-center gap-1" *ngIf="available <= 0">
-                        <span class="badge badge-xs badge-error"></span> Agotado
-                      </span>
-                    </div>
-
-                    <div *ngIf="!item.unitPriceCop" class="text-error text-xs flex items-center gap-1">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" /></svg>
-                      Sin precio asignado
-                    </div>
+            <div class="flex-1 flex flex-col justify-between">
+              <div class="flex justify-between items-start gap-4">
+                <div>
+                  <h3 class="font-bold text-slate-800 text-lg leading-tight group-hover:text-primary transition-colors">
+                    {{ item.productName }}
+                  </h3>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span class="text-xs text-slate-500 font-medium">{{ item.variantName }}</span>
+                    <span class="w-1 h-1 rounded-full bg-slate-300"></span>
+                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">SKU: {{ item.sku }}</span>
                   </div>
+                </div>
+                <div class="text-right">
+                  <p class="text-lg font-black text-slate-900 tracking-tighter">
+                    {{ (item.unitPriceCop ?? 0) | currency : 'COP' : 'symbol-narrow' : '1.0-0' }}
+                  </p>
+                  <p class="text-[10px] text-slate-400 font-bold uppercase">Unitario</p>
+                </div>
+              </div>
 
-                  <div class="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-4 border-t sm:border-t-0 border-base-200 pt-3 sm:pt-0 mt-2 sm:mt-0">
+              <div class="flex justify-between items-center mt-6">
+                <div class="flex items-center bg-slate-50 rounded-xl p-1 border border-slate-200 shadow-sm">
+                  <button (click)="decreaseQty(item)" class="btn btn-ghost btn-sm btn-square hover:bg-white text-slate-600 shadow-none">-</button>
+                  <span class="px-5 text-sm font-black text-slate-800">{{ item.quantity }}</span>
+                  <button (click)="increaseQty(item)" class="btn btn-ghost btn-sm btn-square hover:bg-white text-slate-600 shadow-none">+</button>
+                </div>
 
-                    <div class="text-left sm:text-right">
-                      <div class="text-lg font-bold text-base-content" *ngIf="item.unitPriceCop">
-                        {{ item.unitPriceCop * item.quantity | currency : 'COP' : 'symbol-narrow' }}
-                      </div>
-                      <div class="text-xs text-base-content/50" *ngIf="item.unitPriceCop">
-                        {{ item.unitPriceCop | currency : 'COP' : 'symbol-narrow' }} c/u
-                      </div>
-                      <div class="text-error font-bold" *ngIf="!item.unitPriceCop">--</div>
-                    </div>
-
-                    <div class="flex items-center gap-3">
-                      <div class="join border border-base-300 rounded-btn">
-                        <button class="join-item btn btn-xs btn-ghost px-2 hover:bg-base-200"
-                                [disabled]="item.quantity <= 1">
-                          −
-                        </button>
-                        <div class="join-item px-2 min-w-[2rem] text-center text-sm font-medium flex items-center justify-center bg-base-100">
-                          {{ item.quantity }}
-                        </div>
-                        <button class="join-item btn btn-xs btn-ghost px-2 hover:bg-base-200">
-                          +
-                        </button>
-                      </div>
-
-                      <div class="tooltip tooltip-left" data-tip="Eliminar producto">
-                        <button class="btn btn-square btn-ghost btn-sm text-error/70 hover:text-error hover:bg-error/10">
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-
+                <div class="flex items-center gap-6">
+                  <div class="text-right">
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">Subtotal</p>
+                    <p class="font-black text-primary text-lg">
+                      {{ (item.unitPriceCop ?? 0) * item.quantity | currency : 'COP' : 'symbol-narrow' : '1.0-0' }}
+                    </p>
                   </div>
+                  <button (click)="removeItem(item)" class="btn btn-circle btn-ghost btn-sm text-slate-300 hover:text-error hover:bg-red-50 transition-all">
+                    <lucide-icon [img]="xIcon" class="w-4 h-4"></lucide-icon>
+                  </button>
                 </div>
               </div>
             </div>
-          }
-        </div>
-      </section>
-
-      <aside class="lg:col-span-4 relative">
-        <div class="card bg-base-100 shadow-xl border border-base-200 sticky top-6">
-          <div class="card-body p-6">
-            <h2 class="card-title text-xl mb-4">Resumen de Orden</h2>
-
-            <div class="space-y-3">
-              <div class="flex justify-between text-base-content/70">
-                <span>Subtotal</span>
-                <span class="font-medium text-base-content">{{ mockCartSummary.subtotal | currency : 'COP' }}</span>
-              </div>
-
-              <div class="flex justify-between text-base-content/70">
-                <span>Envío estimado</span>
-                <span class="font-medium text-base-content">{{ mockCartSummary.shipping | currency : 'COP' }}</span>
-              </div>
-
-              <div class="flex justify-between text-success" *ngIf="mockCartSummary.discount">
-                <span>Descuento aplicado</span>
-                <span>-{{ mockCartSummary.discount | currency : 'COP' }}</span>
-              </div>
-            </div>
-
-            <div class="divider my-4"></div>
-
-            <div class="flex justify-between items-end mb-6">
-              <span class="text-lg font-bold">Total</span>
-              <div class="text-right">
-                <span class="block text-2xl font-extrabold text-primary">
-                  {{ mockCartSummary.total | currency : 'COP' }}
-                </span>
-                <span class="text-xs text-base-content/50">Incluye impuestos</span>
-              </div>
-            </div>
-
-            <div class="flex flex-col gap-3">
-              <button class="btn btn-primary btn-block shadow-lg shadow-primary/30"
-                      (click)="goToCheckout()"
-                      [disabled]="mockCartSummary.hasPriceIssues || mockCartSummary.hasStockIssues || !mockCartItems.length">
-                Ir a Pagar
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 ml-1">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                </svg>
-              </button>
-
-              <button class="btn btn-ghost btn-block btn-sm" (click)="goToCatalog()">
-                Seguir comprando
-              </button>
-            </div>
-
-            <div class="mt-6 flex items-center justify-center gap-2 text-xs text-base-content/40">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
-              </svg>
-              Checkout seguro y encriptado
-            </div>
-
           </div>
         </div>
-      </aside>
+      }
+    </div>
 
+    <div class="bg-blue-50/50 border border-blue-100 rounded-2xl p-4 flex gap-4 items-center">
+      <div class="w-10 h-10 bg-blue-500 text-white rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-blue-100">
+        <lucide-icon [img]="infoIcon" class="w-5 h-5"></lucide-icon>
+      </div>
+      <p class="text-xs text-blue-800 font-medium leading-relaxed">
+        <strong>Nota:</strong> Al continuar, generarás una solicitud de pedido.
+        No realizaremos ningún cobro automático. Un asesor te contactará para formalizar la transacción.
+      </p>
     </div>
   </div>
+
+  <aside class="lg:col-span-4">
+    <div class="sticky top-24 space-y-4">
+      <div class="bg-white rounded-[32px] border border-slate-200 p-8 shadow-xl shadow-slate-200/40 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-full -mr-16 -mt-16 opacity-50"></div>
+
+        <h3 class="text-sm font-black text-slate-400 mb-6 uppercase tracking-[0.2em] relative">Resumen de Orden</h3>
+
+        <div class="space-y-4 mb-8 relative">
+          <div class="flex justify-between text-slate-500 font-medium text-sm">
+            <span>Valor productos</span>
+            <span class="text-slate-900 font-bold">{{ mockCartSummary.subtotal | currency : 'COP' : 'symbol-narrow' : '1.0-0' }}</span>
+          </div>
+          <div class="flex justify-between text-slate-500 font-medium text-sm">
+            <span>Envío</span>
+            <span class="text-emerald-500 font-black uppercase text-[10px] tracking-widest bg-emerald-50 px-2 py-0.5 rounded-md">Gratis</span>
+          </div>
+          <div class="divider before:bg-slate-100 after:bg-slate-100 my-2"></div>
+          <div class="flex justify-between items-end">
+            <div>
+              <span class="text-slate-400 font-bold text-[10px] uppercase">Total Estimado</span>
+              <p class="text-3xl font-black text-slate-900 tracking-tighter">
+                {{ mockCartSummary.total | currency : 'COP' : 'symbol-narrow' : '1.0-0' }}
+              </p>
+            </div>
+            <div class="text-[10px] text-slate-400 font-bold mb-1">COP</div>
+          </div>
+        </div>
+
+        <button
+          (click)="goToCheckout()"
+          class="btn btn-primary w-full h-16 rounded-2xl border-none text-white font-black text-lg shadow-lg shadow-primary/30 hover:shadow-primary/40 hover:-translate-y-0.5 active:translate-y-0 transition-all"
+        >
+          CONTINUAR PEDIDO
+          <lucide-icon [img]="arrowRightIcon" class="w-5 h-5 ml-2"></lucide-icon>
+        </button>
+
+        <div class="mt-6 flex flex-col gap-3">
+          <div class="flex items-center justify-center gap-2 text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+            <lucide-icon [img]="shieldCheckIcon" class="w-3 h-3 text-emerald-500"></lucide-icon>
+            Pedido Verificado
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+        <label class="block text-[10px] font-black text-slate-400 uppercase mb-3 tracking-widest">¿Tienes un cupón?</label>
+        <div class="flex gap-2">
+          <input
+            type="text"
+            placeholder="Código"
+            class="input input-bordered bg-slate-50 w-full rounded-xl text-sm border-slate-200 focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all"
+          />
+          <button class="btn btn-slate-900 text-white rounded-xl px-4 border-none hover:bg-slate-800">
+            OK
+          </button>
+        </div>
+      </div>
+    </div>
+  </aside>
 </div>

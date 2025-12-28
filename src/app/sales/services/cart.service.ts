@@ -1,5 +1,5 @@
 import { Injectable, signal, computed, effect } from '@angular/core';
-import { CartItem } from '../interface';
+import { CartItem } from '../interfaces';
 
 const CART_STORAGE_KEY = 'higinex_cart';
 

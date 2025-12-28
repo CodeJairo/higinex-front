@@ -53,6 +53,10 @@ export class CatalogPage {
     this.showMobileFilters.set(false);
   }
 
+  resetFilters(): void {
+    this.filterService.resetFilters();
+  }
+
   retryLoad(): void {
     this.productsQuery.refetch();
     this.variantsQuery.refetch();

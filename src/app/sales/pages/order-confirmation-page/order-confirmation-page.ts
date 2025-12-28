@@ -1,5 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { CircleCheckBig, Clock, LucideAngularModule, Phone, X } from 'lucide-angular';
 
 interface OrderConfirmationItem {
   productName: string;
@@ -35,11 +37,18 @@ interface OrderConfirmation {
 @Component({
   selector: 'app-order-confirmation-page',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LucideAngularModule],
   templateUrl: './order-confirmation-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrderConfirmationPage {
+  private readonly router = inject(Router);
+
+  readonly checkCircleIcon = CircleCheckBig;
+  readonly clockIcon = Clock;
+  readonly xIcon = X;
+  readonly phoneIcon = Phone;
+
   mockOrderConfirmation: OrderConfirmation = {
     id: 'order-001',
     orderNumber: 'ORD-9B1C2D3E4F5A',
@@ -84,5 +93,9 @@ export class OrderConfirmationPage {
 
   onCancelOrder(): void {
     console.log('Cancelar pedido (mock)');
+  }
+
+  goToCatalog(): void {
+    this.router.navigateByUrl('/sales/catalog');
   }
 }

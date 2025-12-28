@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../auth/services/auth.service';
-import { Product, ProductVariant, VariantImage } from '../interface';
+import { Product, ProductVariant, VariantImage } from '../interfaces';
 
 const DEFAULT_LIMIT = 100;
 const DEFAULT_OFFSET = 0;

@@ -19,7 +19,6 @@ interface CustomerAddress {
 
 @Component({
   selector: 'app-customer-addresses',
-  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './addresses-page.html',
 })

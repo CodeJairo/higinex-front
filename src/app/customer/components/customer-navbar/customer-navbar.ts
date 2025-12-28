@@ -26,7 +26,6 @@ import { CustomerUserMenu } from '../../../sales/components/customer-user-menu/c
 
 @Component({
   selector: 'customer-navbar',
-  standalone: true,
   imports: [CommonModule, LucideAngularModule, CustomerUserMenu, AdminUserMenu],
   templateUrl: './customer-navbar.html',
   host: {

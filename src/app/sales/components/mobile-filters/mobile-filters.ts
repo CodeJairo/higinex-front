@@ -9,7 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { ChevronDown, ChevronUp, LucideAngularModule, X } from 'lucide-angular';
-import { Product } from '../../interface';
+import { Product } from '../../interfaces';
 import { FilterService } from '../../services/filter.service';
 
 @Component({

@@ -18,7 +18,6 @@ interface AccentOption {
 
 @Component({
   selector: 'customer-appearance-settings',
-  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './appearance-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

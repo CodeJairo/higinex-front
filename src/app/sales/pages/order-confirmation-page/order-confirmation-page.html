@@ -1,87 +1,125 @@
-<div class="min-h-screen bg-base-200">
-  <div class="max-w-4xl mx-auto p-6 space-y-6">
-    <div class="card bg-base-100 border">
-      <div class="card-body p-6 text-center">
-        <div class="text-3xl font-semibold text-green-600">Pedido creado correctamente</div>
+<div class="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-700">
 
-        <div class="text-sm text-slate-600 mt-2">
-          Número de orden:
-          <span class="font-mono font-semibold">
-            {{ mockOrderConfirmation.orderNumber }}
-          </span>
+  <div class="card bg-white border border-slate-200 shadow-xl shadow-slate-200/50 rounded-[32px] overflow-hidden">
+    <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-400 to-emerald-500"></div>
+
+    <div class="p-8 text-center">
+      <div class="w-20 h-20 bg-green-50 text-green-500 rounded-3xl flex items-center justify-center mx-auto mb-6 border border-green-100 shadow-inner">
+        <lucide-icon [img]="checkCircleIcon" class="w-10 h-10"></lucide-icon>
+      </div>
+
+      <h2 class="text-3xl font-black text-slate-800 tracking-tight">¡Pedido Recibido!</h2>
+      <p class="text-slate-500 font-medium mt-2 max-w-sm mx-auto">
+        Hemos registrado tu orden. Un asesor de Higinex se pondrá en contacto contigo para coordinar el pago y envío.
+      </p>
+
+      <div class="flex flex-wrap justify-center gap-4 mt-8">
+        <div class="px-6 py-3 bg-slate-50 rounded-2xl border border-slate-100">
+          <p class="text-[10px] uppercase font-bold text-slate-400 tracking-widest mb-1">Número de orden</p>
+          <p class="font-mono text-lg font-bold text-primary">{{ mockOrderConfirmation.orderNumber }}</p>
         </div>
 
-        <div class="badge badge-warning mt-3">
-          {{ mockOrderConfirmation.status }}
-        </div>
-
-        <!-- Reservation countdown -->
-        <div class="mt-3 text-sm text-slate-600">
-          Reserva activa hasta:
-          <span class="font-medium">
-            {{ mockOrderConfirmation.reservationExpiresAt }}
-          </span>
+        <div class="px-6 py-3 bg-slate-50 rounded-2xl border border-slate-100">
+          <p class="text-[10px] uppercase font-bold text-slate-400 tracking-widest mb-1">Estado actual</p>
+          <div [ngClass]="{
+            'bg-amber-100 text-amber-700': mockOrderConfirmation.status === 'CREATED' || mockOrderConfirmation.status === 'PENDING_PAYMENT',
+            'bg-blue-100 text-blue-700': mockOrderConfirmation.status === 'PAID' || mockOrderConfirmation.status === 'PREPARING',
+            'bg-green-100 text-green-700': mockOrderConfirmation.status === 'DELIVERED',
+            'bg-red-100 text-red-700': mockOrderConfirmation.status === 'CANCELED'
+          }" class="badge border-none font-black py-3 px-4 rounded-lg uppercase text-[10px]">
+            {{ mockOrderConfirmation.status }}
+          </div>
         </div>
       </div>
+
+      @if (mockOrderConfirmation.status === 'CREATED') {
+        <div class="mt-6 flex items-center justify-center gap-2 text-sm text-amber-600 font-bold bg-amber-50 py-2 px-4 rounded-full w-fit mx-auto border border-amber-100">
+          <lucide-icon [img]="clockIcon" class="w-4 h-4"></lucide-icon>
+          Reserva activa hasta: {{ mockOrderConfirmation.reservationExpiresAt }}
+        </div>
+      }
     </div>
+  </div>
 
-    <!-- Order items -->
-    <div class="card bg-base-100 border">
-      <div class="card-body p-4">
-        <h3 class="font-semibold mb-2">Resumen del pedido</h3>
+  <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
 
-        <div class="space-y-2">
+    <div class="md:col-span-7 space-y-4">
+      <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest ml-1">Detalle del pedido</h3>
+
+      <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="divide-y divide-slate-100">
           @for (item of mockOrderConfirmation.items; track item.sku) {
-          <div class="flex justify-between border-b pb-2 last:border-0">
-            <div>
-              <div class="font-medium text-sm">{{ item.productName }} — {{ item.variantName }}</div>
-              <div class="text-xs text-slate-500">SKU {{ item.sku }}</div>
-            </div>
-
-            <div class="text-right">
-              <div class="text-sm">x{{ item.quantity }}</div>
-              <div class="font-semibold">
-                {{ item.lineTotal | currency : 'COP' }}
+            <div class="p-4 flex gap-4 items-center group hover:bg-slate-50 transition-colors">
+              <div class="w-16 h-16 bg-slate-100 rounded-xl flex-shrink-0 border border-slate-200 flex items-center justify-center text-[10px] text-slate-400 font-bold uppercase overflow-hidden">
+                Higinex
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-bold text-slate-800 truncate">{{ item.productName }}</p>
+                <p class="text-xs text-slate-500">{{ item.variantName }} <span class="mx-1">•</span> Cant: {{ item.quantity }}</p>
+                <p class="text-[10px] text-slate-400 mt-1 uppercase font-bold tracking-tighter">SKU: {{ item.sku }}</p>
+              </div>
+              <div class="text-right">
+                <p class="text-sm font-black text-slate-900">{{ item.lineTotal | currency : 'COP' : 'symbol-narrow' : '1.0-0' }}</p>
               </div>
             </div>
-          </div>
           }
         </div>
       </div>
     </div>
 
-    <!-- Totals -->
-    <div class="card bg-base-100 border">
-      <div class="card-body p-4">
-        <div class="flex justify-between text-sm">
-          <span>Subtotal</span>
-          <span>{{ mockOrderConfirmation.totals.subtotal | currency : 'COP' }}</span>
+    <div class="md:col-span-5 space-y-6">
+      <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest ml-1">Resumen financiero</h3>
+
+      <div class="bg-slate-900 rounded-[32px] p-8 text-white shadow-xl shadow-slate-300">
+        <div class="space-y-4">
+          <div class="flex justify-between text-sm opacity-60">
+            <span>Subtotal</span>
+            <span>{{ mockOrderConfirmation.totals.subtotal | currency : 'COP' : 'symbol-narrow' : '1.0-0' }}</span>
+          </div>
+          <div class="flex justify-between text-sm opacity-60">
+            <span>Costo de envío</span>
+            <span class="text-green-400">Gratis</span>
+          </div>
+          <div class="flex justify-between text-sm opacity-60">
+            <span>Descuento aplicado</span>
+            <span class="text-primary">-{{ mockOrderConfirmation.totals.discount | currency : 'COP' : 'symbol-narrow' : '1.0-0' }}</span>
+          </div>
+
+          <div class="divider before:bg-white/10 after:bg-white/10 my-2"></div>
+
+          <div class="flex justify-between items-end">
+            <span class="font-bold opacity-80 uppercase text-xs tracking-widest">Total Final</span>
+            <span class="text-3xl font-black text-white tracking-tighter">
+              {{ mockOrderConfirmation.totals.total | currency : 'COP' : 'symbol-narrow' : '1.0-0' }}
+            </span>
+          </div>
         </div>
 
-        <div class="flex justify-between text-sm">
-          <span>Envío</span>
-          <span>{{ mockOrderConfirmation.totals.shipping | currency : 'COP' }}</span>
+        <div class="mt-8 space-y-3">
+          <button (click)="goToCatalog()" class="btn btn-primary w-full h-14 rounded-2xl border-none font-black text-base shadow-lg shadow-primary/20">
+            VOLVER AL CATÁLOGO
+          </button>
+
+          @if (mockOrderConfirmation.status === 'CREATED' || mockOrderConfirmation.status === 'PENDING_PAYMENT') {
+            <button class="btn btn-ghost btn-block text-red-400 hover:text-red-500 hover:bg-red-500/10 font-bold transition-all">
+              <lucide-icon [img]="xIcon" class="w-4 h-4 mr-2"></lucide-icon>
+              Solicitar cancelación
+            </button>
+          }
         </div>
+      </div>
 
-        <div class="flex justify-between text-sm">
-          <span>Descuento</span>
-          <span>-{{ mockOrderConfirmation.totals.discount | currency : 'COP' }}</span>
+      <div class="p-6 bg-blue-50 rounded-3xl border border-blue-100 flex items-start gap-4">
+        <div class="w-10 h-10 bg-blue-500 text-white rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-blue-200">
+          <lucide-icon [img]="phoneIcon" class="w-5 h-5"></lucide-icon>
         </div>
-
-        <div class="divider my-2"></div>
-
-        <div class="flex justify-between font-semibold">
-          <span>Total</span>
-          <span>{{ mockOrderConfirmation.totals.total | currency : 'COP' }}</span>
+        <div>
+          <h4 class="text-sm font-bold text-blue-900">¿Dudas con tu orden?</h4>
+          <p class="text-xs text-blue-700 mt-1">Escríbenos directamente a WhatsApp para agilizar tu despacho.</p>
+          <button class="mt-3 text-sm font-black text-blue-600 hover:underline">Chat Soporte →</button>
         </div>
       </div>
     </div>
 
-    <!-- Actions -->
-    <div class="flex gap-2 justify-end">
-      <button class="btn btn-ghost">Volver al catálogo</button>
-
-      <button class="btn btn-error btn-outline">Cancelar pedido</button>
-    </div>
   </div>
 </div>

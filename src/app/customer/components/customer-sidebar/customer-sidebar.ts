@@ -12,7 +12,6 @@ interface customerNavItem {
 
 @Component({
   selector: 'customer-sidebar',
-  standalone: true,
   imports: [CommonModule, RouterModule, LucideAngularModule],
   templateUrl: './customer-sidebar.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

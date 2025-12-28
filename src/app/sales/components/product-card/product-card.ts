@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { Check, LucideAngularModule, Package, ShoppingCart } from 'lucide-angular';
 import { ImageWithFallback } from '../../../shared/components/image-with-fallback/image-with-fallback';
-import { ProductVariant } from '../../interface';
+import { ProductVariant } from '../../interfaces';
 import { CatalogService } from '../../services/catalog.service';
 import { CartService } from '../../services/cart.service';
 

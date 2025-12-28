@@ -1,94 +1,117 @@
-<div class="flex flex-1">
-  <sales-sidebar [products]="products()"></sales-sidebar>
+<div class="flex flex-col lg:flex-row min-h-[calc(100-64px)]">
+  <aside
+    class="hidden lg:block w-72 shrink-0 border-r border-base-200 bg-base-100/50 backdrop-blur-sm sticky top-16 h-[calc(100vh-64px)] overflow-y-auto"
+  >
+    <sales-sidebar [products]="products()"></sales-sidebar>
+  </aside>
 
-  <main class="flex-1 p-6 lg:p-8">
-    <div class="flex items-center justify-between gap-3 mb-6">
-      <div class="flex-1">
-        <h2 class="text-slate-900 mb-1">Productos disponibles</h2>
-        <p class="text-sm text-slate-600">
-          {{ filteredVariants().length }}
-          {{ filteredVariants().length === 1 ? 'producto encontrado' : 'productos encontrados' }}
+  <main class="flex-1 p-4 lg:p-8">
+    <header class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <h1 class="text-2xl font-bold text-slate-800">Catálogo de Productos</h1>
+          <span class="badge badge-sm bg-primary/10 text-primary border-none font-bold">
+            {{ filteredVariants().length }}
+          </span>
+        </div>
+        <p class="text-sm text-slate-500">
+          Explora nuestras soluciones de higiene y limpieza profesional.
         </p>
       </div>
 
-      <!-- Mobile Filters Button -->
-      <button
-        (click)="openMobileFilters()"
-        class="lg:hidden flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-      >
-        <lucide-icon [img]="filterIcon" class="w-4 h-4"></lucide-icon>
-        <span class="text-sm">Filtros</span>
-      </button>
+      <div class="flex items-center gap-3">
+        <button
+          (click)="openMobileFilters()"
+          class="lg:hidden btn btn-primary btn-md grow shadow-md shadow-primary/20 gap-2"
+        >
+          <lucide-icon [img]="filterIcon" class="w-4 h-4"></lucide-icon>
+          Filtros
+        </button>
 
-      <select
-        class="hidden sm:block px-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
-        <option>Ordenar por: Relevancia</option>
-        <option>Menor precio</option>
-        <option>Mayor precio</option>
-        <option>Nombre A-Z</option>
-        <option>Nombre Z-A</option>
-      </select>
-    </div>
+        <div class="relative hidden sm:block min-w-50">
+          <label
+            class="text-[10px] uppercase font-bold text-slate-400 absolute -top-2 left-3 px-1 bg-white z-10"
+          >
+            Ordenar por
+          </label>
+          <select
+            class="select select-bordered w-full bg-white font-medium text-slate-700 focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all"
+          >
+            <option>Relevancia</option>
+            <option>Menor precio</option>
+            <option>Mayor precio</option>
+            <option>Nombre A-Z</option>
+          </select>
+        </div>
+      </div>
+    </header>
 
-    <!-- Mobile Filters Modal -->
     @if (showMobileFilters()) {
-    <sales-mobile-filters
-      [products]="products()"
-      (closeFilters)="closeMobileFilters()"
-    ></sales-mobile-filters>
-    }
-
-    @if (isLoading()) {
-    <div class="text-center py-16">
-      <div class="w-16 h-16 bg-slate-100 rounded-full animate-pulse mx-auto mb-4"></div>
-      <h3 class="text-slate-900 mb-2">Cargando catalogo</h3>
-      <p class="text-sm text-slate-600">Estamos preparando las variantes disponibles.</p>
+    <div class="fixed inset-0 z-[110] lg:hidden animate-in fade-in duration-200">
+      <div
+        class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+        (click)="closeMobileFilters()"
+      ></div>
+      <div
+        class="absolute right-0 top-0 h-full w-[85%] max-w-sm bg-base-100 shadow-2xl animate-in slide-in-from-right duration-300"
+      >
+        <sales-mobile-filters
+          [products]="products()"
+          (closeFilters)="closeMobileFilters()"
+        ></sales-mobile-filters>
+      </div>
+    </div>
+    } @if (isLoading()) {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      @for (i of [1,2,3,4,5,6,7,8]; track i) {
+      <div class="card bg-base-100 border border-base-200 h-80 animate-pulse">
+        <div class="h-48 bg-slate-100 rounded-t-2xl"></div>
+        <div class="p-4 space-y-3">
+          <div class="h-4 bg-slate-100 rounded w-3/4"></div>
+          <div class="h-3 bg-slate-50 rounded w-1/2"></div>
+          <div class="flex justify-between pt-4">
+            <div class="h-6 bg-slate-100 rounded w-1/4"></div>
+            <div class="h-8 bg-slate-100 rounded-lg w-1/3"></div>
+          </div>
+        </div>
+      </div>
+      }
     </div>
     } @else if (hasError()) {
-    <div class="text-center py-16">
+    <div class="card bg-white border border-red-100 p-12 text-center max-w-lg mx-auto shadow-sm">
       <div
-        class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4"
+        class="w-20 h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6"
       >
-        <svg class="w-8 h-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
-            stroke-width="2"
-            d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            stroke-width="1.5"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
           />
         </svg>
       </div>
-      <h3 class="text-slate-900 mb-2">No se pudo cargar el catalogo</h3>
-      <p class="text-sm text-slate-600 mb-4">Intenta nuevamente en unos segundos.</p>
-      <button
-        (click)="retryLoad()"
-        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-      >
-        Reintentar
-      </button>
+      <h3 class="text-xl font-bold text-slate-800">Interrupción de señal</h3>
+      <p class="text-slate-500 mt-2 mb-8">
+        No logramos conectar con el almacén. Verifica tu conexión e intenta de nuevo.
+      </p>
+      <button (click)="retryLoad()" class="btn btn-primary px-8">Reintentar conexión</button>
     </div>
     } @else if (filteredVariants().length === 0) {
-    <div class="text-center py-16">
-      <div
-        class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4"
-      >
-        <svg class="w-8 h-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
-          />
-        </svg>
-      </div>
-      <h3 class="text-slate-900 mb-2">No se encontraron variantes</h3>
-      <p class="text-sm text-slate-600">Prueba con otros productos o limpia los filtros.</p>
+    <div class="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-300">
+      <div class="text-6xl mb-4">🔍</div>
+      <h3 class="text-xl font-bold text-slate-800">Sin coincidencias</h3>
+      <p class="text-slate-500 mt-1">Prueba ajustando los filtros o buscando otro término.</p>
+      <button (click)="resetFilters()" class="btn btn-ghost btn-sm mt-4 text-primary">
+        Limpiar todos los filtros
+      </button>
     </div>
     } @else {
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 auto-rows-fr">
       @for (variant of filteredVariants(); track variant.id) {
-      <sales-product-card [variant]="variant"></sales-product-card>
+      <div class="hover:-translate-y-1 transition-transform duration-300">
+        <sales-product-card [variant]="variant"></sales-product-card>
+      </div>
       }
     </div>
     }
