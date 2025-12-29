@@ -33,19 +33,39 @@ export class ProductCard {
     this.variant().product?.name ? this.variant().name : this.variant().sku
   );
   readonly attributesLabel = computed(() => this.formatAttributes(this.variant().attributesJson));
-  readonly imageUrl = computed(() => {
+  readonly images = computed(() => {
     const variant = this.variant();
-    const image = variant.images?.[0];
-    if (image?.id) {
-      return this.catalogService.buildVariantImageUrl(variant.id, image.id);
+    if (!variant.images || variant.images.length === 0) {
+      return [
+        {
+          id: 'placeholder',
+          url: PLACEHOLDER_IMAGE,
+          alt: this.productName(),
+        },
+      ];
     }
-    return PLACEHOLDER_IMAGE;
+    return variant.images.map((img) => ({
+      id: img.id,
+      url: this.catalogService.buildVariantImageUrl(variant.id, img.id),
+      alt: img.altText ?? this.productName(),
+    }));
   });
-  readonly imageAlt = computed(() => {
-    const variant = this.variant();
-    const image = variant.images?.[0];
-    return image?.altText ?? this.productName();
-  });
+
+  getSlideId(imageId: string): string {
+    return `slide-${this.variant().id}-${imageId}`;
+  }
+
+  getPrevSlideId(currentIndex: number): string {
+    const images = this.images();
+    const prevIndex = currentIndex === 0 ? images.length - 1 : currentIndex - 1;
+    return this.getSlideId(images[prevIndex].id);
+  }
+
+  getNextSlideId(currentIndex: number): string {
+    const images = this.images();
+    const nextIndex = currentIndex === images.length - 1 ? 0 : currentIndex + 1;
+    return this.getSlideId(images[nextIndex].id);
+  }
   readonly availability = computed(() => {
     const inventory = this.variant().inventory;
     if (!inventory) {
