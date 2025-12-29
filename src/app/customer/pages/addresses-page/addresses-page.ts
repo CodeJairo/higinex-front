@@ -1,21 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-
-interface CustomerAddress {
-  id: string;
-  label?: string | null;
-  line1: string;
-  line2?: string | null;
-  neighborhood?: string | null;
-  city: string;
-  state: string;
-  postalCode?: string | null;
-  notes?: string | null;
-  isDefault: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
+import { injectQuery } from '@tanstack/angular-query-experimental';
+import {
+  CreateCustomerAddressPayload,
+  CustomerAddress,
+  UpdateCustomerAddressPayload,
+} from '../../interfaces/customer-address.interface';
+import { CustomerAddressService } from '../../services/customer-address.service';
 
 @Component({
   selector: 'app-customer-addresses',
@@ -23,45 +15,28 @@ interface CustomerAddress {
   templateUrl: './addresses-page.html',
 })
 export class AddressesPage {
-  // Estados de sistema (mock)
-  isLoading = false;
-  errorMessage: string | null = null;
+  private readonly addressService = inject(CustomerAddressService);
 
-  // Data mock (simula respuesta del backend)
-  addresses: CustomerAddress[] = [
-    {
-      id: 'address-1',
-      label: 'Casa',
-      line1: 'Calle 123 #45-67',
-      line2: 'Apto 302',
-      neighborhood: 'Laureles',
-      city: 'Medellín',
-      state: 'Antioquia',
-      postalCode: '050021',
-      notes: 'Entregar en portería',
-      isDefault: true,
-      createdAt: '2025-01-01T12:00:00.000Z',
-      updatedAt: '2025-01-05T12:00:00.000Z',
-    },
-    {
-      id: 'address-2',
-      label: 'Oficina',
-      line1: 'Cra 45 #12-34',
-      line2: 'Piso 5, Oficina 502',
-      neighborhood: 'El Poblado',
-      city: 'Medellín',
-      state: 'Antioquia',
-      postalCode: '050022',
-      notes: 'Recepción 24 horas',
-      isDefault: false,
-      createdAt: '2025-01-02T10:00:00.000Z',
-      updatedAt: '2025-01-03T10:00:00.000Z',
-    },
-  ];
+  // Consultar direcciones
+  private readonly addressesQuery = injectQuery(() => ({
+    queryKey: ['customer-addresses'],
+    queryFn: () => this.addressService.listAddresses(),
+  }));
 
-  get hasDefault(): boolean {
-    return this.addresses.some((a) => a.isDefault);
-  }
+  // Estados computados desde la query
+  readonly addresses = computed(() => this.addressesQuery.data() ?? []);
+  readonly isLoading = computed(() => this.addressesQuery.isLoading());
+  readonly errorMessage = computed(() =>
+    this.addressesQuery.isError() ? 'Error al cargar las direcciones.' : null
+  );
+
+  // Helper para saber si hay default
+  readonly hasDefault = computed(() => this.addresses().some((a) => a.isDefault));
+
+  // Loading states de acciones (desde el servicio)
+  readonly isSaving = computed(
+    () => this.addressService.isCreating() || this.addressService.isUpdating()
+  );
 
   // Estado UI formularios / modales
   isFormOpen = false;
@@ -70,8 +45,8 @@ export class AddressesPage {
   editingAddress: CustomerAddress | null = null;
   addressToDelete: CustomerAddress | null = null;
 
-  // Modelo simple para el formulario (mock)
-  addressForm = {
+  // Modelo para el formulario
+  addressForm: CreateCustomerAddressPayload = {
     label: '',
     line1: '',
     line2: '',
@@ -82,8 +57,6 @@ export class AddressesPage {
     notes: '',
     isDefault: false,
   };
-
-  // --- Acciones UI (mock, sin HTTP) ---
 
   openCreateForm() {
     this.editingAddress = null;
@@ -97,8 +70,9 @@ export class AddressesPage {
       postalCode: '',
       notes: '',
       // Si no hay default aún, sugerimos marcar esta como default
-      isDefault: !this.hasDefault,
+      isDefault: !this.hasDefault(),
     };
+    this.addressService.clearErrors();
     this.isFormOpen = true;
   }
 
@@ -115,6 +89,7 @@ export class AddressesPage {
       notes: address.notes ?? '',
       isDefault: address.isDefault,
     };
+    this.addressService.clearErrors();
     this.isFormOpen = true;
   }
 
@@ -122,13 +97,27 @@ export class AddressesPage {
     this.isFormOpen = false;
   }
 
-  saveAddress() {
-    // Aquí luego conectas con POST/PATCH.
-    console.log('Guardar dirección (mock)', {
-      form: this.addressForm,
-      editing: this.editingAddress,
-    });
-    this.isFormOpen = false;
+  async saveAddress() {
+    // Validar campos mínimos si se desea, aunque el backend valida
+    if (!this.addressForm.line1 || !this.addressForm.city || !this.addressForm.state) {
+      // Podríamos mostrar un toast o error local
+      return;
+    }
+
+    let success = false;
+    if (this.editingAddress) {
+      // Update
+      const payload: UpdateCustomerAddressPayload = { ...this.addressForm };
+      // Limpiar campos vacíos si es necesario, o enviarlos tal cual
+      success = await this.addressService.updateAddress(this.editingAddress.id, payload);
+    } else {
+      // Create
+      success = await this.addressService.createAddress(this.addressForm);
+    }
+
+    if (success) {
+      this.closeForm();
+    }
   }
 
   confirmDelete(address: CustomerAddress) {
@@ -141,23 +130,22 @@ export class AddressesPage {
     this.addressToDelete = null;
   }
 
-  deleteAddress() {
+  async deleteAddress() {
     if (this.addressToDelete) {
-      this.addresses = this.addresses.filter((a) => a.id !== this.addressToDelete!.id);
+      const success = await this.addressService.deleteAddress(this.addressToDelete.id);
+      if (success) {
+        this.cancelDelete();
+      }
     }
-    this.cancelDelete();
   }
 
-  makeDefault(address: CustomerAddress) {
-    // Mock de PATCH /default
-    this.addresses = this.addresses.map((a) => ({
-      ...a,
-      isDefault: a.id === address.id,
-    }));
+  async makeDefault(address: CustomerAddress) {
+    // Optimistic update podría ser manejado por react-query (invalidate), 
+    // pero aquí esperamos la respuesta
+    await this.addressService.setDefaultAddress(address.id);
   }
 
   retry() {
-    // Aquí luego harás el refetch.
-    console.log('Reintentar (mock)');
+    this.addressesQuery.refetch();
   }
 }

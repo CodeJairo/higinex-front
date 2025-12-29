@@ -26,7 +26,7 @@
       </button>
     </header>
 
-    @if (errorMessage) {
+    @if (errorMessage()) {
     <div role="alert" class="alert shadow-sm border border-error/20 bg-error/10 text-error mb-6">
       <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -34,11 +34,11 @@
       </svg>
       <div class="flex-1">
         <h3 class="font-bold text-sm">Error al cargar</h3>
-        <div class="text-xs">{{ errorMessage }}</div>
+        <div class="text-xs">{{ errorMessage() }}</div>
       </div>
       <button class="btn btn-sm btn-ghost text-error" (click)="retry()">Reintentar</button>
     </div>
-    } @if (isLoading) {
+    } @if (isLoading()) {
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       @for (skeleton of [1, 2, 3]; track skeleton) {
       <div class="card bg-base-100 border border-base-200 h-48">
@@ -56,7 +56,7 @@
       </div>
       }
     </div>
-    } @else { @if (!addresses.length) {
+    } @else { @if (!addresses().length) {
     <div
       class="card bg-base-100 border-2 border-dashed border-base-300 py-16 text-center hover:border-base-content/20 transition-colors">
       <div class="mx-auto mb-4 h-20 w-20 rounded-full bg-base-200 flex items-center justify-center text-4xl">
@@ -70,7 +70,7 @@
         <button class="btn btn-primary" (click)="openCreateForm()">Crear primera dirección</button>
       </div>
     </div>
-    } @else { @if (!hasDefault) {
+    } @else { @if (!hasDefault()) {
     <div class="alert bg-warning/10 border-warning/20 text-warning-content shadow-sm mb-6 flex items-start gap-3">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
         class="w-5 h-5 mt-0.5">
@@ -83,7 +83,7 @@
     }
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-5">
-      @for (address of addresses; track address.id) {
+      @for (address of addresses(); track address.id) {
       <div class="card bg-base-100 shadow-sm hover:shadow-md transition-shadow border border-base-200 group">
         <div class="card-body p-5">
           <div class="flex items-start justify-between mb-3">
@@ -261,8 +261,13 @@
         </div>
 
         <div class="modal-action bg-base-100 p-6 pt-2 border-t mt-0">
-          <button class="btn btn-ghost" (click)="closeForm()">Cancelar</button>
-          <button class="btn btn-primary px-8" (click)="saveAddress()">Guardar Ubicación</button>
+          <button class="btn btn-ghost" (click)="closeForm()" [disabled]="isSaving()">Cancelar</button>
+          <button class="btn btn-primary px-8" (click)="saveAddress()" [disabled]="isSaving()">
+            @if (isSaving()) {
+            <span class="loading loading-spinner"></span>
+            }
+            {{ editingAddress ? 'Actualizar' : 'Guardar' }}
+          </button>
         </div>
       </div>
       <div class="modal-backdrop" (click)="closeForm()"></div>
