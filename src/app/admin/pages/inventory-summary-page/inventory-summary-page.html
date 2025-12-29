@@ -1,0 +1,302 @@
+<div class="min-h-screen bg-base-200">
+    <div class="max-w-7xl mx-auto px-4 py-8">
+
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="text-sm breadcrumbs mb-2">
+                <ul>
+                    <li><a routerLink="/admin/dashboard">Panel</a></li>
+                    <li><a routerLink="/admin/inventory">Inventario</a></li>
+                    <li class="cursor-default">Resumen</li>
+                </ul>
+            </div>
+
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-3xl font-bold tracking-tight text-base-content flex items-center gap-3">
+                        <lucide-icon [img]="icons.Layers" class="w-8 h-8 text-primary"></lucide-icon>
+                        Resumen de Inventario
+                    </h1>
+                    <p class="text-base-content/70 mt-1">
+                        Visión general del stock y gestión de existencias por variante.
+                    </p>
+                </div>
+                <div class="flex gap-2">
+                    <a routerLink="/admin/inventory/movements" class="btn btn-outline gap-2">
+                        <lucide-icon [img]="icons.History" class="w-4 h-4"></lucide-icon>
+                        Ver Historial
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <!-- Total On Hand -->
+            <div class="stats shadow-sm border border-base-200 bg-base-100">
+                <div class="stat">
+                    <div class="stat-figure text-primary bg-primary/10 p-2 rounded-full">
+                        <lucide-icon [img]="icons.Box" class="w-6 h-6"></lucide-icon>
+                    </div>
+                    <div class="stat-title font-medium">Total en Mano (On Hand)</div>
+                    <div class="stat-value text-primary">{{ summaryQuery.data()?.totalOnHand || 0 | number }}</div>
+                    <div class="stat-desc">Unidades físicas totales en almacén</div>
+                </div>
+            </div>
+
+            <!-- Total Reserved -->
+            <div class="stats shadow-sm border border-base-200 bg-base-100">
+                <div class="stat">
+                    <div class="stat-figure text-warning bg-warning/10 p-2 rounded-full">
+                        <lucide-icon [img]="icons.Clipboard" class="w-6 h-6"></lucide-icon>
+                    </div>
+                    <div class="stat-title font-medium">Reservado</div>
+                    <div class="stat-value text-warning">{{ summaryQuery.data()?.totalReserved || 0 | number }}</div>
+                    <div class="stat-desc">Comprometido en órdenes activas</div>
+                </div>
+            </div>
+
+            <!-- Total Available -->
+            <div class="stats shadow-sm border border-base-200 bg-base-100">
+                <div class="stat">
+                    <div class="stat-figure text-success bg-success/10 p-2 rounded-full">
+                        <lucide-icon [img]="icons.CheckCircle" class="w-6 h-6"></lucide-icon>
+                    </div>
+                    <div class="stat-title font-medium">Disponible para Venta</div>
+                    <div class="stat-value text-success">{{ summaryQuery.data()?.totalAvailable || 0 | number }}</div>
+                    <div class="stat-desc">On Hand - Reservado = Disponible</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Card -->
+        <div class="card bg-base-100 shadow-sm border border-base-200">
+            <div class="card-body p-0">
+                <!-- Toolbar -->
+                <div
+                    class="p-4 border-b border-base-200 flex flex-col sm:flex-row gap-4 justify-between items-center bg-base-100/50">
+                    <div class="relative w-full sm:w-72">
+                        <div
+                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/40">
+                            <lucide-icon [img]="icons.Search" class="w-4 h-4"></lucide-icon>
+                        </div>
+                        <input type="text" placeholder="Buscar por SKU, nombre, GTIN..."
+                            class="input input-bordered w-full pl-10 input-sm" [value]="searchQuery()"
+                            (input)="onSearch($event)" />
+                    </div>
+
+                    <!-- Pagination Controls (Simple) -->
+                    <div class="join">
+                        <button class="join-item btn btn-sm btn-ghost" (click)="prevPage()" [disabled]="offset() === 0">
+                            « Anterior
+                        </button>
+                        <button class="join-item btn btn-sm btn-ghost cursor-default bg-base-200/50">
+                            Pág. {{ (offset() / limit()) + 1 }}
+                        </button>
+                        <button class="join-item btn btn-sm btn-ghost" (click)="nextPage()" [disabled]="!hasMore()">
+                            Siguiente »
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="overflow-x-auto min-h-[400px]">
+                    <table class="table table-zebra w-full align-middle">
+                        <thead>
+                            <tr class="bg-base-200/50 text-base-content/70">
+                                <th class="w-1/3">Producto / Variante</th>
+                                <th>Estado</th>
+                                <th class="text-right">On Hand</th>
+                                <th class="text-right">Reservado</th>
+                                <th class="text-right">Disponible</th>
+                                <th class="w-10"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (balancesQuery.isPending()) {
+                            @for (i of [1,2,3,4,5]; track i) {
+                            <tr class="animate-pulse">
+                                <td colspan="6" class="h-16">
+                                    <div class="h-4 bg-base-200 rounded w-1/2 mb-2"></div>
+                                    <div class="h-3 bg-base-200 rounded w-1/4"></div>
+                                </td>
+                            </tr>
+                            }
+                            } @else if (balances().length === 0) {
+                            <tr>
+                                <td colspan="6" class="text-center py-10 text-base-content/50">
+                                    <div class="flex flex-col items-center gap-2">
+                                        <lucide-icon [img]="icons.Box" class="w-10 h-10 opacity-20"></lucide-icon>
+                                        <p>Not se encontraron productos en el inventario.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            } @else {
+                            @for (balance of balances(); track balance.variantId) {
+                            <tr class="hover group">
+                                <td>
+                                    <div class="flex flex-col">
+                                        <div class="font-bold text-base-content flex items-center gap-2">
+                                            {{ balance.variant.product.name }}
+                                        </div>
+                                        <div class="flex items-center gap-2 text-xs text-base-content/60">
+                                            <span class="badge badge-sm badge-ghost font-mono">{{ balance.variant.sku
+                                                }}</span>
+                                            <span class="truncate max-w-[200px]">{{ balance.variant.name }}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    @if (balance.variant.isActive) {
+                                    <div class="badge badge-xs badge-success gap-1">
+                                        <span class="w-1 h-1 rounded-full bg-current"></span>
+                                        Activo
+                                    </div>
+                                    } @else {
+                                    <div class="badge badge-xs badge-neutral gap-1">
+                                        <span class="w-1 h-1 rounded-full bg-current"></span>
+                                        Inactivo
+                                    </div>
+                                    }
+                                </td>
+                                <td class="text-right font-mono font-medium text-base">{{ balance.onHand | number }}
+                                </td>
+                                <td class="text-right font-mono text-warning">{{ balance.reserved | number }}</td>
+                                <td class="text-right font-mono font-bold text-base"
+                                    [class.text-success]="balance.available > 0"
+                                    [class.text-error]="balance.available <= 0">
+                                    {{ balance.available | number }}
+                                </td>
+                                <td class="text-right">
+                                    <button
+                                        class="btn btn-square btn-ghost btn-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                                        (click)="openAdjustModal(balance)" title="Ajustar Stock">
+                                        <lucide-icon [img]="icons.Settings"
+                                            class="w-4 h-4 text-base-content/60"></lucide-icon>
+                                    </button>
+                                </td>
+                            </tr>
+                            }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Adjust Modal -->
+<dialog #adjustModal class="modal modal-bottom sm:modal-middle">
+    <div class="modal-box p-0 overflow-hidden">
+        <!-- Modal Header -->
+        <div
+            class="bg-base-200 p-4 border-b border-base-300 flex justify-between items-center sm:p-6 text-center sm:text-left">
+            <h3 class="font-bold text-lg flex items-center gap-2">
+                <lucide-icon [img]="icons.ArrowRightLeft" class="w-5 h-5 text-primary"></lucide-icon>
+                Ajuste de Inventario
+            </h3>
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost" (click)="closeAdjustModal()">
+                    <lucide-icon [img]="icons.X" class="w-4 h-4"></lucide-icon>
+                </button>
+            </form>
+        </div>
+
+        <!-- Modal Content -->
+        @if (selectedVariant()) {
+        <div class="p-4 sm:p-6 space-y-4">
+
+            <!-- Context Info -->
+            <div class="bg-base-200/50 rounded-lg p-3 text-sm flex justify-between items-center border border-base-200">
+                <div>
+                    <p class="font-bold text-base-content leading-tight">{{ selectedVariant()?.variant?.product?.name }}
+                    </p>
+                    <p class="text-base-content/60 mt-0.5 flex items-center gap-1.5">
+                        {{ selectedVariant()?.variant?.name }}
+                        <span class="badge badge-xs badge-ghost font-mono">{{ selectedVariant()?.variant?.sku }}</span>
+                    </p>
+                </div>
+                <div class="text-right pl-4">
+                    <div class="text-[10px] uppercase tracking-wider opacity-50 font-semibold text-base-content">Actual
+                    </div>
+                    <div class="font-mono font-bold text-xl leading-none text-base-content">{{ selectedVariant()?.onHand
+                        }}</div>
+                </div>
+            </div>
+
+            <form [formGroup]="adjustForm" class="space-y-4">
+                <!-- Alert Reminder -->
+                <div role="alert"
+                    class="alert p-3 rounded-lg text-xs md:text-sm bg-info/10 text-info-content border-info/20">
+                    <lucide-icon [img]="icons.Info" class="w-4 h-4 stroke-2"></lucide-icon>
+                    <span>
+                        Este ajuste modifica directamente el <b>On Hand</b> (físico).
+                        El <b>Disponible</b> se recalculará automáticamente.
+                    </span>
+                </div>
+
+                <!-- Quantity Input -->
+                <div class="form-control">
+                    <label class="label font-bold text-base-content/80">
+                        Cantidad a ajustar (+/-)
+                        <span class="badge badge-xs" [class.badge-success]="getAdjustmentType() === 'IN'"
+                            [class.badge-error]="getAdjustmentType() === 'OUT'">
+                            {{ getAdjustmentType() === 'IN' ? 'Entrada' : (getAdjustmentType() === 'OUT' ? 'Salida' :
+                            'Neutro') }}
+                        </span>
+                    </label>
+                    <input type="number" formControlName="quantity" placeholder="Ej. 10 para agregar, -5 para retirar"
+                        class="input input-bordered w-full font-mono text-lg"
+                        [class.input-success]="getAdjustmentType() === 'IN'"
+                        [class.input-error]="getAdjustmentType() === 'OUT'" />
+                    @if (adjustForm.controls.quantity.value === 0 && adjustForm.controls.quantity.touched) {
+                    <div class="label">
+                        <span class="label-text-alt text-error">La cantidad no puede ser 0.</span>
+                    </div>
+                    }
+                </div>
+
+                <!-- Reason -->
+                <div class="form-control">
+                    <label class="label font-bold text-base-content/80">Motivo</label>
+                    <input type="text" formControlName="reason"
+                        placeholder="Ej. Conteo cíclico, Daño en almacén, Devolución..."
+                        class="input input-bordered w-full" />
+                </div>
+
+                <!-- Notes -->
+                <div class="form-control">
+                    <label class="label font-bold text-base-content/80">Notas (Opcional)</label>
+                    <textarea formControlName="notes" placeholder="Detalles adicionales..."
+                        class="textarea textarea-bordered h-24 resize-none"></textarea>
+                </div>
+            </form>
+
+            @if (adjustMutation.isError()) {
+            <div role="alert" class="alert alert-error rounded-lg p-3 text-sm">
+                <lucide-icon [img]="icons.AlertTriangle" class="w-4 h-4"></lucide-icon>
+                <span>Error al procesar el ajuste. Verifica que no resulte en stock negativo.</span>
+            </div>
+            }
+        </div>
+
+        <!-- Footer Actions -->
+        <div class="p-4 sm:p-6 bg-base-100 border-t border-base-200 flex justify-end gap-2">
+            <button class="btn btn-ghost" (click)="closeAdjustModal()">Cancelar</button>
+            <button class="btn btn-primary"
+                [disabled]="adjustForm.invalid || adjustMutation.isPending() || adjustForm.value.quantity === 0"
+                (click)="submitAdjustment()">
+                @if (adjustMutation.isPending()) {
+                <span class="loading loading-spinner text-primary-content"></span>
+                } @else {
+                Confirmar Ajuste
+                }
+            </button>
+        </div>
+        }
+    </div>
+</dialog>
+<form method="dialog" class="modal-backdrop">
+    <button (click)="closeAdjustModal()">close</button>
+</form>

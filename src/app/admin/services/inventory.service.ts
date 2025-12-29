@@ -4,31 +4,8 @@ import { injectMutation } from '@tanstack/angular-query-experimental';
 import { defer, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../auth/services/auth.service';
-
-export interface Product {
-  id: string;
-  name: string;
-  slug: string;
-  description?: string | null;
-  status: 'PUBLISHED' | 'ARCHIVED' | string;
-  createdAt?: string;
-  updatedAt?: string;
-  deletedAt?: string | null;
-}
-
-export interface CreateProductPayload {
-  name: string;
-  slug: string;
-  description?: string;
-}
-
-export interface CreateVariantPayload {
-  sku: string;
-  gtin?: string;
-  name: string;
-  attributesJson?: Record<string, string | number | boolean>;
-  initialOnHand?: number;
-}
+import { InventoryAdjustmentPayload, InventoryBalance, InventoryMovement, InventorySummary } from '../interfaces/inventory.interface';
+import { CreateProductPayload, CreateVariantPayload, Product } from '../interfaces/products.interface';
 
 @Injectable({ providedIn: 'root' })
 export class InventoryManagementService {
@@ -43,6 +20,83 @@ export class InventoryManagementService {
 
   readonly createProductError = this.createProductErrorSignal.asReadonly();
   readonly isCreatingProduct = computed(() => this.createProductMutation.isPending());
+
+  // --- Inventory Summary & Balances ---
+
+  getInventorySummary(): Observable<InventorySummary> {
+    return defer(() =>
+      this.authService.requestWithAuthHeaders((headers) =>
+        this.http.get<InventorySummary>(this.buildUrl('/inventory/summary'), { headers })
+      )
+    );
+  }
+
+  getInventoryBalances(
+    limit: number = 20,
+    offset: number = 0,
+    q: string = ''
+  ): Observable<InventoryBalance[]> {
+    const params = new HttpParams({
+      fromObject: {
+        limit: String(limit),
+        offset: String(offset),
+        ...(q ? { q } : {}),
+      },
+    });
+
+    return defer(() =>
+      this.authService.requestWithAuthHeaders((headers) =>
+        this.http.get<InventoryBalance[]>(this.buildUrl('/inventory/balances'), {
+          headers,
+          params,
+        })
+      )
+    );
+  }
+
+  adjustInventory(payload: InventoryAdjustmentPayload): Observable<unknown> {
+    return defer(() =>
+      this.authService.requestWithAuthHeaders((headers) =>
+        this.http.post(this.buildUrl('/inventory/adjust'), payload, { headers })
+      )
+    );
+  }
+
+  // --- Inventory Movements ---
+
+  getInventoryMovements(
+    limit: number = 20,
+    offset: number = 0,
+    filters: {
+      variantId?: string;
+      orderId?: string;
+      type?: 'IN' | 'OUT' | 'ADJUSTMENT';
+      dateFrom?: string;
+      dateTo?: string;
+    } = {}
+  ): Observable<InventoryMovement[]> {
+    let params = new HttpParams({
+      fromObject: {
+        limit: String(limit),
+        offset: String(offset),
+      },
+    });
+
+    if (filters.variantId) params = params.set('variantId', filters.variantId);
+    if (filters.orderId) params = params.set('orderId', filters.orderId);
+    if (filters.type) params = params.set('type', filters.type);
+    if (filters.dateFrom) params = params.set('dateFrom', filters.dateFrom);
+    if (filters.dateTo) params = params.set('dateTo', filters.dateTo);
+
+    return defer(() =>
+      this.authService.requestWithAuthHeaders((headers) =>
+        this.http.get<InventoryMovement[]>(this.buildUrl('/inventory/movements'), {
+          headers,
+          params,
+        })
+      )
+    );
+  }
 
   listProducts(
     limit: number = 100,

@@ -1,18 +1,5 @@
 import { CommonModule } from '@angular/common';
 import {
-  AlertCircle,
-  AlertTriangle,
-  Archive,
-  CheckCircle,
-  LucideAngularModule,
-  Package,
-  PackageOpen,
-  Search,
-  Settings,
-  UploadCloud,
-  X,
-} from 'lucide-angular';
-import {
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -21,10 +8,25 @@ import {
   signal,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import { injectMutation, injectQuery, QueryClient } from '@tanstack/angular-query-experimental';
+import {
+  AlertCircle,
+  AlertTriangle,
+  Archive,
+  CheckCircle,
+  LucideAngularModule,
+  Package,
+  PackageOpen,
+  Plus,
+  Search,
+  Settings,
+  UploadCloud,
+  X,
+} from 'lucide-angular';
 import { firstValueFrom } from 'rxjs';
-import { InventoryManagementService, Product } from '../../services/inventory.service';
-import { Router } from '@angular/router';
+import { Product } from '../../interfaces/products.interface';
+import { InventoryManagementService } from '../../services/inventory.service';
 
 const PRODUCTS_QUERY = {
   limit: 100,
@@ -36,7 +38,7 @@ const PRODUCTS_QUERY_KEY = ['inventory', 'products', PRODUCTS_QUERY] as const;
 
 @Component({
   selector: 'app-inventory-products-page',
-  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule],
+  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule, RouterLink],
   templateUrl: './inventory-products-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -61,6 +63,7 @@ export class InventoryProductsPage implements OnInit {
   readonly UploadCloud = UploadCloud;
   readonly X = X;
   readonly Settings = Settings;
+  readonly Plus = Plus;
 
   private readonly productsQuery = injectQuery(() => ({
     queryKey: PRODUCTS_QUERY_KEY,
@@ -115,7 +118,7 @@ export class InventoryProductsPage implements OnInit {
   readonly isLoading = computed(() => this.productsQuery.isLoading());
   readonly isError = computed(() => this.productsQuery.isError());
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   get products(): Product[] {
     return this.productsQuery.data() ?? [];
@@ -141,6 +144,10 @@ export class InventoryProductsPage implements OnInit {
       return 'Archivado';
     }
     return 'Borrador';
+  }
+
+  onCreateProduct(): void {
+    this.router.navigateByUrl('/admin/inventory/create-product');
   }
 
   dismissActionMessage(): void {

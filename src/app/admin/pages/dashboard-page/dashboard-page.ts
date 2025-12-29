@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import {
   CircleCheckBig,
   Clock,
+  Calendar,
   FileText,
   Heart,
   LucideAngularModule,
@@ -34,6 +35,7 @@ export class DashboardPage {
   readonly heartIcon = Heart;
   readonly trendingIcon = TrendingUp;
   readonly clockIcon = Clock;
+  readonly calendarIcon = Calendar;
   readonly checkIcon = CircleCheckBig;
   readonly truckIcon = Truck;
   readonly sparklesIcon = Sparkles;
@@ -62,6 +64,15 @@ export class DashboardPage {
     { id: 'ORD-2024-1246', date: '25 Nov 2024', total: 920000, items: 68, status: 'in-transit' },
     { id: 'ORD-2024-1244', date: '18 Nov 2024', total: 560000, items: 38, status: 'processing' },
   ];
+
+  get currentDate(): string {
+    return new Date().toLocaleDateString('es-CO', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  }
 
   formatPrice(price: number): string {
     return new Intl.NumberFormat('es-CO', {

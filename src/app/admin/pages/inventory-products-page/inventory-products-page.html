@@ -4,9 +4,8 @@
     <div class="mb-6">
       <div class="text-sm breadcrumbs mb-2">
         <ul>
-          <li><a>Panel</a></li>
-          <li><a>Inventario</a></li>
-          <li>Productos</li>
+          <li><a routerLink="/admin/inventory">Inventario</a></li>
+          <li class="cursor-default">Productos</li>
         </ul>
       </div>
 
@@ -22,14 +21,11 @@
     <div class="w-full">
       <!-- LISTA DE PRODUCTOS -->
       <section class="space-y-4">
-        <div
-          class="card bg-base-100 shadow-xl shadow-base-200/50 border border-base-200 overflow-hidden"
-        >
+        <div class="card bg-base-100 shadow-xl shadow-base-200/50 border border-base-200 overflow-hidden">
           <div class="card-body p-0">
             <!-- Toolbar -->
             <div
-              class="p-5 border-b border-base-200 bg-base-50/50 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
-            >
+              class="p-5 border-b border-base-200 bg-base-50/50 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 class="text-base-content text-lg font-bold flex items-center gap-2">
                   <lucide-icon [img]="Package" class="w-5 h-5 text-primary"></lucide-icon>
@@ -40,37 +36,31 @@
                 </p>
               </div>
 
-              <!-- Buscador -->
-              <div class="w-full sm:max-w-xs">
-                <label
-                  class="input input-bordered input-sm flex items-center gap-3 bg-base-100 focus-within:ring-2 ring-primary/20 transition-all"
-                >
-                  <lucide-icon [img]="Search" class="w-4 h-4 text-base-content/40"></lucide-icon>
-                  <input
-                    type="text"
-                    placeholder="Buscar producto..."
-                    class="grow text-sm font-medium placeholder:font-normal"
-                  />
-                </label>
+              <!-- Buscador y Acciones -->
+              <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                <div class="w-full sm:max-w-xs">
+                  <label
+                    class="input input-bordered input-sm flex items-center gap-3 bg-base-100 focus-within:ring-2 ring-primary/20 transition-all">
+                    <lucide-icon [img]="Search" class="w-4 h-4 text-base-content/40"></lucide-icon>
+                    <input type="text" placeholder="Buscar producto..."
+                      class="grow text-sm font-medium placeholder:font-normal" />
+                  </label>
+                </div>
+                <button (click)="onCreateProduct()" class="btn btn-sm btn-primary">
+                  <lucide-icon [img]="Plus" class="w-4 h-4"></lucide-icon>
+                  Nuevo Producto
+                </button>
               </div>
             </div>
 
             @if (actionMessage(); as message) {
-            <div
-              role="alert"
-              class="alert m-4 rounded-lg shadow-sm"
-              [class.alert-success]="message.type === 'success'"
-              [class.alert-error]="message.type === 'error'"
-            >
+            <div role="alert" class="alert m-4 rounded-lg shadow-sm" [class.alert-success]="message.type === 'success'"
+              [class.alert-error]="message.type === 'error'">
               @if (message.type === 'success') {
               <lucide-icon [img]="CheckCircle" class="w-5 h-5"></lucide-icon> } @if (message.type
               === 'error') { <lucide-icon [img]="AlertCircle" class="w-5 h-5"></lucide-icon> }
               <span class="text-sm font-medium">{{ message.text }}</span>
-              <button
-                type="button"
-                class="btn btn-ghost btn-xs btn-square ml-auto"
-                (click)="dismissActionMessage()"
-              >
+              <button type="button" class="btn btn-ghost btn-xs btn-square ml-auto" (click)="dismissActionMessage()">
                 <lucide-icon [img]="X" class="w-4 h-4"></lucide-icon>
               </button>
             </div>
@@ -78,13 +68,9 @@
 
             <div class="overflow-x-auto min-h-[300px]">
               @if (isLoading()) {
-              <div
-                class="flex flex-col items-center justify-center h-64 text-base-content/30 gap-3"
-              >
+              <div class="flex flex-col items-center justify-center h-64 text-base-content/30 gap-3">
                 <span class="loading loading-spinner loading-md"></span>
-                <span class="text-xs font-medium tracking-wide uppercase"
-                  >Cargando catálogo...</span
-                >
+                <span class="text-xs font-medium tracking-wide uppercase">Cargando catálogo...</span>
               </div>
               } @else if (isError()) {
               <div class="flex flex-col items-center justify-center h-64 text-error/60 gap-3">
@@ -92,170 +78,154 @@
                 <span class="text-sm font-medium">Error al cargar productos</span>
               </div>
               } @else {
-              <table class="table w-full hidden md:table">
-                <thead>
-                  <tr
-                    class="bg-base-200/50 text-xs uppercase tracking-wider text-base-content/50 font-bold border-b border-base-200"
-                  >
-                    <th class="py-4 pl-6">Producto</th>
-                    <th class="py-4 hidden sm:table-cell">Slug</th>
-                    <th class="py-4">Estado</th>
-                    <th class="py-4 pr-6 text-right">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (product of products; track product.id) {
-                  <tr
-                    class="group hover:bg-base-50 transition-colors cursor-pointer"
-                    (click)="onManageVariants(product)"
-                  >
-                    <!-- Nombre y Desc -->
-                    <td class="pl-6">
-                      <div class="flex flex-col gap-1 max-w-[200px] sm:max-w-xs">
-                        <span
-                          class="font-bold text-sm text-base-content group-hover:text-primary transition-colors"
-                        >
-                          {{ product.name }}
-                        </span>
-                        <span class="text-xs text-base-content/50 line-clamp-1">
-                          {{ product.description || 'Sin descripción' }}
-                        </span>
-                      </div>
-                    </td>
+              <div class="hidden md:block">
+                <table class="table w-full">
+                  <thead>
+                    <tr
+                      class="bg-base-200/50 text-xs uppercase tracking-wider text-base-content/50 font-bold border-b border-base-200">
+                      <th class="py-4 pl-6">Producto</th>
+                      <th class="py-4 hidden sm:table-cell">Slug</th>
+                      <th class="py-4">Estado</th>
+                      <th class="py-4 pr-6 text-right">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (product of products; track product.id) {
+                    <tr class="group hover:bg-base-50 transition-colors cursor-pointer"
+                      (click)="onManageVariants(product)">
+                      <!-- Nombre y Desc -->
+                      <td class="pl-6">
+                        <div class="flex flex-col gap-1 max-w-[200px] sm:max-w-xs">
+                          <span class="font-bold text-sm text-base-content group-hover:text-primary transition-colors">
+                            {{ product.name }}
+                          </span>
+                          <span class="text-xs text-base-content/50 line-clamp-1">
+                            {{ product.description || 'Sin descripción' }}
+                          </span>
+                        </div>
+                      </td>
 
-                    <!-- Slug (Desktop) -->
-                    <td class="hidden sm:table-cell font-mono text-[10px] text-base-content/50">
-                      {{ product.slug }}
-                    </td>
+                      <!-- Slug (Desktop) -->
+                      <td class="hidden sm:table-cell font-mono text-[10px] text-base-content/50">
+                        {{ product.slug }}
+                      </td>
 
-                    <!-- Estado -->
-                    <td>
-                      <div
-                        class="badge badge-sm font-bold tracking-wider"
-                        [ngClass]="{
+                      <!-- Estado -->
+                      <td>
+                        <div class="badge badge-sm font-bold tracking-wider" [ngClass]="{
                           'badge-success text-success-content': product.status === 'PUBLISHED',
                           'badge-error badge-outline': product.status === 'ARCHIVED',
                           'badge-ghost': product.status === 'DRAFT'
-                        }"
-                      >
-                        {{ getProductStatusLabel(product.status) }}
-                      </div>
-                    </td>
+                        }">
+                          {{ getProductStatusLabel(product.status) }}
+                        </div>
+                      </td>
 
-                    <!-- Acciones -->
-                    <td class="pr-6 text-right">
-                      <div
-                        class="flex items-center justify-end gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
-                      >
-                        <!-- Publicar/Archivar Toggle -->
-                        @if (product.status !== 'PUBLISHED') {
-                        <button
-                          class="btn btn-xs btn-circle btn-ghost text-success tooltip tooltip-left"
-                          data-tip="Publicar"
-                          [class.btn-disabled]="isPublishing(product.id)"
-                          (click)="$event.stopPropagation(); onPublish(product)"
-                        >
-                          <lucide-icon [img]="UploadCloud" class="w-4 h-4"></lucide-icon>
-                        </button>
-                        } @else {
-                        <button
-                          class="btn btn-xs btn-circle btn-ghost text-error tooltip tooltip-left"
-                          data-tip="Archivar"
-                          [class.btn-disabled]="isArchiving(product.id)"
-                          (click)="$event.stopPropagation(); onArchive(product)"
-                        >
-                          <lucide-icon [img]="Archive" class="w-4 h-4"></lucide-icon>
-                        </button>
-                        }
+                      <!-- Acciones -->
+                      <td class="pr-6 text-right">
+                        <div class="flex items-center justify-end gap-2">
+                          <!-- Publicar/Archivar Toggle -->
+                          @if (product.status !== 'PUBLISHED') {
+                          <button
+                            class="btn btn-xs btn-circle btn-ghost text-base-content/40 hover:text-success transition-colors tooltip tooltip-left"
+                            data-tip="Publicar" [class.btn-disabled]="isPublishing(product.id)"
+                            (click)="$event.stopPropagation(); onPublish(product)">
+                            <lucide-icon [img]="UploadCloud" class="w-4 h-4"></lucide-icon>
+                          </button>
+                          } @else {
+                          <button
+                            class="btn btn-xs btn-circle btn-ghost text-base-content/40 hover:text-error transition-colors tooltip tooltip-left"
+                            data-tip="Archivar" [class.btn-disabled]="isArchiving(product.id)"
+                            (click)="$event.stopPropagation(); onArchive(product)">
+                            <lucide-icon [img]="Archive" class="w-4 h-4"></lucide-icon>
+                          </button>
+                          }
 
-                        <button
-                          class="btn btn-xs btn-circle btn-ghost text-base-content/70 tooltip tooltip-left"
-                          data-tip="Gestionar Variantes"
-                          (click)="$event.stopPropagation(); onManageVariants(product)"
-                        >
-                          <lucide-icon [img]="Settings" class="w-4 h-4"></lucide-icon>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  } @empty {
-                  <tr>
-                    <td colspan="5" class="text-center py-12">
-                      <div
-                        class="flex flex-col items-center justify-center gap-3 text-base-content/40"
-                      >
-                        <lucide-icon [img]="PackageOpen" class="w-10 h-10 stroke-1"></lucide-icon>
-                        <span class="text-sm font-medium">No hay productos registrados.</span>
-                      </div>
-                    </td>
-                  </tr>
-                  }
-                </tbody>
-              </table>
+                          <button
+                            class="btn btn-xs btn-circle btn-ghost text-base-content/40 hover:text-primary transition-colors tooltip tooltip-left"
+                            data-tip="Gestionar Variantes"
+                            (click)="$event.stopPropagation(); onManageVariants(product)">
+                            <lucide-icon [img]="Settings" class="w-4 h-4"></lucide-icon>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    } @empty {
+                    <tr>
+                      <td colspan="5" class="text-center py-12">
+                        <div class="flex flex-col items-center justify-center gap-3 text-base-content/40">
+                          <lucide-icon [img]="PackageOpen" class="w-10 h-10 stroke-1"></lucide-icon>
+                          <span class="text-sm font-medium">No hay productos registrados.</span>
+                        </div>
+                      </td>
+                    </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
               }
 
               <!-- Mobile Card View -->
               <div class="md:hidden space-y-3">
                 @for (product of products; track product.id) {
-                <div
-                  class="card bg-base-100 border border-base-200 shadow-sm p-4"
-                  (click)="onManageVariants(product)"
-                >
-                  <div class="flex justify-between items-start mb-2">
-                    <div class="flex-1">
-                      <h3 class="font-bold text-sm text-base-content">{{ product.name }}</h3>
-                      @if (product.slug) {
-                      <p class="text-[10px] font-mono text-base-content/40 mt-0.5">
-                        {{ product.slug }}
-                      </p>
-                      }
-                      <p class="text-xs text-base-content/60 mt-1 line-clamp-2">
+                <div class="card bg-base-100 border border-base-200 shadow-sm" (click)="onManageVariants(product)">
+                  <div class="card-body p-3 flex-row items-stretch gap-3">
+                    <!-- Status Indicator Bar -->
+                    <div class="w-1 rounded-full shrink-0 my-0.5 transition-colors" [ngClass]="{
+                        'bg-success': product.status === 'PUBLISHED',
+                        'bg-error': product.status === 'ARCHIVED',
+                        'bg-base-300': product.status === 'DRAFT'
+                      }"></div>
+
+                    <!-- Info -->
+                    <div class="flex-1 min-w-0 flex flex-col justify-center gap-0.5">
+                      <div class="flex items-center gap-2">
+                        <h3 class="font-bold text-sm leading-tight truncate">{{ product.name }}</h3>
+                        @if (product.slug) {
+                        <span class="text-[10px] font-mono text-base-content/40 truncate hidden xs:inline-block">
+                          {{ product.slug }}
+                        </span>
+                        }
+                      </div>
+
+                      <p class="text-xs text-base-content/60 line-clamp-1">
                         {{ product.description || 'Sin descripción' }}
                       </p>
-                    </div>
-                    <div
-                      class="badge badge-sm font-bold tracking-wider ml-2 shrink-0"
-                      [ngClass]="{
-                        'badge-success text-success-content': product.status === 'PUBLISHED',
-                        'badge-error badge-outline': product.status === 'ARCHIVED',
-                        'badge-ghost': product.status === 'DRAFT'
-                      }"
-                    >
-                      {{ getProductStatusLabel(product.status) }}
-                    </div>
-                  </div>
 
-                  <div class="flex items-center justify-between mt-3 pt-3 border-t border-base-100">
-                    <div class="text-[10px] text-base-content/40 font-medium"></div>
-                    <div class="flex gap-1">
+                      <div class="flex items-center gap-2 mt-1">
+                        <div class="badge badge-xs font-bold tracking-wider shrink-0" [ngClass]="{
+                            'badge-success text-success-content': product.status === 'PUBLISHED',
+                            'badge-error badge-outline': product.status === 'ARCHIVED',
+                            'badge-ghost': product.status === 'DRAFT'
+                          }">
+                          {{ getProductStatusLabel(product.status) }}
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex flex-col items-center justify-center gap-1 shrink-0 pl-2 border-l border-base-100">
+                      <button class="btn btn-xs btn-circle btn-ghost text-primary"
+                        (click)="$event.stopPropagation(); onManageVariants(product)">
+                        <lucide-icon [img]="Settings" class="w-4 h-4"></lucide-icon>
+                      </button>
+
                       @if (product.status !== 'PUBLISHED') {
-                      <button
-                        class="btn btn-xs btn-circle btn-ghost text-success"
-                        (click)="$event.stopPropagation(); onPublish(product)"
-                      >
+                      <button class="btn btn-xs btn-circle btn-ghost text-success"
+                        (click)="$event.stopPropagation(); onPublish(product)">
                         <lucide-icon [img]="UploadCloud" class="w-4 h-4"></lucide-icon>
                       </button>
                       } @else {
-                      <button
-                        class="btn btn-xs btn-circle btn-ghost text-error"
-                        (click)="$event.stopPropagation(); onArchive(product)"
-                      >
+                      <button class="btn btn-xs btn-circle btn-ghost text-error"
+                        (click)="$event.stopPropagation(); onArchive(product)">
                         <lucide-icon [img]="Archive" class="w-4 h-4"></lucide-icon>
                       </button>
                       }
-                      <button
-                        class="btn btn-xs btn-circle btn-ghost text-primary"
-                        (click)="$event.stopPropagation(); onManageVariants(product)"
-                      >
-                        <lucide-icon [img]="Settings" class="w-4 h-4"></lucide-icon>
-                      </button>
                     </div>
                   </div>
                 </div>
                 } @empty {
-                <div
-                  class="flex flex-col items-center justify-center gap-3 text-base-content/40 py-8"
-                >
+                <div class="flex flex-col items-center justify-center gap-3 text-base-content/40 py-8">
                   <lucide-icon [img]="PackageOpen" class="w-10 h-10 stroke-1"></lucide-icon>
                   <span class="text-sm font-medium">No hay productos registrados.</span>
                 </div>

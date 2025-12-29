@@ -24,6 +24,20 @@ export const adminRoutes: Routes = [
     component: InventoryLayoutPage,
     children: [
       {
+        path: '',
+        loadComponent: () =>
+          import(
+            './pages/inventory-summary-page/inventory-summary-page'
+          ).then((m) => m.InventorySummaryPage),
+      },
+      {
+        path: 'movements',
+        loadComponent: () =>
+          import(
+            './pages/inventory-movements-page/inventory-movements-page'
+          ).then((m) => m.InventoryMovementsPage),
+      },
+      {
         path: 'products',
         component: InventoryProductsPage,
       },

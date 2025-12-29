@@ -5,13 +5,15 @@
       <div class="flex items-center gap-2 text-sm breadcrumbs text-base-content/60 mb-1">
         <ul>
           <li><a routerLink="/admin/inventory">Inventario</a></li>
-          <li>Variantes</li>
+          <li><a routerLink="/admin/inventory/products">Productos</a></li>
+          <li class="cursor-default">Variantes</li>
         </ul>
       </div>
       <h1 class="text-3xl font-bold tracking-tight">{{ productName() }}</h1>
       <p class="text-base-content/60">Gestiona las variantes del producto</p>
     </div>
-    <button (click)="openCreateForm()" class="btn btn-primary gap-2">
+    <button (click)="openCreateForm()"
+      class="btn btn-primary gap-2 md:fixed md:bottom-12 md:right-12 md:z-50 md:shadow-lg md:rounded-full md:h-12 md:px-6">
       <lucide-icon [img]="Plus" class="w-4 h-4"></lucide-icon>
       Nueva Variante
     </button>
@@ -38,76 +40,57 @@
   <div class="grid grid-cols-1 gap-4">
     @for (variant of variants(); track variant.id) {
     <div class="card bg-base-100 shadow-sm border border-base-200">
-      <div class="card-body p-4 sm:p-6 flex-row items-center gap-4">
+      <div class="card-body p-3 sm:p-6 flex-row items-stretch gap-3 sm:gap-4">
         <!-- Status Indicator -->
-        <div
-          class="w-2 h-12 rounded-full shrink-0"
-          [ngClass]="variant.isActive ? 'bg-success' : 'bg-base-200'"
-          title="Status"
-        ></div>
+        <div class="w-1 sm:w-2 rounded-full shrink-0 my-0.5 transition-colors"
+          [ngClass]="variant.isActive ? 'bg-success' : 'bg-base-200'" title="Status"></div>
 
         <!-- Info -->
-        <div class="flex-1 min-w-0">
-          <div class="flex items-center gap-2 mb-1">
-            <h3 class="font-bold text-lg truncate">{{ variant.name }}</h3>
+        <div class="flex-1 min-w-0 flex flex-col justify-center">
+          <div class="flex items-center gap-2 mb-0.5">
+            <h3 class="font-bold text-sm sm:text-lg leading-tight truncate">{{ variant.name }}</h3>
             @if (!variant.isActive) {
-            <span class="badge badge-sm badge-ghost">Inactivo</span>
+            <span class="badge badge-xs sm:badge-sm badge-ghost">Inactivo</span>
             }
           </div>
-          <div class="flex flex-wrap gap-x-6 gap-y-1 text-sm text-base-content/70">
-            <span class="flex items-center gap-1">
-              <span class="font-medium text-base-content/50 uppercase text-xs">SKU</span>
-              {{ variant.sku }}
+          <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs sm:text-sm text-base-content/70">
+            <span class="inline-flex items-center gap-1">
+              <span class="font-bold text-base-content/40 uppercase text-[10px] tracking-wider">SKU</span>
+              <span class="font-mono">{{ variant.sku }}</span>
             </span>
-            <span class="flex items-center gap-1">
-              <span class="font-medium text-base-content/50 uppercase text-xs">Stock</span>
-              {{ variant.inventory?.onHand ?? 0 }}
+            <span class="inline-flex items-center gap-1">
+              <span class="font-bold text-base-content/40 uppercase text-[10px] tracking-wider">Stock</span>
+              <span>{{ variant.inventory?.onHand ?? 0 }}</span>
             </span>
-            <span class="flex items-center gap-1">
-              <span class="font-medium text-base-content/50 uppercase text-xs">GTIN</span>
-              {{ variant.gtin || '---' }}
+            <span class="hidden xs:inline-flex items-center gap-1">
+              <span class="font-bold text-base-content/40 uppercase text-[10px] tracking-wider">GTIN</span>
+              <span>{{ variant.gtin || '---' }}</span>
             </span>
           </div>
         </div>
 
         <!-- Actions -->
         <div class="flex items-center gap-2">
-          <button
-            (click)="openImageManager(variant)"
-            class="btn btn-square btn-ghost btn-sm tooltip"
-            data-tip="Imágenes"
-          >
+          <button (click)="openImageManager(variant)" class="btn btn-square btn-ghost btn-sm tooltip"
+            data-tip="Imágenes">
             <lucide-icon [img]="ImageIcon" class="w-4 h-4"></lucide-icon>
           </button>
 
-          <button
-            (click)="openEditForm(variant)"
-            class="btn btn-square btn-ghost btn-sm tooltip"
-            data-tip="Editar"
-          >
+          <button (click)="openEditForm(variant)" class="btn btn-square btn-ghost btn-sm tooltip" data-tip="Editar">
             <lucide-icon [img]="Edit" class="w-4 h-4"></lucide-icon>
           </button>
 
           <div class="dropdown dropdown-end">
             <button tabindex="0" class="btn btn-square btn-ghost btn-sm">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                class="inline-block w-4 h-4 stroke-current"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
-                ></path>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                class="inline-block w-4 h-4 stroke-current">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z">
+                </path>
               </svg>
             </button>
-            <ul
-              tabindex="0"
-              class="dropdown-content z-1 menu p-2 shadow bg-base-100 rounded-box w-52 border border-base-200"
-            >
+            <ul tabindex="0"
+              class="dropdown-content z-1 menu p-2 shadow bg-base-100 rounded-box w-52 border border-base-200">
               <li>
                 <a (click)="toggleActivation(variant)">
                   @if(variant.isActive) { Desactivar } @else { Activar }
@@ -136,15 +119,10 @@
           <label class="label">
             <span class="label-text font-medium">Nombre de la Variante</span>
           </label>
-          <input
-            type="text"
-            formControlName="name"
-            placeholder="Ej: Rojo / Grande"
-            class="input input-bordered w-full"
+          <input type="text" formControlName="name" placeholder="Ej: Rojo / Grande" class="input input-bordered w-full"
             [class.input-error]="
               variantForm.get('name')?.invalid && variantForm.get('name')?.touched
-            "
-          />
+            " />
         </div>
 
         <div class="grid grid-cols-2 gap-4">
@@ -153,15 +131,10 @@
             <label class="label">
               <span class="label-text font-medium">SKU *</span>
             </label>
-            <input
-              type="text"
-              formControlName="sku"
-              placeholder="SKU-123"
-              class="input input-bordered w-full"
+            <input type="text" formControlName="sku" placeholder="SKU-123" class="input input-bordered w-full"
               [class.input-error]="
                 variantForm.get('sku')?.invalid && variantForm.get('sku')?.touched
-              "
-            />
+              " />
           </div>
 
           <!-- GTIN -->
@@ -169,12 +142,7 @@
             <label class="label">
               <span class="label-text font-medium">GTIN (EAN/UPC)</span>
             </label>
-            <input
-              type="text"
-              formControlName="gtin"
-              placeholder="Opcional"
-              class="input input-bordered w-full"
-            />
+            <input type="text" formControlName="gtin" placeholder="Opcional" class="input input-bordered w-full" />
           </div>
         </div>
 
@@ -185,21 +153,13 @@
             <span class="label-text font-medium">Stock Inicial</span>
             <span class="label-text-alt text-base-content/50">Solo al crear</span>
           </label>
-          <input
-            type="number"
-            formControlName="initialOnHand"
-            class="input input-bordered w-full"
-          />
+          <input type="number" formControlName="initialOnHand" class="input input-bordered w-full" />
         </div>
         }
 
         <div class="modal-action">
           <button type="button" class="btn" (click)="closeForm()">Cancelar</button>
-          <button
-            type="submit"
-            class="btn btn-primary"
-            [disabled]="variantForm.invalid || variantForm.pristine"
-          >
+          <button type="submit" class="btn btn-primary" [disabled]="variantForm.invalid || variantForm.pristine">
             Guardar
           </button>
         </div>
@@ -214,9 +174,7 @@
   <dialog class="modal modal-bottom sm:modal-middle" [class.modal-open]="isImageManagerOpen()">
     <div class="modal-box w-11/12 max-w-3xl h-[80vh] flex flex-col p-0 bg-base-100">
       <!-- Header -->
-      <div
-        class="px-6 py-4 border-b border-base-200 flex justify-between items-center bg-base-100 z-10 sticky top-0"
-      >
+      <div class="px-6 py-4 border-b border-base-200 flex justify-between items-center bg-base-100 z-10 sticky top-0">
         <div>
           <h3 class="font-bold text-lg">Imágenes de la variante</h3>
           <p class="text-xs text-base-content/60">{{ selectedVariantForImages()?.name }}</p>
@@ -231,13 +189,10 @@
         <!-- Upload Area -->
         <div class="mb-8">
           <label
-            class="flex flex-col items-center justify-center w-full h-32 border-2 border-primary/20 border-dashed rounded-2xl cursor-pointer bg-base-100 hover:bg-base-50 transition-colors group"
-          >
+            class="flex flex-col items-center justify-center w-full h-32 border-2 border-primary/20 border-dashed rounded-2xl cursor-pointer bg-base-100 hover:bg-base-50 transition-colors group">
             <div class="flex flex-col items-center justify-center pt-5 pb-6">
-              <lucide-icon
-                [img]="ImageIcon"
-                class="w-8 h-8 mb-2 text-primary/50 group-hover:text-primary transition-colors"
-              ></lucide-icon>
+              <lucide-icon [img]="ImageIcon"
+                class="w-8 h-8 mb-2 text-primary/50 group-hover:text-primary transition-colors"></lucide-icon>
               <p class="text-sm font-medium text-base-content/70">
                 <span class="font-bold text-primary">Click para subir</span>
               </p>
@@ -260,29 +215,21 @@
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           @for (image of variantImages(); track image.id) {
           <div
-            class="group relative aspect-square bg-base-100 rounded-xl border border-base-200 shadow-sm overflow-hidden hover:shadow-md transition-all"
-          >
-            <img
-              [src]="image.url || '/placeholder.svg'"
-              [alt]="image.altText || 'Variant Image'"
-              class="w-full h-full object-contain p-2"
-            />
+            class="group relative aspect-square bg-base-100 rounded-xl border border-base-200 shadow-sm overflow-hidden hover:shadow-md transition-all">
+            <img [src]="image.url || '/placeholder.svg'" [alt]="image.altText || 'Variant Image'"
+              class="w-full h-full object-contain p-2" />
 
             <!-- Overlays -->
             <div
-              class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2"
-            >
-              <button
-                (click)="deleteImage(image.id)"
-                class="btn btn-circle btn-sm btn-error text-white border-none min-h-0 h-8 w-8"
-              >
+              class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+              <button (click)="deleteImage(image.id)"
+                class="btn btn-circle btn-sm btn-error text-white border-none min-h-0 h-8 w-8">
                 <lucide-icon [img]="Trash2" class="w-4 h-4"></lucide-icon>
               </button>
             </div>
 
             <div
-              class="absolute bottom-0 left-0 right-0 bg-base-100/90 backdrop-blur text-[10px] p-1 text-center font-mono border-t border-base-200"
-            >
+              class="absolute bottom-0 left-0 right-0 bg-base-100/90 backdrop-blur text-[10px] p-1 text-center font-mono border-t border-base-200">
               Order: {{ image.sortOrder }}
             </div>
           </div>

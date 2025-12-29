@@ -1,0 +1,232 @@
+<div class="min-h-screen bg-base-200">
+    <div class="max-w-7xl mx-auto px-4 py-8">
+
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="text-sm breadcrumbs mb-2">
+                <ul>
+                    <li><a routerLink="/admin/dashboard">Panel</a></li>
+                    <li><a routerLink="/admin/inventory">Inventario</a></li>
+                    <li class="cursor-default">Movimientos</li>
+                </ul>
+            </div>
+
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-3xl font-bold tracking-tight text-base-content flex items-center gap-3">
+                        <lucide-icon [img]="icons.History" class="w-8 h-8 text-primary"></lucide-icon>
+                        Historial de Movimientos
+                    </h1>
+                    <p class="text-base-content/70 mt-1">
+                        Auditoría completa de entradas, salidas y ajustes de inventario.
+                    </p>
+                </div>
+                <div>
+                    <button class="btn btn-ghost btn-sm gap-2" (click)="movementsQuery.refetch()">
+                        <lucide-icon [img]="icons.Refresh" class="w-4 h-4"
+                            [class.animate-spin]="isFetching()"></lucide-icon>
+                        Actualizar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters Card -->
+        <div class="card bg-base-100 shadow-sm border border-base-200 mb-6">
+            <div class="card-body p-4 sm:p-6">
+                <h3 class="font-bold text-base-content mb-4 flex items-center gap-2">
+                    <lucide-icon [img]="icons.Filter" class="w-4 h-4"></lucide-icon>
+                    Filtros de Búsqueda
+                </h3>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                    <!-- Variant ID -->
+                    <div class="form-control">
+                        <label class="label label-text-alt font-bold">Variante (ID)</label>
+                        <div class="relative">
+                            <input type="text" [(ngModel)]="filterVariantId" placeholder="UUID Variante"
+                                class="input input-bordered w-full input-sm" />
+                            @if (filterVariantId()) {
+                            <button (click)="filterVariantId.set('')"
+                                class="absolute right-2 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-base-content">
+                                <lucide-icon [img]="icons.X" class="w-3 h-3"></lucide-icon>
+                            </button>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Order ID -->
+                    <div class="form-control">
+                        <label class="label label-text-alt font-bold">Orden (ID)</label>
+                        <div class="relative">
+                            <input type="text" [(ngModel)]="filterOrderId" placeholder="UUID Órden"
+                                class="input input-bordered w-full input-sm" />
+                            @if (filterOrderId()) {
+                            <button (click)="filterOrderId.set('')"
+                                class="absolute right-2 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-base-content">
+                                <lucide-icon [img]="icons.X" class="w-3 h-3"></lucide-icon>
+                            </button>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Type -->
+                    <div class="form-control">
+                        <label class="label label-text-alt font-bold">Tipo Movimiento</label>
+                        <select [(ngModel)]="filterType" class="select select-bordered w-full select-sm">
+                            <option value="">Todos</option>
+                            <option value="IN">Entrada (IN)</option>
+                            <option value="OUT">Salida (OUT)</option>
+                            <option value="ADJUSTMENT">Ajuste (ADJUSTMENT)</option>
+                        </select>
+                    </div>
+
+                    <!-- Date From -->
+                    <div class="form-control">
+                        <label class="label label-text-alt font-bold">Desde</label>
+                        <input type="date" [(ngModel)]="filterDateFrom" class="input input-bordered w-full input-sm" />
+                    </div>
+
+                    <!-- Date To -->
+                    <div class="form-control">
+                        <label class="label label-text-alt font-bold">Hasta</label>
+                        <input type="date" [(ngModel)]="filterDateTo" class="input input-bordered w-full input-sm" />
+                    </div>
+                </div>
+
+                <div class="flex justify-end mt-4 pt-4 border-t border-base-200">
+                    <button class="btn btn-ghost btn-sm text-error" (click)="clearFilters()">
+                        Limpiar Filtros
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table Card -->
+        <div class="card bg-base-100 shadow-sm border border-base-200">
+            <div class="card-body p-0">
+                <div class="overflow-x-auto min-h-[400px]">
+                    <table class="table table-zebra w-full align-middle">
+                        <thead>
+                            <tr class="bg-base-200/50 text-base-content/70">
+                                <th>Fecha / Hora</th>
+                                <th>Tipo / Motivo</th>
+                                <th>Variante / Producto</th>
+                                <th>Cantidad</th>
+                                <th>Usuario / Notas</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (movementsQuery.isLoading()) {
+                            @for (i of [1,2,3,4,5]; track i) {
+                            <tr class="animate-pulse">
+                                <td colspan="5" class="h-16">
+                                    <div class="h-4 bg-base-200 rounded w-1/2 mb-2"></div>
+                                </td>
+                            </tr>
+                            }
+                            } @else if (movements().length === 0) {
+                            <tr>
+                                <td colspan="5" class="text-center py-10 text-base-content/50">
+                                    <div class="flex flex-col items-center gap-2">
+                                        <lucide-icon [img]="icons.History" class="w-10 h-10 opacity-20"></lucide-icon>
+                                        <p>No se encontraron movimientos con los filtros actuales.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            } @else {
+                            @for (mov of movements(); track mov.id) {
+                            <tr class="hover">
+                                <!-- Date -->
+                                <td class="whitespace-nowrap font-mono text-xs">
+                                    <div class="font-bold">{{ mov.occurredAt | date:'shortDate' }}</div>
+                                    <div class="opacity-60">{{ mov.occurredAt | date:'mediumTime' }}</div>
+                                </td>
+
+                                <!-- Type -->
+                                <td>
+                                    @let typeInfo = getTypeLabel(mov.type, mov.reason);
+                                    <div class="flex flex-col gap-1 items-start">
+                                        <span class="badge badge-sm gap-1" [ngClass]="typeInfo.class">
+                                            {{ typeInfo.label }}
+                                        </span>
+                                        <span class="text-xs opacity-70 font-mono">{{ mov.reason }}</span>
+                                    </div>
+                                </td>
+
+                                <!-- Variant -->
+                                <td>
+                                    <div class="flex flex-col text-sm">
+                                        <div class="font-bold truncate max-w-[200px]"
+                                            [title]="mov.variant?.product?.name || mov.productName">
+                                            {{ mov.variant?.product?.name || mov.productName || 'Producto Desconocido'
+                                            }}
+                                        </div>
+                                        <div class="flex items-center gap-2 opacity-70 text-xs">
+                                            <span class="badge badge-ghost badge-xs font-mono">
+                                                {{ mov.variant?.sku || mov.variantSku || '???' }}
+                                            </span>
+                                            <span class="truncate max-w-[150px]">
+                                                {{ mov.variant?.name || mov.variantName || 'Variante Desconocida' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <!-- Quantity -->
+                                <td>
+                                    <span class="font-mono font-bold text-lg" [class.text-success]="mov.quantity > 0"
+                                        [class.text-error]="mov.quantity < 0">
+                                        {{ mov.quantity > 0 ? '+' : '' }}{{ mov.quantity | number }}
+                                    </span>
+                                </td>
+
+                                <!-- User / Notes -->
+                                <td class="text-xs">
+                                    @if (mov.createdByEmail) {
+                                    <div class="flex items-center gap-1 opacity-70 mb-1" title="User">
+                                        <div
+                                            class="w-4 h-4 rounded-full bg-base-300 flex items-center justify-center text-[10px]">
+                                            {{ mov.createdByEmail.charAt(0) | uppercase }}
+                                        </div>
+                                        <span class="truncate max-w-[150px]">{{ mov.createdByEmail }}</span>
+                                    </div>
+                                    }
+                                    @if (mov.orderId) {
+                                    <div
+                                        class="badge badge-outline badge-xs font-mono border-base-300 text-base-content/60 cursor-pointer hover:bg-base-200">
+                                        {{ mov.orderId }}
+                                    </div>
+                                    }
+                                    @if (mov.notes) {
+                                    <div class="mt-1 opacity-60 italic truncate max-w-[200px]" [title]="mov.notes">
+                                        "{{ mov.notes }}"
+                                    </div>
+                                    }
+                                </td>
+                            </tr>
+                            }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination Footer -->
+                <div class="p-4 border-t border-base-200 bg-base-100 flex justify-between items-center">
+                    <span class="text-xs text-base-content/50">Mostrando {{ movements().length }} resultados</span>
+                    <div class="join">
+                        <button class="join-item btn btn-sm btn-outline" (click)="prevPage()"
+                            [disabled]="offset() === 0">
+                            <lucide-icon [img]="icons.ArrowLeft" class="w-3 h-3"></lucide-icon>
+                            Anterior
+                        </button>
+                        <button class="join-item btn btn-sm btn-outline" (click)="nextPage()" [disabled]="!hasMore()">
+                            Siguiente
+                            <lucide-icon [img]="icons.ArrowRight" class="w-3 h-3"></lucide-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

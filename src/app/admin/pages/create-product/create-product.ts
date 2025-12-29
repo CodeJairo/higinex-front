@@ -11,12 +11,13 @@ import {
 } from 'lucide-angular';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { CreateProductPayload, InventoryManagementService } from '../../services/inventory.service';
+import { Router, RouterLink } from '@angular/router';
+import { CreateProductPayload } from '../../interfaces/products.interface';
+import { InventoryManagementService } from '../../services/inventory.service';
 
 @Component({
   selector: 'app-create-product',
-  imports: [ReactiveFormsModule, LucideAngularModule],
+  imports: [ReactiveFormsModule, LucideAngularModule, RouterLink],
   templateUrl: './create-product.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -77,7 +78,7 @@ export class CreateProduct {
   }
 
   cancel(): void {
-    this.router.navigateByUrl('/admin/inventory');
+    this.router.navigateByUrl('/admin/inventory/products');
   }
 
   dismissError(): void {

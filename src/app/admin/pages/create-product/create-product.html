@@ -1,13 +1,24 @@
-<div class="h-full w-full bg-base-200/60 p-6 md:p-10 flex flex-col items-center justify-center overflow-y-auto">
-  <div class="w-full max-w-2xl animate-fade-in-up">
+<div class="min-h-screen bg-base-200">
+  <div class="max-w-6xl mx-auto px-4 py-8">
     <!-- Header -->
-    <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary mb-4">
-        <lucide-icon [img]="PlusCircle" class="w-6 h-6"></lucide-icon>
+    <div class="mb-6">
+      <div class="text-sm breadcrumbs mb-2">
+        <ul>
+          <li><a routerLink="/admin/inventory">Inventario</a></li>
+          <li><a routerLink="/admin/inventory/products">Productos</a></li>
+          <li class="cursor-default">Nuevo Producto</li>
+        </ul>
       </div>
-      <h2 class="text-3xl font-black text-base-content tracking-tight">Crear Producto</h2>
-      <p class="text-base-content/60 mt-2 font-medium">Define los detalles básicos para un nuevo producto en el
-        catálogo.</p>
+
+      <div class="flex items-center gap-3">
+        <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary shrink-0">
+          <lucide-icon [img]="PlusCircle" class="w-5 h-5"></lucide-icon>
+        </div>
+        <div>
+          <h1 class="text-2xl lg:text-3xl font-semibold text-base-content tracking-tight">Crear Producto</h1>
+          <p class="text-sm text-base-content/70">Define los detalles básicos para un nuevo producto en el catálogo.</p>
+        </div>
+      </div>
     </div>
 
     <!-- Card del Formulario -->

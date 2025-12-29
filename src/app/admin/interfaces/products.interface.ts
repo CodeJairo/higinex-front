@@ -59,3 +59,20 @@ export interface UpdateVariantImagePayload {
   altText?: string;
   sortOrder?: number;
 }
+
+export interface Product {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  status: 'PUBLISHED' | 'ARCHIVED' | string;
+  createdAt?: string;
+  updatedAt?: string;
+  deletedAt?: string | null;
+}
+
+export interface CreateProductPayload {
+  name: string;
+  slug: string;
+  description?: string;
+}
