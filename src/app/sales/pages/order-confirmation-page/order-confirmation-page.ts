@@ -2,7 +2,7 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { injectQuery } from '@tanstack/angular-query-experimental';
-import { CircleCheckBig, Clock, LucideAngularModule, Phone, X } from 'lucide-angular';
+import { Bookmark, CircleCheckBig, Clock, LucideAngularModule, Map, Phone, X } from 'lucide-angular';
 import { CheckoutOrder, OrderStatus } from '../../interfaces';
 import { CheckoutService } from '../../services/checkout.service';
 
@@ -21,6 +21,8 @@ export class OrderConfirmationPage {
   readonly clockIcon = Clock;
   readonly xIcon = X;
   readonly phoneIcon = Phone;
+  readonly mapIcon = Map;
+  readonly bookmarkIcon = Bookmark;
 
   readonly orderId = signal(this.route.snapshot.paramMap.get('orderId') ?? '');
 
@@ -57,6 +59,22 @@ export class OrderConfirmationPage {
       return 'badge badge-error badge-lg text-error-content';
     }
     return 'badge badge-ghost badge-lg text-base-content/70';
+  }
+
+  getStatusLabel(status: OrderStatus): string {
+    const labels: Record<OrderStatus, string> = {
+      CREATED: 'Creado',
+      PENDING_PAYMENT: 'Pendiente de Pago',
+      PAID: 'Pagado',
+      PREPARING: 'Preparando',
+      SHIPPED: 'Enviado',
+      DELIVERED: 'Entregado',
+      CANCELED: 'Cancelado',
+      RETURN_REQUESTED: 'Devolución Solicitada',
+      RETURNED: 'Devuelto',
+      REFUNDED: 'Reembolsado',
+    };
+    return labels[status] ?? status;
   }
 
   toAmount(value: string | number | null | undefined): number {

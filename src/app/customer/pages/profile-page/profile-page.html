@@ -11,16 +11,29 @@
   <!-- Información principal -->
   <div class="card bg-base-100 border border-base-200 shadow-sm overflow-hidden">
     <div class="card-body p-6 md:p-8">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-base-200 pb-4 mb-6">
+      <div
+        class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-base-200 pb-4 mb-6"
+      >
         <div>
           <h2 class="card-title text-lg font-bold text-base-content">Información Personal</h2>
-          <p class="text-sm text-base-content/60">Datos utilizados para la comunicación y facturación.</p>
+          <p class="text-sm text-base-content/60">
+            Datos utilizados para la comunicación y facturación.
+          </p>
         </div>
         <div class="badge badge-ghost gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-            stroke="currentColor" class="w-4 h-4 text-primary">
-            <path stroke-linecap="round" stroke-linejoin="round"
-              d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A7.5 7.5 0 014.5 20.118z" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-4 h-4 text-primary"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A7.5 7.5 0 014.5 20.118z"
+            />
           </svg>
           Perfil {{ profile().emailVerified ? 'Verificado' : 'Incompleto' }}
         </div>
@@ -36,56 +49,103 @@
             <label class="label">
               <span class="label-text font-medium">Nombre completo</span>
             </label>
-            <label class="input input-bordered flex items-center gap-2 focus-within:outline-primary">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
-                class="w-4 h-4 opacity-70">
+            <label
+              class="input input-bordered flex items-center gap-2 focus-within:outline-primary"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+                class="w-4 h-4 opacity-70"
+              >
                 <path
-                  d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z" />
+                  d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z"
+                />
               </svg>
-              <input type="text" class="grow" placeholder="Nombre y apellidos" [ngModel]="profile().name"
-                (ngModelChange)="onNameChange($event)" />
+              <input
+                type="text"
+                class="grow"
+                placeholder="Nombre y apellidos"
+                [ngModel]="profile().name"
+                (ngModelChange)="onNameChange($event)"
+              />
             </label>
-            <span class="label-text-alt text-xs text-base-content/40 mt-1 ml-1">Visible en facturas.</span>
+            <span class="label-text-alt text-xs text-base-content/40 mt-1 ml-1"
+              >Visible en facturas.</span
+            >
           </div>
 
           <div class="form-control w-full">
             <label class="label justify-start gap-2">
               <span class="label-text font-medium">Correo electrónico</span>
-              <span class="badge badge-xs" [ngClass]="
+              <span
+                class="badge badge-xs"
+                [ngClass]="
                   profile().emailVerified
                     ? 'badge-success badge-outline'
                     : 'badge-warning badge-outline'
-                ">
+                "
+              >
                 {{ profile().emailVerified ? 'Verificado' : 'Pendiente' }}
               </span>
             </label>
-            <label class="input input-bordered flex items-center gap-2 focus-within:outline-primary">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
-                class="w-4 h-4 opacity-70">
+            <label
+              class="input input-bordered flex items-center gap-2 focus-within:outline-primary"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+                class="w-4 h-4 opacity-70"
+              >
                 <path
-                  d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" />
+                  d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z"
+                />
                 <path
-                  d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
+                  d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z"
+                />
               </svg>
-              <input type="email" class="grow" placeholder="email@ejemplo.com" [ngModel]="profile().email"
-                (ngModelChange)="onEmailChange($event)" />
+              <input
+                type="email"
+                class="grow"
+                placeholder="email@ejemplo.com"
+                [ngModel]="profile().email"
+                (ngModelChange)="onEmailChange($event)"
+              />
             </label>
-            <span class="label-text-alt text-xs text-base-content/40 mt-1 ml-1">Cambiarlo requiere
-              re-verificación.</span>
+            <span class="label-text-alt text-xs text-base-content/40 mt-1 ml-1"
+              >Cambiarlo requiere re-verificación.</span
+            >
           </div>
 
           <div class="form-control w-full">
             <label class="label">
               <span class="label-text font-medium">Teléfono móvil</span>
             </label>
-            <label class="input input-bordered flex items-center gap-2 focus-within:outline-primary">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                stroke="currentColor" class="w-4 h-4 opacity-70">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
+            <label
+              class="input input-bordered flex items-center gap-2 focus-within:outline-primary"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-4 h-4 opacity-70"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"
+                />
               </svg>
-              <input type="tel" class="grow" placeholder="+57 300 000 0000" [ngModel]="profile().phone"
-                (ngModelChange)="onPhoneChange($event)" />
+              <input
+                type="tel"
+                class="grow"
+                placeholder="+57 300 000 0000"
+                [ngModel]="profile().phone"
+                (ngModelChange)="onPhoneChange($event)"
+              />
             </label>
           </div>
         </div>
@@ -97,10 +157,19 @@
 
           <div class="bg-base-200/50 border border-base-200 rounded-lg p-5">
             <div class="flex items-start gap-3 mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                stroke="currentColor" class="w-5 h-5 text-base-content/40 mt-0.5">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-5 h-5 text-base-content/40 mt-0.5"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
+                />
               </svg>
               <div>
                 <h4 class="text-sm font-semibold text-base-content">Información Protegida</h4>
@@ -116,9 +185,12 @@
                 <label class="label pt-0 pb-1">
                   <span class="label-text text-xs text-base-content/60">Tipo de documento</span>
                 </label>
-                <input type="text"
+                <input
+                  type="text"
                   class="input input-bordered input-sm bg-base-100 text-base-content/70 border-base-300"
-                  [value]="profile().documentType" readonly />
+                  [value]="profile().documentType"
+                  readonly
+                />
               </div>
 
               <div class="form-control">
@@ -126,7 +198,8 @@
                   <span class="label-text text-xs text-base-content/60">Número de documento</span>
                 </label>
                 <div
-                  class="input input-bordered input-sm bg-base-100 text-base-content/70 border-base-300 flex items-center justify-between">
+                  class="input input-bordered input-sm bg-base-100 text-base-content/70 border-base-300 flex items-center justify-between"
+                >
                   <span>{{ profile().documentNumber }}</span>
                   <span class="badge badge-ghost badge-xs text-base-content/40">ID</span>
                 </div>
@@ -135,9 +208,19 @@
           </div>
 
           <div class="flex items-center justify-end gap-2 text-xs text-base-content/40 mt-2 px-1">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-              stroke="currentColor" class="w-3 h-3">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-3 h-3"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
             Miembro desde: {{ profile().createdAt | date : 'longDate' }}
           </div>
@@ -146,11 +229,21 @@
 
       <div class="card-actions justify-end mt-8 border-t border-base-200 pt-5">
         <div class="flex items-center gap-3">
-          <button type="button" class="btn btn-ghost hover:bg-base-200" [disabled]="!isDirty" (click)="resetChanges()">
+          <button
+            type="button"
+            class="btn btn-ghost hover:bg-base-200"
+            [disabled]="!isDirty"
+            (click)="resetChanges()"
+          >
             Cancelar
           </button>
-          <button type="button" class="btn btn-primary px-8" [class.btn-disabled]="!isDirty || isSaving()"
-            [disabled]="!isDirty || isSaving()" (click)="saveProfile()">
+          <button
+            type="button"
+            class="btn btn-primary px-8"
+            [class.btn-disabled]="!isDirty || isSaving()"
+            [disabled]="!isDirty || isSaving()"
+            (click)="saveProfile()"
+          >
             <span *ngIf="isSaving()" class="loading loading-spinner loading-xs"></span>
             {{ isSaving() ? 'Guardando...' : 'Guardar Cambios' }}
           </button>
@@ -187,7 +280,7 @@
               Si sospechas que alguien más tiene acceso, cierra sesión en todos los dispositivos.
             </p>
           </div>
-          <button type="button" class="btn btn-ghost btn-sm">Cerrar sesiones</button>
+          <button type="button" class="btn btn-ghost btn-sm btn-disabled">Cerrar sesiones</button>
         </div>
       </div>
     </div>

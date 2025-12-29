@@ -12,11 +12,13 @@ import { Router } from '@angular/router';
 import { injectMutation, injectQuery } from '@tanstack/angular-query-experimental';
 import {
   ArrowLeft,
+  ArrowRight,
   CircleAlert,
   Info,
   LucideAngularModule,
   Map,
   NotebookPen,
+  Package,
   Shield,
   Truck,
   User,
@@ -46,6 +48,8 @@ export class CheckoutPage {
   readonly shieldIcon = Shield;
   readonly truckIcon = Truck;
   readonly arrowLeftIcon = ArrowLeft;
+  readonly arrowRightIcon = ArrowRight;
+  readonly packageIcon = Package;
 
   readonly cartItems = this.cartService.items;
   readonly cartSummary = this.cartService.summary;
@@ -111,6 +115,10 @@ export class CheckoutPage {
 
   goToCart(): void {
     this.router.navigateByUrl('/sales/checkout/cart');
+  }
+
+  goToCatalog(): void {
+    this.router.navigateByUrl('/sales/catalog');
   }
 
   async onConfirmOrder(): Promise<void> {

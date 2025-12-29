@@ -24,14 +24,20 @@ export class CartService {
   );
 
   readonly summary = computed<CheckoutCartSummary>(() => {
-    const subtotalAmount = this.subtotalAmount();
+    const totalItemValue = this.subtotalAmount();
     const shippingAmount = 0;
     const discountAmount = 0;
+
+    // Asumimos IVA del 19% incluido en el precio
+    const taxAmount = Math.round(totalItemValue - totalItemValue / 1.19);
+    const subtotalAmount = totalItemValue - taxAmount;
+
     return {
       subtotalAmount,
       shippingAmount,
+      taxAmount,
       discountAmount,
-      totalAmount: subtotalAmount + shippingAmount - discountAmount,
+      totalAmount: totalItemValue + shippingAmount - discountAmount,
       currency: DEFAULT_CURRENCY,
     };
   });

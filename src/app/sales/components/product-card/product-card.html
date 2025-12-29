@@ -29,7 +29,7 @@
       @for (image of images(); track image.id; let i = $index) {
       <div [id]="getSlideId(image.id)" class="carousel-item relative w-full h-full">
         <shared-image-with-fallback [src]="image.url" [alt]="image.alt"
-          class="w-full h-full object-contain mix-blend-multiply transition-transform duration-700 group-hover:scale-110"></shared-image-with-fallback>
+          imgClass="w-full h-full object-contain mix-blend-multiply transition-transform duration-700 group-hover:scale-110"></shared-image-with-fallback>
 
         @if (images().length > 1) {
         <div class="absolute flex justify-between transform -translate-y-1/2 left-2 right-2 top-1/2">

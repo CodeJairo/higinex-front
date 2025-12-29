@@ -40,13 +40,15 @@ export class CartDropdown {
   readonly bagIcon = ShoppingBag;
   readonly arrowRightIcon = ArrowRight;
 
-  readonly subtotal = computed(() =>
+  readonly totalValue = computed(() =>
     this.items().reduce((sum, item) => sum + (item.unitPriceCop ?? 0) * item.quantity, 0)
   );
 
-  readonly tax = computed(() => this.subtotal() * 0.19);
+  readonly tax = computed(() => Math.round(this.totalValue() - this.totalValue() / 1.19));
 
-  readonly total = computed(() => this.subtotal() + this.tax());
+  readonly subtotal = computed(() => this.totalValue() - this.tax());
+
+  readonly total = computed(() => this.totalValue());
 
   readonly totalItems = computed(() =>
     this.items().reduce((sum, item) => sum + item.quantity, 0)

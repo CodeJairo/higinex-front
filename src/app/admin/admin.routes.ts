@@ -31,6 +31,13 @@ export const adminRoutes: Routes = [
         path: 'create-product',
         component: CreateProduct,
       },
+      {
+        path: 'variants/:productId',
+        loadComponent: () =>
+          import(
+            './pages/inventory-variants-page/inventory-variants-page'
+          ).then((m) => m.InventoryVariantsPage),
+      },
     ],
   },
 

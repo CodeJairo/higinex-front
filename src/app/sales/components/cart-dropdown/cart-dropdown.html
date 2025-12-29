@@ -23,7 +23,7 @@
       class="flex gap-3 p-2 bg-base-200/50 rounded-xl border border-transparent hover:border-base-200 hover:bg-base-100 transition-all group">
       <div class="w-14 h-14 bg-base-100 rounded-lg overflow-hidden shrink-0 border border-base-200">
         <shared-image-with-fallback alt="{{ item.productName }}" [src]="getItemImageUrl(item)"
-          class="w-full h-full object-contain p-1"></shared-image-with-fallback>
+          imgClass="w-full h-full object-contain p-1"></shared-image-with-fallback>
       </div>
 
       <div class="flex-1 min-w-0 flex flex-col justify-between">
@@ -69,14 +69,13 @@
         <span>{{ formatPrice(subtotal()) }}</span>
       </div>
       <div class="flex justify-between text-[10px] font-bold uppercase text-base-content/60 tracking-wider">
-        <span>IVA (19%)</span>
+        <span>Impuestos</span>
         <span>{{ formatPrice(tax()) }}</span>
       </div>
 
-      <div
-        class="flex justify-between items-center py-1.5 px-2 bg-emerald-500/10 rounded-lg border border-emerald-500/20 mt-2">
-        <span class="text-[9px] font-black text-emerald-600 uppercase tracking-widest">Envío Nacional</span>
-        <span class="text-[9px] font-black text-emerald-600 uppercase">Gratis</span>
+      <div class="flex justify-between text-[10px] font-bold uppercase text-base-content/60 tracking-wider">
+        <span>Envío</span>
+        <span>Por calcular</span>
       </div>
     </div>
 

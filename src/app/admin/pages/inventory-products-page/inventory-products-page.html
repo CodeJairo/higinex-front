@@ -14,20 +14,22 @@
         Productos y variantes
       </h1>
       <p class="text-sm text-base-content/70 max-w-3xl">
-        Gestiona el estado de publicación de los productos y crea variantes con sus atributos e
-        inventario inicial.
+        Gestiona el catálogo de productos y sus variantes.
       </p>
     </div>
 
-    <!-- Main grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+    <!-- Main Content -->
+    <div class="w-full">
       <!-- LISTA DE PRODUCTOS -->
-      <section class="lg:col-span-2 space-y-4">
-        <div class="card bg-base-100 shadow-xl shadow-base-200/50 border border-base-200 overflow-hidden">
+      <section class="space-y-4">
+        <div
+          class="card bg-base-100 shadow-xl shadow-base-200/50 border border-base-200 overflow-hidden"
+        >
           <div class="card-body p-0">
             <!-- Toolbar -->
             <div
-              class="p-5 border-b border-base-200 bg-base-50/50 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              class="p-5 border-b border-base-200 bg-base-50/50 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+            >
               <div>
                 <h2 class="text-base-content text-lg font-bold flex items-center gap-2">
                   <lucide-icon [img]="Package" class="w-5 h-5 text-primary"></lucide-icon>
@@ -41,21 +43,34 @@
               <!-- Buscador -->
               <div class="w-full sm:max-w-xs">
                 <label
-                  class="input input-bordered input-sm flex items-center gap-3 bg-base-100 focus-within:ring-2 ring-primary/20 transition-all">
+                  class="input input-bordered input-sm flex items-center gap-3 bg-base-100 focus-within:ring-2 ring-primary/20 transition-all"
+                >
                   <lucide-icon [img]="Search" class="w-4 h-4 text-base-content/40"></lucide-icon>
-                  <input type="text" placeholder="Buscar producto..."
-                    class="grow text-sm font-medium placeholder:font-normal" />
+                  <input
+                    type="text"
+                    placeholder="Buscar producto..."
+                    class="grow text-sm font-medium placeholder:font-normal"
+                  />
                 </label>
               </div>
             </div>
 
             @if (actionMessage(); as message) {
-            <div role="alert" class="alert m-4 rounded-lg shadow-sm" [class.alert-success]="message.type === 'success'"
-              [class.alert-error]="message.type === 'error'">
-              @if (message.type === 'success') { <lucide-icon [img]="CheckCircle" class="w-5 h-5"></lucide-icon> }
-              @if (message.type === 'error') { <lucide-icon [img]="AlertCircle" class="w-5 h-5"></lucide-icon> }
+            <div
+              role="alert"
+              class="alert m-4 rounded-lg shadow-sm"
+              [class.alert-success]="message.type === 'success'"
+              [class.alert-error]="message.type === 'error'"
+            >
+              @if (message.type === 'success') {
+              <lucide-icon [img]="CheckCircle" class="w-5 h-5"></lucide-icon> } @if (message.type
+              === 'error') { <lucide-icon [img]="AlertCircle" class="w-5 h-5"></lucide-icon> }
               <span class="text-sm font-medium">{{ message.text }}</span>
-              <button type="button" class="btn btn-ghost btn-xs btn-square ml-auto" (click)="dismissActionMessage()">
+              <button
+                type="button"
+                class="btn btn-ghost btn-xs btn-square ml-auto"
+                (click)="dismissActionMessage()"
+              >
                 <lucide-icon [img]="X" class="w-4 h-4"></lucide-icon>
               </button>
             </div>
@@ -63,9 +78,13 @@
 
             <div class="overflow-x-auto min-h-[300px]">
               @if (isLoading()) {
-              <div class="flex flex-col items-center justify-center h-64 text-base-content/30 gap-3">
+              <div
+                class="flex flex-col items-center justify-center h-64 text-base-content/30 gap-3"
+              >
                 <span class="loading loading-spinner loading-md"></span>
-                <span class="text-xs font-medium tracking-wide uppercase">Cargando catálogo...</span>
+                <span class="text-xs font-medium tracking-wide uppercase"
+                  >Cargando catálogo...</span
+                >
               </div>
               } @else if (isError()) {
               <div class="flex flex-col items-center justify-center h-64 text-error/60 gap-3">
@@ -76,9 +95,9 @@
               <table class="table w-full hidden md:table">
                 <thead>
                   <tr
-                    class="bg-base-200/50 text-xs uppercase tracking-wider text-base-content/50 font-bold border-b border-base-200">
-                    <th class="py-4 pl-6 w-12"></th> <!-- Selection indicator -->
-                    <th class="py-4">Producto</th>
+                    class="bg-base-200/50 text-xs uppercase tracking-wider text-base-content/50 font-bold border-b border-base-200"
+                  >
+                    <th class="py-4 pl-6">Producto</th>
                     <th class="py-4 hidden sm:table-cell">Slug</th>
                     <th class="py-4">Estado</th>
                     <th class="py-4 pr-6 text-right">Acciones</th>
@@ -86,21 +105,16 @@
                 </thead>
                 <tbody>
                   @for (product of products; track product.id) {
-                  <tr class="group hover:bg-base-50 transition-colors cursor-pointer"
-                    [class.bg-primary/5]="selectedProduct()?.id === product.id" (click)="onOpenVariantPanel(product)">
-
-                    <!-- Indicador activo -->
-                    <td class="pl-6">
-                      <div class="w-2 h-2 rounded-full transition-all duration-300"
-                        [class.bg-primary]="selectedProduct()?.id === product.id"
-                        [class.bg-base-300]="selectedProduct()?.id !== product.id"
-                        [class.scale-125]="selectedProduct()?.id === product.id"></div>
-                    </td>
-
+                  <tr
+                    class="group hover:bg-base-50 transition-colors cursor-pointer"
+                    (click)="onManageVariants(product)"
+                  >
                     <!-- Nombre y Desc -->
-                    <td>
+                    <td class="pl-6">
                       <div class="flex flex-col gap-1 max-w-[200px] sm:max-w-xs">
-                        <span class="font-bold text-sm text-base-content group-hover:text-primary transition-colors">
+                        <span
+                          class="font-bold text-sm text-base-content group-hover:text-primary transition-colors"
+                        >
                           {{ product.name }}
                         </span>
                         <span class="text-xs text-base-content/50 line-clamp-1">
@@ -116,11 +130,14 @@
 
                     <!-- Estado -->
                     <td>
-                      <div class="badge badge-sm font-bold tracking-wider" [ngClass]="{
-                            'badge-success text-success-content': product.status === 'PUBLISHED',
-                            'badge-error badge-outline': product.status === 'ARCHIVED',
-                            'badge-ghost': product.status === 'DRAFT'
-                          }">
+                      <div
+                        class="badge badge-sm font-bold tracking-wider"
+                        [ngClass]="{
+                          'badge-success text-success-content': product.status === 'PUBLISHED',
+                          'badge-error badge-outline': product.status === 'ARCHIVED',
+                          'badge-ghost': product.status === 'DRAFT'
+                        }"
+                      >
                         {{ getProductStatusLabel(product.status) }}
                       </div>
                     </td>
@@ -128,26 +145,35 @@
                     <!-- Acciones -->
                     <td class="pr-6 text-right">
                       <div
-                        class="flex items-center justify-end gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-
+                        class="flex items-center justify-end gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
+                      >
                         <!-- Publicar/Archivar Toggle -->
                         @if (product.status !== 'PUBLISHED') {
-                        <button class="btn btn-xs btn-circle btn-ghost text-success tooltip tooltip-left"
-                          data-tip="Publicar" [class.btn-disabled]="isPublishing(product.id)"
-                          (click)="$event.stopPropagation(); onPublish(product)">
+                        <button
+                          class="btn btn-xs btn-circle btn-ghost text-success tooltip tooltip-left"
+                          data-tip="Publicar"
+                          [class.btn-disabled]="isPublishing(product.id)"
+                          (click)="$event.stopPropagation(); onPublish(product)"
+                        >
                           <lucide-icon [img]="UploadCloud" class="w-4 h-4"></lucide-icon>
                         </button>
                         } @else {
-                        <button class="btn btn-xs btn-circle btn-ghost text-error tooltip tooltip-left"
-                          data-tip="Archivar" [class.btn-disabled]="isArchiving(product.id)"
-                          (click)="$event.stopPropagation(); onArchive(product)">
+                        <button
+                          class="btn btn-xs btn-circle btn-ghost text-error tooltip tooltip-left"
+                          data-tip="Archivar"
+                          [class.btn-disabled]="isArchiving(product.id)"
+                          (click)="$event.stopPropagation(); onArchive(product)"
+                        >
                           <lucide-icon [img]="Archive" class="w-4 h-4"></lucide-icon>
                         </button>
                         }
 
-                        <button class="btn btn-xs btn-circle btn-ghost text-base-content/70 tooltip tooltip-left"
-                          data-tip="Agregar Variante" (click)="$event.stopPropagation(); onOpenVariantPanel(product)">
-                          <lucide-icon [img]="Plus" class="w-4 h-4"></lucide-icon>
+                        <button
+                          class="btn btn-xs btn-circle btn-ghost text-base-content/70 tooltip tooltip-left"
+                          data-tip="Gestionar Variantes"
+                          (click)="$event.stopPropagation(); onManageVariants(product)"
+                        >
+                          <lucide-icon [img]="Settings" class="w-4 h-4"></lucide-icon>
                         </button>
                       </div>
                     </td>
@@ -155,7 +181,9 @@
                   } @empty {
                   <tr>
                     <td colspan="5" class="text-center py-12">
-                      <div class="flex flex-col items-center justify-center gap-3 text-base-content/40">
+                      <div
+                        class="flex flex-col items-center justify-center gap-3 text-base-content/40"
+                      >
                         <lucide-icon [img]="PackageOpen" class="w-10 h-10 stroke-1"></lucide-icon>
                         <span class="text-sm font-medium">No hay productos registrados.</span>
                       </div>
@@ -169,197 +197,71 @@
               <!-- Mobile Card View -->
               <div class="md:hidden space-y-3">
                 @for (product of products; track product.id) {
-                <div class="card bg-base-100 border border-base-200 shadow-sm p-4"
-                  (click)="onOpenVariantPanel(product)">
+                <div
+                  class="card bg-base-100 border border-base-200 shadow-sm p-4"
+                  (click)="onManageVariants(product)"
+                >
                   <div class="flex justify-between items-start mb-2">
                     <div class="flex-1">
                       <h3 class="font-bold text-sm text-base-content">{{ product.name }}</h3>
                       @if (product.slug) {
-                      <p class="text-[10px] font-mono text-base-content/40 mt-0.5">{{ product.slug }}</p>
+                      <p class="text-[10px] font-mono text-base-content/40 mt-0.5">
+                        {{ product.slug }}
+                      </p>
                       }
                       <p class="text-xs text-base-content/60 mt-1 line-clamp-2">
                         {{ product.description || 'Sin descripción' }}
                       </p>
                     </div>
-                    <div class="badge badge-sm font-bold tracking-wider ml-2 shrink-0" [ngClass]="{
-                          'badge-success text-success-content': product.status === 'PUBLISHED',
-                          'badge-error badge-outline': product.status === 'ARCHIVED',
-                          'badge-ghost': product.status === 'DRAFT'
-                        }">
+                    <div
+                      class="badge badge-sm font-bold tracking-wider ml-2 shrink-0"
+                      [ngClass]="{
+                        'badge-success text-success-content': product.status === 'PUBLISHED',
+                        'badge-error badge-outline': product.status === 'ARCHIVED',
+                        'badge-ghost': product.status === 'DRAFT'
+                      }"
+                    >
                       {{ getProductStatusLabel(product.status) }}
                     </div>
                   </div>
 
                   <div class="flex items-center justify-between mt-3 pt-3 border-t border-base-100">
-                    <div class="text-[10px] text-base-content/40 font-medium">
-                      <!-- Espacio para conteo de variantes si existiera -->
-                    </div>
+                    <div class="text-[10px] text-base-content/40 font-medium"></div>
                     <div class="flex gap-1">
                       @if (product.status !== 'PUBLISHED') {
-                      <button class="btn btn-xs btn-circle btn-ghost text-success"
-                        (click)="$event.stopPropagation(); onPublish(product)">
+                      <button
+                        class="btn btn-xs btn-circle btn-ghost text-success"
+                        (click)="$event.stopPropagation(); onPublish(product)"
+                      >
                         <lucide-icon [img]="UploadCloud" class="w-4 h-4"></lucide-icon>
                       </button>
                       } @else {
-                      <button class="btn btn-xs btn-circle btn-ghost text-error"
-                        (click)="$event.stopPropagation(); onArchive(product)">
+                      <button
+                        class="btn btn-xs btn-circle btn-ghost text-error"
+                        (click)="$event.stopPropagation(); onArchive(product)"
+                      >
                         <lucide-icon [img]="Archive" class="w-4 h-4"></lucide-icon>
                       </button>
                       }
-                      <button class="btn btn-xs btn-circle btn-ghost text-primary"
-                        (click)="$event.stopPropagation(); onOpenVariantPanel(product)">
-                        <lucide-icon [img]="Plus" class="w-4 h-4"></lucide-icon>
+                      <button
+                        class="btn btn-xs btn-circle btn-ghost text-primary"
+                        (click)="$event.stopPropagation(); onManageVariants(product)"
+                      >
+                        <lucide-icon [img]="Settings" class="w-4 h-4"></lucide-icon>
                       </button>
                     </div>
                   </div>
                 </div>
                 } @empty {
-                <div class="flex flex-col items-center justify-center gap-3 text-base-content/40 py-8">
+                <div
+                  class="flex flex-col items-center justify-center gap-3 text-base-content/40 py-8"
+                >
                   <lucide-icon [img]="PackageOpen" class="w-10 h-10 stroke-1"></lucide-icon>
                   <span class="text-sm font-medium">No hay productos registrados.</span>
                 </div>
                 }
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- FORMULARIO DE VARIANTE -->
-      <section class="space-y-4">
-        <div class="card bg-base-100 shadow-sm border border-base-200">
-          <div class="card-body p-4 lg:p-6">
-            <h2 class="text-base-content text-lg font-medium mb-1">Crear variante</h2>
-            <p class="text-xs text-base-content/50 mb-4">
-              Define SKU, GTIN, nombre, atributos y stock inicial para la variante del producto
-              seleccionado.
-            </p>
-
-            @if (!isVariantPanelOpen()) {
-            <div class="py-10 text-center text-xs text-base-content/50">
-              Selecciona un producto de la lista para crear una variante.
-            </div>
-            } @else {
-            <form [formGroup]="variantForm" (ngSubmit)="onSubmitVariant()">
-              <!-- producto seleccionado -->
-              <div class="mb-4 text-xs text-base-content/50">
-                Producto seleccionado:<br />
-                <span class="font-medium text-base-content">
-                  {{ selectedProduct()?.name }}
-                </span>
-                <span class="text-base-content/40"> · /productos/{{ selectedProduct()?.slug }} </span>
-              </div>
-
-              <!-- SKU -->
-              <div class="form-control mb-3">
-                <label class="label">
-                  <span class="label-text font-medium text-base-content">SKU</span>
-                  <span class="label-text-alt text-xs text-base-content/40">Obligatorio</span>
-                </label>
-                <input type="text" class="input input-bordered input-sm w-full" placeholder="Ej. CARGO-KHA-34"
-                  formControlName="sku" />
-                <label class="label">
-                  <span class="label-text-alt text-base-content/50">
-                    Identificador interno único de la variante.
-                  </span>
-                </label>
-              </div>
-
-              <!-- GTIN -->
-              <div class="form-control mb-3">
-                <label class="label">
-                  <span class="label-text font-medium text-base-content">
-                    GTIN / Código de barras
-                  </span>
-                  <span class="label-text-alt text-xs text-base-content/40">Opcional</span>
-                </label>
-                <input type="text" class="input input-bordered input-sm w-full" placeholder="Ej. 7701234567103"
-                  formControlName="gtin" />
-                <label class="label">
-                  <span class="label-text-alt text-base-content/50">
-                    Código de barras asociado a esta variante.
-                  </span>
-                </label>
-              </div>
-
-              <!-- Nombre de la variante -->
-              <div class="form-control mb-3">
-                <label class="label">
-                  <span class="label-text font-medium text-base-content"> Nombre de la variante </span>
-                  <span class="label-text-alt text-xs text-base-content/40">Obligatorio</span>
-                </label>
-                <input type="text" class="input input-bordered input-sm w-full" placeholder="Ej. Khaki / Talla 34"
-                  formControlName="name" />
-                <label class="label">
-                  <span class="label-text-alt text-base-content/50">
-                    Nombre que se mostrará junto al producto.
-                  </span>
-                </label>
-              </div>
-
-              <!-- Atributos dinámicos -->
-              <div class="form-control mb-4">
-                <label class="label">
-                  <span class="label-text font-medium text-base-content">Atributos</span>
-                  <span class="label-text-alt text-xs text-base-content/40">Opcional</span>
-                </label>
-
-                <div class="space-y-2" formArrayName="attributes">
-                  @for (attr of attributes.controls; track $index) {
-                  <div class="flex gap-2" [formGroupName]="$index">
-                    <input type="text" class="input input-bordered input-xs flex-1" placeholder="Nombre (ej. color)"
-                      formControlName="key" />
-                    <input type="text" class="input input-bordered input-xs flex-1" placeholder="Valor (ej. Khaki)"
-                      formControlName="value" />
-                    <button type="button" class="btn btn-ghost btn-xs text-error" (click)="onRemoveAttribute($index)">
-                      Quitar
-                    </button>
-                  </div>
-                  }
-
-                  <button type="button" class="btn btn-ghost btn-xs mt-1 text-base-content/70"
-                    (click)="onAddAttribute()">
-                    + Agregar atributo
-                  </button>
-                </div>
-
-                <label class="label">
-                  <span class="label-text-alt text-base-content/50">
-                    Se enviarán como <code>attributesJson</code> (clave–valor).
-                  </span>
-                </label>
-              </div>
-
-              <!-- Stock inicial -->
-              <div class="form-control mb-4">
-                <label class="label">
-                  <span class="label-text font-medium text-base-content">Stock inicial</span>
-                  <span class="label-text-alt text-xs text-base-content/40">Opcional</span>
-                </label>
-                <input type="number" min="0" class="input input-bordered input-sm w-40" placeholder="Ej. 15"
-                  formControlName="initialOnHand" />
-                <label class="label">
-                  <span class="label-text-alt text-base-content/50">
-                    Unidades iniciales en inventario para esta variante.
-                  </span>
-                </label>
-              </div>
-
-              <!-- Acciones -->
-              <div class="border-t border-base-200 mt-2 pt-4 flex flex-col gap-3">
-                <div class="text-xs text-base-content/50">
-                  El inventario podrá ajustarse después mediante movimientos de stock.
-                </div>
-                <div class="flex justify-end gap-2">
-                  <button type="button" class="btn btn-ghost btn-sm text-base-content/70"
-                    (click)="onResetVariantForm()">
-                    Limpiar formulario
-                  </button>
-                  <button type="submit" class="btn btn-primary btn-sm">Guardar variante</button>
-                </div>
-              </div>
-            </form>
-            }
           </div>
         </div>
       </section>

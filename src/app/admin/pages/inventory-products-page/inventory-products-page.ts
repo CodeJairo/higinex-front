@@ -7,8 +7,8 @@ import {
   LucideAngularModule,
   Package,
   PackageOpen,
-  Plus,
   Search,
+  Settings,
   UploadCloud,
   X,
 } from 'lucide-angular';
@@ -20,14 +20,11 @@ import {
   OnInit,
   signal,
 } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { injectMutation, injectQuery, QueryClient } from '@tanstack/angular-query-experimental';
 import { firstValueFrom } from 'rxjs';
-import {
-  CreateVariantPayload,
-  InventoryManagementService,
-  Product,
-} from '../../services/inventory.service';
+import { InventoryManagementService, Product } from '../../services/inventory.service';
+import { Router } from '@angular/router';
 
 const PRODUCTS_QUERY = {
   limit: 100,
@@ -45,11 +42,10 @@ const PRODUCTS_QUERY_KEY = ['inventory', 'products', PRODUCTS_QUERY] as const;
 })
 export class InventoryProductsPage implements OnInit {
   private readonly inventoryService = inject(InventoryManagementService);
-  private readonly formBuilder = inject(FormBuilder);
+  private readonly router = inject(Router);
   private readonly queryClient = inject(QueryClient);
 
   readonly selectedProduct = signal<Product | null>(null);
-  readonly isVariantPanelOpen = signal(false);
   readonly actionMessage = signal<{ type: 'success' | 'error'; text: string } | null>(null);
   readonly publishingProductId = signal<string | null>(null);
   readonly archivingProductId = signal<string | null>(null);
@@ -61,18 +57,10 @@ export class InventoryProductsPage implements OnInit {
   readonly CheckCircle = CheckCircle;
   readonly Package = Package;
   readonly PackageOpen = PackageOpen;
-  readonly Plus = Plus;
   readonly Search = Search;
   readonly UploadCloud = UploadCloud;
   readonly X = X;
-
-  readonly variantForm = this.formBuilder.nonNullable.group({
-    sku: this.formBuilder.nonNullable.control('', [Validators.required]),
-    gtin: this.formBuilder.nonNullable.control(''),
-    name: this.formBuilder.nonNullable.control('', [Validators.required]),
-    initialOnHand: this.formBuilder.control<number | null>(null),
-    attributes: this.formBuilder.array<FormGroup>([]),
-  });
+  readonly Settings = Settings;
 
   private readonly productsQuery = injectQuery(() => ({
     queryKey: PRODUCTS_QUERY_KEY,
@@ -124,31 +112,17 @@ export class InventoryProductsPage implements OnInit {
     },
   }));
 
-  private readonly createVariantMutation = injectMutation(() => ({
-    mutationFn: (payload: { productId: string; variant: CreateVariantPayload }) =>
-      firstValueFrom(this.inventoryService.createVariant(payload.productId, payload.variant)),
-    onSuccess: () => this.resetVariantFormValues(),
-  }));
-
   readonly isLoading = computed(() => this.productsQuery.isLoading());
   readonly isError = computed(() => this.productsQuery.isError());
 
-  ngOnInit(): void {
-    this.closeVariantPanel();
-  }
+  ngOnInit(): void {}
 
   get products(): Product[] {
     return this.productsQuery.data() ?? [];
   }
 
-  get attributes(): FormArray<FormGroup> {
-    return this.variantForm.get('attributes') as FormArray<FormGroup>;
-  }
-
-  onOpenVariantPanel(product: Product): void {
-    this.selectedProduct.set(product);
-    this.isVariantPanelOpen.set(true);
-    this.resetVariantFormValues();
+  onManageVariants(product: Product): void {
+    this.router.navigateByUrl(`/admin/inventory/variants/${product.id}`);
   }
 
   onPublish(product: Product): void {
@@ -157,58 +131,6 @@ export class InventoryProductsPage implements OnInit {
 
   onArchive(product: Product): void {
     this.archiveProductMutation.mutate(product.id);
-  }
-
-  onAddAttribute(): void {
-    this.attributes.push(
-      this.formBuilder.nonNullable.group({
-        key: this.formBuilder.nonNullable.control(''),
-        value: this.formBuilder.nonNullable.control(''),
-      })
-    );
-  }
-
-  onRemoveAttribute(index: number): void {
-    this.attributes.removeAt(index);
-  }
-
-  onResetVariantForm(): void {
-    this.closeVariantPanel();
-  }
-
-  closeVariantPanel(): void {
-    this.isVariantPanelOpen.set(false);
-    this.selectedProduct.set(null);
-    this.resetVariantFormValues();
-  }
-
-  private resetVariantFormValues(): void {
-    this.variantForm.reset({
-      sku: '',
-      gtin: '',
-      name: '',
-      initialOnHand: null,
-    });
-
-    this.attributes.clear();
-    this.onAddAttribute();
-    this.variantForm.markAsPristine();
-    this.variantForm.markAsUntouched();
-  }
-
-  onSubmitVariant(): void {
-    const selectedProduct = this.selectedProduct();
-    if (!selectedProduct) {
-      return;
-    }
-
-    if (this.variantForm.invalid) {
-      this.variantForm.markAllAsTouched();
-      return;
-    }
-
-    const payload = this.buildVariantPayload();
-    this.createVariantMutation.mutate({ productId: selectedProduct.id, variant: payload });
   }
 
   getProductStatusLabel(status: string): string {
@@ -244,48 +166,5 @@ export class InventoryProductsPage implements OnInit {
     if (this.selectedProduct()?.id === updated.id) {
       this.selectedProduct.set(updated);
     }
-  }
-
-  private buildVariantPayload(): CreateVariantPayload {
-    const raw = this.variantForm.getRawValue();
-    const payload: CreateVariantPayload = {
-      sku: raw.sku.trim(),
-      name: raw.name.trim(),
-    };
-
-    const gtin = raw.gtin.trim();
-    if (gtin) {
-      payload.gtin = gtin;
-    }
-
-    if (raw.initialOnHand !== null && raw.initialOnHand !== undefined) {
-      payload.initialOnHand = raw.initialOnHand;
-    }
-
-    const attributesJson = this.buildAttributesJson();
-    if (attributesJson) {
-      payload.attributesJson = attributesJson;
-    }
-
-    return payload;
-  }
-
-  private buildAttributesJson(): Record<string, string> | undefined {
-    const attributes = this.attributes.controls
-      .map((control) => control.getRawValue() as { key?: string; value?: string })
-      .map((item) => ({
-        key: (item.key ?? '').trim(),
-        value: (item.value ?? '').trim(),
-      }))
-      .filter((item) => item.key && item.value);
-
-    if (!attributes.length) {
-      return undefined;
-    }
-
-    return attributes.reduce<Record<string, string>>((acc, item) => {
-      acc[item.key] = item.value;
-      return acc;
-    }, {});
   }
 }

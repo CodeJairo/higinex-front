@@ -14,16 +14,34 @@ import {
 } from 'lucide-angular';
 import { CheckoutCartItem } from '../../interfaces';
 import { CartService } from '../../services/cart.service';
+import { CatalogService } from '../../services/catalog.service';
+import { ImageWithFallback } from '../../../shared/components/image-with-fallback/image-with-fallback';
+
+const PLACEHOLDER_IMAGE = '/placeholder-product.svg';
 
 @Component({
   selector: 'customer-cart-page',
-  imports: [CurrencyPipe, LucideAngularModule],
+  imports: [CurrencyPipe, LucideAngularModule, ImageWithFallback],
   templateUrl: './cart-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CartPage {
   private readonly router = inject(Router);
   private readonly cartService = inject(CartService);
+  private readonly catalogService = inject(CatalogService);
+
+  getItemImageUrl(item: CheckoutCartItem): string {
+    const image = item.images?.[0];
+    if (image?.id) {
+      return this.catalogService.buildVariantImageUrl(item.variantId, image.id);
+    }
+    return PLACEHOLDER_IMAGE;
+  }
+
+  getItemImageAlt(item: CheckoutCartItem): string {
+    const image = item.images?.[0];
+    return image?.altText ?? item.productName;
+  }
 
   readonly arrowLeftIcon = ArrowLeft;
   readonly trashIcon = Trash;
@@ -44,7 +62,7 @@ export class CartPage {
   }
 
   goToCheckout(): void {
-    if (this.hasPriceIssues() || this.hasStockIssues()) {
+    if (this.cartItems().length === 0 || this.hasPriceIssues() || this.hasStockIssues()) {
       return;
     }
     this.router.navigateByUrl('/sales/checkout/confirm');

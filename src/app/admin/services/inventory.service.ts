@@ -26,7 +26,7 @@ export interface CreateVariantPayload {
   sku: string;
   gtin?: string;
   name: string;
-  attributesJson?: Record<string, string>;
+  attributesJson?: Record<string, string | number | boolean>;
   initialOnHand?: number;
 }
 
@@ -94,14 +94,14 @@ export class InventoryManagementService {
     );
   }
 
-  async createProduct(payload: CreateProductPayload): Promise<boolean> {
+  async createProduct(payload: CreateProductPayload): Promise<Product | null> {
     this.createProductErrorSignal.set(null);
     try {
-      await this.createProductMutation.mutateAsync(payload);
-      return true;
+      const result = await this.createProductMutation.mutateAsync(payload);
+      return result as Product;
     } catch (error) {
       this.createProductErrorSignal.set(this.mapCreateProductError(error));
-      return false;
+      return null;
     }
   }
 

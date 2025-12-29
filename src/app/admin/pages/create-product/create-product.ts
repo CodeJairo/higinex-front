@@ -61,10 +61,11 @@ export class CreateProduct {
     }
 
     const payload = this.buildPayload();
-    const success = await this.inventoryService.createProduct(payload);
-    if (success) {
+    const product = await this.inventoryService.createProduct(payload);
+    if (product) {
       this.saveSuccess.set(true);
-      this.resetForm();
+      // Short delay to show success message or just immediate redirect
+      this.router.navigateByUrl(`/admin/inventory/variants/${product.id}`);
     }
   }
 

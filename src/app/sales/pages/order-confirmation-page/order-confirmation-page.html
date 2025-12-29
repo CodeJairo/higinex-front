@@ -31,7 +31,7 @@
               'badge border-none font-black py-3 px-4 rounded-lg uppercase text-[10px] ' +
               getStatusBadgeClass(order.status)
             ">
-            {{ order.status }}
+            {{ getStatusLabel(order.status) }}
           </div>
         </div>
       </div>
@@ -43,6 +43,17 @@
         Reserva activa hasta: {{ order.reservationExpiresAt | date : 'dd/MM/yyyy HH:mm' }}
       </div>
       }
+
+      <div class="mt-8 pt-6 border-t border-base-200/50">
+        <p class="text-xs text-base-content/50 flex flex-col sm:flex-row items-center justify-center gap-2">
+          <span class="flex items-center gap-2">
+            <lucide-icon [img]="bookmarkIcon" class="w-4 h-4"></lucide-icon>
+            <strong>Tip:</strong> Guarda este enlace para rastrear tu pedido.
+          </span>
+          <span class="hidden sm:inline opacity-50">|</span>
+          <span class="opacity-80">También te notificaremos por correo.</span>
+        </p>
+      </div>
     </div>
   </div>
 
@@ -83,6 +94,55 @@
           }
         </div>
       </div>
+
+
+      @if (order.shippingAddress) {
+      <div class="space-y-4">
+        <h3 class="text-sm font-bold text-base-content/40 uppercase tracking-widest ml-1">
+          Datos de Envío
+        </h3>
+
+        <div class="bg-base-100 rounded-3xl border border-base-200 p-6 shadow-sm flex gap-4">
+          <div class="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+            <lucide-icon [img]="mapIcon" class="w-6 h-6"></lucide-icon>
+          </div>
+
+          <div class="space-y-1">
+            <p class="font-bold text-base-content text-lg leading-tight">
+              {{ order.shippingAddress.line1 }}
+            </p>
+            <p class="text-base-content/60 text-sm font-medium">
+              {{ order.shippingAddress.neighborhood }}, {{ order.shippingAddress.city }}, {{ order.shippingAddress.state
+              }}
+              @if (order.shippingAddress.postalCode) {
+              - {{ order.shippingAddress.postalCode }}
+              }
+            </p>
+
+            @if (order.shippingAddress.recipientName || order.shippingAddress.phone) {
+            <div
+              class="flex items-center gap-2 mt-2 pt-2 border-t border-base-200 text-xs text-base-content/60 font-medium">
+              @if (order.shippingAddress.recipientName) {
+              <span>{{ order.shippingAddress.recipientName }}</span>
+              }
+              @if (order.shippingAddress.recipientName && order.shippingAddress.phone) {
+              <span class="w-1 h-1 rounded-full bg-base-content/20"></span>
+              }
+              @if (order.shippingAddress.phone) {
+              <span>{{ order.shippingAddress.phone }}</span>
+              }
+            </div>
+            }
+
+            @if (order.shippingAddress.notes) {
+            <div class="mt-2 text-xs text-base-content/60 bg-base-200/50 p-2 rounded-lg inline-block">
+              "{{ order.shippingAddress.notes }}"
+            </div>
+            }
+          </div>
+        </div>
+      </div>
+      }
     </div>
 
     <div class="md:col-span-5 space-y-6">
@@ -98,14 +158,26 @@
               toAmount(order.subtotalAmount) | currency : order.currency : 'symbol-narrow' : '1.0-0'
               }}</span>
           </div>
+
+          <div class="flex justify-between text-sm opacity-60">
+            <span>Impuestos</span>
+            <span>{{
+              toAmount(order.taxesAmount) | currency : order.currency : 'symbol-narrow' : '1.0-0'
+              }}</span>
+          </div>
+
           <div class="flex justify-between text-sm opacity-60">
             <span>Costo de envío</span>
             <span class="text-success">Gratis</span>
           </div>
-          <!-- <div class="flex justify-between text-sm opacity-60">
+
+          @if (toAmount(order.discountAmount) > 0) {
+          <div class="flex justify-between text-sm opacity-60">
             <span>Descuento aplicado</span>
-            <span class="text-primary">-{{ toAmount(order.discountAmount) | currency : order.currency : 'symbol-narrow' : '1.0-0' }}</span>
-          </div> -->
+            <span class="text-primary">-{{ toAmount(order.discountAmount) | currency : order.currency : 'symbol-narrow'
+              : '1.0-0' }}</span>
+          </div>
+          }
 
           <div class="divider before:bg-neutral-content/10 after:bg-neutral-content/10 my-2"></div>
 

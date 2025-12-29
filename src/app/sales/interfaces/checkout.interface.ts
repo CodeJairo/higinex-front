@@ -45,6 +45,7 @@ export interface CheckoutCartItem {
 export interface CheckoutCartSummary {
   subtotalAmount: number;
   shippingAmount: number;
+  taxAmount: number;
   discountAmount: number;
   totalAmount: number;
   currency: string;
@@ -129,6 +130,7 @@ export interface CheckoutOrder {
   buyerDocumentNumber?: string | null;
   subtotalAmount: string;
   shippingAmount: string;
+  taxesAmount: string;
   discountAmount: string;
   totalAmount: string;
   customerNotes?: string | null;
