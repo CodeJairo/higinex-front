@@ -1,5 +1,20 @@
 import { CommonModule } from '@angular/common';
 import {
+  AlertCircle,
+  AlertTriangle,
+  ArrowLeft,
+  Calendar,
+  Check,
+  FileText,
+  LucideAngularModule,
+  Plus,
+  Search,
+  Tag,
+  Trash2,
+  Users,
+  X,
+} from 'lucide-angular';
+import {
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -50,7 +65,7 @@ const VARIANTS_QUERY: ListVariantsQuery = {
 
 @Component({
   selector: 'app-contracts-page',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule],
   templateUrl: './contracts-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -69,6 +84,19 @@ export class ContractsPage {
   readonly customerStatusById = signal<Map<string, CustomerContractStatus>>(new Map());
   readonly pendingContractDeleteId = signal<string | null>(null);
   readonly pendingPriceDeleteVariantId = signal<string | null>(null);
+
+  // Icons
+  readonly AlertCircle = AlertCircle;
+  readonly AlertTriangle = AlertTriangle;
+  readonly ArrowLeft = ArrowLeft;
+  readonly Calendar = Calendar;
+  readonly FileText = FileText;
+  readonly Plus = Plus;
+  readonly Search = Search;
+  readonly Tag = Tag;
+  readonly Trash2 = Trash2;
+  readonly Users = Users;
+  readonly X = X;
 
   private searchDebounceId: number | null = null;
 
@@ -131,7 +159,7 @@ export class ContractsPage {
   private readonly createContractMutation = injectMutation(() => ({
     mutationFn: (payload: { customerId: string; data: CreateContractPayload }) =>
       firstValueFrom(this.contractsService.createContract(payload.customerId, payload.data)),
-    onSuccess: (contract, payload) => {
+    onSuccess: (contract: ContractWithItems, payload) => {
       this.selectedCustomerId.set(payload.customerId);
       this.selectedContractId.set(contract.id);
       this.resetPriceDrafts();
@@ -150,7 +178,7 @@ export class ContractsPage {
   private readonly updateContractMutation = injectMutation(() => ({
     mutationFn: (payload: { contractId: string; data: UpdateContractPayload }) =>
       firstValueFrom(this.contractsService.updateContract(payload.contractId, payload.data)),
-    onSuccess: (contract, payload) => {
+    onSuccess: (contract: ContractWithItems, payload) => {
       const customerId = this.selectedCustomerId();
       if (customerId) {
         this.updateContractsCache(customerId, (current) =>
@@ -208,12 +236,12 @@ export class ContractsPage {
   readonly customers = computed(() => this.customersQuery.data() ?? []);
   readonly isLoadingCustomers = computed(() => this.customersQuery.isLoading());
   readonly hasCustomersError = computed(() => this.customersQuery.isError());
-  readonly selectedCustomer = computed(() => {
+  readonly selectedCustomer = computed<CustomerSummary | null>(() => {
     const id = this.selectedCustomerId();
     if (!id) {
       return null;
     }
-    return this.customers().find((customer) => customer.id === id) ?? null;
+    return this.customers().find((customer: CustomerSummary) => customer.id === id) ?? null;
   });
   readonly contractsForSelectedCustomer = computed(() => this.contractsQuery.data() ?? []);
   readonly isLoadingContracts = computed(() => this.contractsQuery.isLoading());
@@ -230,11 +258,11 @@ export class ContractsPage {
     if (!id) {
       return null;
     }
-    return this.contractsForSelectedCustomer().find((contract) => contract.id === id) ?? null;
+    return this.contractsForSelectedCustomer().find((contract: ContractSummary) => contract.id === id) ?? null;
   });
 
   readonly contractItemsByVariantId = computed(() => {
-    return new Map(this.contractItems().map((item) => [item.variantId, item]));
+    return new Map(this.contractItems().map((item: any) => [item.variantId, item]));
   });
 
   readonly mergedVariantRows = computed<VariantPriceRow[]>(() => {
@@ -242,7 +270,7 @@ export class ContractsPage {
     const deletes = this.pricesToDelete();
     const itemsByVariant = this.contractItemsByVariantId();
 
-    return this.variants().map((variant) => {
+    return this.variants().map((variant: any) => {
       const currentPrice = itemsByVariant.get(variant.id)?.unitPriceCop ?? null;
       const draftPrice = draft.get(variant.id) ?? null;
       return {
@@ -263,7 +291,7 @@ export class ContractsPage {
     if (!variantId) {
       return null;
     }
-    return this.mergedVariantRows().find((row) => row.variantId === variantId) ?? null;
+    return this.mergedVariantRows().find((row: VariantPriceRow) => row.variantId === variantId) ?? null;
   });
 
   readonly hasPriceChanges = computed(
@@ -297,7 +325,7 @@ export class ContractsPage {
         return;
       }
 
-      if (!selected || !customers.some((customer) => customer.id === selected)) {
+      if (!selected || !customers.some((customer: CustomerSummary) => customer.id === selected)) {
         this.onSelectCustomer(customers[0]);
       }
     });
@@ -324,10 +352,10 @@ export class ContractsPage {
         return;
       }
       const contracts = this.contractsForSelectedCustomer();
-      const status: CustomerContractStatus = contracts.some((contract) => contract.isActive)
+      const status: CustomerContractStatus = contracts.some((contract: ContractSummary) => contract.isActive)
         ? 'active'
         : 'inactive';
-      this.customerStatusById.update((current) => {
+      this.customerStatusById.update((current: Map<string, CustomerContractStatus>) => {
         const next = new Map(current);
         next.set(customerId, status);
         return next;
@@ -343,7 +371,7 @@ export class ContractsPage {
         return;
       }
 
-      if (!selectedId || !contracts.some((contract) => contract.id === selectedId)) {
+      if (!selectedId || !contracts.some((contract: ContractSummary) => contract.id === selectedId)) {
         this.onSelectContract(contracts[0]);
       }
     });
@@ -505,7 +533,7 @@ export class ContractsPage {
     }
 
     const items = this.buildContractItemsPayload();
-    const deletes = Array.from(this.pricesToDelete());
+    const deletes: string[] = Array.from(this.pricesToDelete());
 
     if (!items.length && !deletes.length) {
       return;
@@ -605,7 +633,7 @@ export class ContractsPage {
     const items: ContractItemInput[] = [];
     const current = this.contractItemsByVariantId();
 
-    this.pricesDraft().forEach((price, variantId) => {
+    this.pricesDraft().forEach((price: number, variantId: string) => {
       const currentPrice = current.get(variantId)?.unitPriceCop;
       if (currentPrice !== price) {
         items.push({ variantId, unitPriceCop: price });

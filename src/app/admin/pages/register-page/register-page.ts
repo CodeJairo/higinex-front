@@ -9,6 +9,22 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import {
+  AlertCircle,
+  ArrowLeft,
+  Building2,
+  CheckCircle,
+  Eye,
+  EyeOff,
+  FileText,
+  Key,
+  LucideAngularModule,
+  Mail,
+  Phone,
+  User,
+  UserPlus,
+  X,
+} from 'lucide-angular';
 import { DocumentType, RegisterPayload } from '../../../auth/interfaces';
 import { AdminService } from '../../services/admin.service';
 
@@ -46,7 +62,7 @@ const customerCompletenessValidator = (control: AbstractControl): ValidationErro
 
 @Component({
   selector: 'auth-register-page',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule],
   templateUrl: './register-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -62,10 +78,25 @@ export class RegisterPage {
   readonly isLoading = this.adminService.isRegisterLoading;
   readonly registerError = this.adminService.registerError;
 
+  // Icons
+  readonly AlertCircle = AlertCircle;
+  readonly ArrowLeft = ArrowLeft;
+  readonly Building2 = Building2;
+  readonly CheckCircle = CheckCircle;
+  readonly Eye = Eye;
+  readonly EyeOff = EyeOff;
+  readonly FileText = FileText;
+  readonly Key = Key;
+  readonly Mail = Mail;
+  readonly Phone = Phone;
+  readonly User = User;
+  readonly UserPlus = UserPlus;
+  readonly X = X;
+
   readonly documentTypes: Array<{ value: DocumentType; label: string }> = [
-    { value: 'CC', label: 'CC - Cedula de Ciudadania' },
-    { value: 'CE', label: 'CE - Cedula de Extranjeria' },
-    { value: 'NIT', label: 'NIT - Numero de Identificacion Tributaria' },
+    { value: 'CC', label: 'CC - Cédula de Ciudadanía' },
+    { value: 'CE', label: 'CE - Cédula de Extranjería' },
+    { value: 'NIT', label: 'NIT - Número de Identificación Tributaria' },
     { value: 'TI', label: 'TI - Tarjeta de Identidad' },
     { value: 'PAS', label: 'PAS - Pasaporte' },
   ];

@@ -1,4 +1,14 @@
-import { CommonModule } from '@angular/common';
+import {
+  AlertCircle,
+  CheckCircle,
+  Link,
+  LucideAngularModule,
+  PlusCircle,
+  RefreshCw,
+  Save,
+  Tag,
+  X,
+} from 'lucide-angular';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -6,7 +16,7 @@ import { CreateProductPayload, InventoryManagementService } from '../../services
 
 @Component({
   selector: 'app-create-product',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule, LucideAngularModule],
   templateUrl: './create-product.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -20,15 +30,30 @@ export class CreateProduct {
   readonly isLoading = this.inventoryService.isCreatingProduct;
   readonly createError = this.inventoryService.createProductError;
 
+  // Icons
+  readonly AlertCircle = AlertCircle;
+  readonly CheckCircle = CheckCircle;
+  readonly Link = Link;
+  readonly PlusCircle = PlusCircle;
+  readonly RefreshCw = RefreshCw;
+  readonly Save = Save;
+  readonly Tag = Tag;
+  readonly X = X;
+
   readonly form = this.formBuilder.nonNullable.group({
     name: this.formBuilder.nonNullable.control('', [Validators.required]),
     slug: this.formBuilder.nonNullable.control('', [Validators.required]),
-    description: this.formBuilder.nonNullable.control(''),
+    description: this.formBuilder.nonNullable.control('', [Validators.required, Validators.minLength(10)]),
   });
 
   async onSubmit(): Promise<void> {
     this.submitted.set(true);
     this.saveSuccess.set(false);
+
+    // Auto-generate slug if empty but name is present
+    if (!this.form.controls.slug.value && this.form.controls.name.value) {
+      this.onGenerateSlug();
+    }
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -58,7 +83,7 @@ export class CreateProduct {
     this.inventoryService.clearCreateProductError();
   }
 
-  showError(controlName: 'name' | 'slug'): boolean {
+  showError(controlName: 'name' | 'slug' | 'description'): boolean {
     const control = this.form.get(controlName);
     return !!control && control.invalid && (control.touched || this.submitted());
   }

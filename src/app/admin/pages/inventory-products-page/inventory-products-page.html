@@ -23,71 +23,84 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
       <!-- LISTA DE PRODUCTOS -->
       <section class="lg:col-span-2 space-y-4">
-        <div class="card bg-base-100 shadow-sm border border-base-200">
-          <div class="card-body p-4 lg:p-6">
-            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-2">
+        <div class="card bg-base-100 shadow-xl shadow-base-200/50 border border-base-200 overflow-hidden">
+          <div class="card-body p-0">
+            <!-- Toolbar -->
+            <div
+              class="p-5 border-b border-base-200 bg-base-50/50 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h2 class="text-base-content text-lg font-medium">Lista de productos</h2>
-                <p class="text-xs text-base-content/50">
-                  Selecciona un producto para publicar, archivar o añadir variantes.
+                <h2 class="text-base-content text-lg font-bold flex items-center gap-2">
+                  <lucide-icon [img]="Package" class="w-5 h-5 text-primary"></lucide-icon>
+                  Lista de Productos
+                </h2>
+                <p class="text-xs text-base-content/50 font-medium mt-1">
+                  Gestiona el catálogo base y sus estados.
                 </p>
               </div>
 
               <!-- Buscador -->
-              <div class="w-full max-w-xs">
-                <label class="input input-bordered input-sm flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-base-content/40" fill="none"
-                    viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
-                  </svg>
-                  <input type="text" placeholder="Buscar por nombre o slug" class="grow text-sm" />
+              <div class="w-full sm:max-w-xs">
+                <label
+                  class="input input-bordered input-sm flex items-center gap-3 bg-base-100 focus-within:ring-2 ring-primary/20 transition-all">
+                  <lucide-icon [img]="Search" class="w-4 h-4 text-base-content/40"></lucide-icon>
+                  <input type="text" placeholder="Buscar producto..."
+                    class="grow text-sm font-medium placeholder:font-normal" />
                 </label>
               </div>
             </div>
 
             @if (actionMessage(); as message) {
-            <div role="alert" class="alert mb-4" [class.alert-success]="message.type === 'success'"
+            <div role="alert" class="alert m-4 rounded-lg shadow-sm" [class.alert-success]="message.type === 'success'"
               [class.alert-error]="message.type === 'error'">
-              <span>{{ message.text }}</span>
-              <button type="button" class="btn btn-ghost btn-xs ml-auto" (click)="dismissActionMessage()">
-                Cerrar
+              @if (message.type === 'success') { <lucide-icon [img]="CheckCircle" class="w-5 h-5"></lucide-icon> }
+              @if (message.type === 'error') { <lucide-icon [img]="AlertCircle" class="w-5 h-5"></lucide-icon> }
+              <span class="text-sm font-medium">{{ message.text }}</span>
+              <button type="button" class="btn btn-ghost btn-xs btn-square ml-auto" (click)="dismissActionMessage()">
+                <lucide-icon [img]="X" class="w-4 h-4"></lucide-icon>
               </button>
             </div>
-            } @if (isLoading()) {
-            <div class="py-8 text-center text-xs text-base-content/50">Cargando productos...</div>
-            } @else if (isError()) {
-            <div class="py-8 text-center text-xs text-base-content/50">
-              No se pudieron cargar los productos. Intenta nuevamente.
-            </div>
-            } @else {
-            <div class="overflow-x-auto mt-4">
-              <table class="table text-sm">
+            }
+
+            <div class="overflow-x-auto min-h-[300px]">
+              @if (isLoading()) {
+              <div class="flex flex-col items-center justify-center h-64 text-base-content/30 gap-3">
+                <span class="loading loading-spinner loading-md"></span>
+                <span class="text-xs font-medium tracking-wide uppercase">Cargando catálogo...</span>
+              </div>
+              } @else if (isError()) {
+              <div class="flex flex-col items-center justify-center h-64 text-error/60 gap-3">
+                <lucide-icon [img]="AlertTriangle" class="w-8 h-8"></lucide-icon>
+                <span class="text-sm font-medium">Error al cargar productos</span>
+              </div>
+              } @else {
+              <table class="table w-full hidden md:table">
                 <thead>
-                  <tr class="text-xs text-base-content/50">
-                    <th class="w-8"></th>
-                    <th>Producto</th>
-                    <th>Slug</th>
-                    <th class="w-28">Estado</th>
-                    <th class="w-64">Acciones</th>
+                  <tr
+                    class="bg-base-200/50 text-xs uppercase tracking-wider text-base-content/50 font-bold border-b border-base-200">
+                    <th class="py-4 pl-6 w-12"></th> <!-- Selection indicator -->
+                    <th class="py-4">Producto</th>
+                    <th class="py-4 hidden sm:table-cell">Slug</th>
+                    <th class="py-4">Estado</th>
+                    <th class="py-4 pr-6 text-right">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
                   @for (product of products; track product.id) {
-                  <tr class="hover:bg-base-200">
-                    <!-- indicador seleccionado -->
-                    <td>
-                      <button type="button" class="badge badge-xs" [ngClass]="{
-                          'badge-primary': selectedProduct()?.id === product.id,
-                          'badge-ghost': selectedProduct()?.id !== product.id
-                        }" (click)="onOpenVariantPanel(product)"
-                        aria-label="Seleccionar para agregar variante"></button>
+                  <tr class="group hover:bg-base-50 transition-colors cursor-pointer"
+                    [class.bg-primary/5]="selectedProduct()?.id === product.id" (click)="onOpenVariantPanel(product)">
+
+                    <!-- Indicador activo -->
+                    <td class="pl-6">
+                      <div class="w-2 h-2 rounded-full transition-all duration-300"
+                        [class.bg-primary]="selectedProduct()?.id === product.id"
+                        [class.bg-base-300]="selectedProduct()?.id !== product.id"
+                        [class.scale-125]="selectedProduct()?.id === product.id"></div>
                     </td>
 
-                    <!-- nombre + descripción -->
+                    <!-- Nombre y Desc -->
                     <td>
-                      <div class="flex flex-col">
-                        <span class="font-medium text-base-content">
+                      <div class="flex flex-col gap-1 max-w-[200px] sm:max-w-xs">
+                        <span class="font-bold text-sm text-base-content group-hover:text-primary transition-colors">
                           {{ product.name }}
                         </span>
                         <span class="text-xs text-base-content/50 line-clamp-1">
@@ -96,77 +109,118 @@
                       </div>
                     </td>
 
-                    <!-- slug -->
-                    <td class="text-xs text-base-content/50">/productos/{{ product.slug }}</td>
-
-                    <!-- estado -->
-                    <td>
-                      <span class="badge badge-sm" [ngClass]="{
-                          'badge-success badge-outline': product.status === 'PUBLISHED',
-                          'badge-error badge-outline': product.status === 'ARCHIVED',
-                          'badge-ghost':
-                            product.status !== 'PUBLISHED' && product.status !== 'ARCHIVED'
-                        }">
-                        {{ getProductStatusLabel(product.status) }}
-                      </span>
+                    <!-- Slug (Desktop) -->
+                    <td class="hidden sm:table-cell font-mono text-[10px] text-base-content/50">
+                      {{ product.slug }}
                     </td>
 
-                    <!-- acciones -->
+                    <!-- Estado -->
                     <td>
-                      <div class="flex flex-wrap gap-2">
-                        <!-- Publicar -->
-                        <button type="button" class="btn btn-xs gap-2" [ngClass]="{
-                            'btn-success': product.status !== 'PUBLISHED',
-                            'btn-success btn-outline cursor-default': product.status === 'PUBLISHED'
-                          }" [disabled]="
-                            product.status === 'PUBLISHED' ||
-                            isPublishing(product.id) ||
-                            isArchiving(product.id)
-                          " (click)="$event.stopPropagation(); onPublish(product)">
-                          @if (isPublishing(product.id)) {
-                          <span class="loading loading-spinner loading-xs"></span>
-                          <span>Publicando...</span>
-                          } @else {
-                          <span>Publicar</span>
-                          }
-                        </button>
+                      <div class="badge badge-sm font-bold tracking-wider" [ngClass]="{
+                            'badge-success text-success-content': product.status === 'PUBLISHED',
+                            'badge-error badge-outline': product.status === 'ARCHIVED',
+                            'badge-ghost': product.status === 'DRAFT'
+                          }">
+                        {{ getProductStatusLabel(product.status) }}
+                      </div>
+                    </td>
 
-                        <!-- Archivar -->
-                        <button type="button" class="btn btn-xs gap-2" [ngClass]="{
-                            'btn-error btn-outline': product.status !== 'ARCHIVED',
-                            'btn-error cursor-default': product.status === 'ARCHIVED'
-                          }" [disabled]="
-                            product.status === 'ARCHIVED' ||
-                            isArchiving(product.id) ||
-                            isPublishing(product.id)
-                          " (click)="$event.stopPropagation(); onArchive(product)">
-                          @if (isArchiving(product.id)) {
-                          <span class="loading loading-spinner loading-xs"></span>
-                          <span>Archivando...</span>
-                          } @else {
-                          <span>Archivar</span>
-                          }
-                        </button>
+                    <!-- Acciones -->
+                    <td class="pr-6 text-right">
+                      <div
+                        class="flex items-center justify-end gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
 
-                        <!-- Agregar variante -->
-                        <button type="button" class="btn btn-xs btn-ghost text-base-content/70"
-                          (click)="$event.stopPropagation(); onOpenVariantPanel(product)">
-                          Agregar variante
+                        <!-- Publicar/Archivar Toggle -->
+                        @if (product.status !== 'PUBLISHED') {
+                        <button class="btn btn-xs btn-circle btn-ghost text-success tooltip tooltip-left"
+                          data-tip="Publicar" [class.btn-disabled]="isPublishing(product.id)"
+                          (click)="$event.stopPropagation(); onPublish(product)">
+                          <lucide-icon [img]="UploadCloud" class="w-4 h-4"></lucide-icon>
+                        </button>
+                        } @else {
+                        <button class="btn btn-xs btn-circle btn-ghost text-error tooltip tooltip-left"
+                          data-tip="Archivar" [class.btn-disabled]="isArchiving(product.id)"
+                          (click)="$event.stopPropagation(); onArchive(product)">
+                          <lucide-icon [img]="Archive" class="w-4 h-4"></lucide-icon>
+                        </button>
+                        }
+
+                        <button class="btn btn-xs btn-circle btn-ghost text-base-content/70 tooltip tooltip-left"
+                          data-tip="Agregar Variante" (click)="$event.stopPropagation(); onOpenVariantPanel(product)">
+                          <lucide-icon [img]="Plus" class="w-4 h-4"></lucide-icon>
                         </button>
                       </div>
                     </td>
                   </tr>
                   } @empty {
                   <tr>
-                    <td colspan="5" class="text-center text-xs text-base-content/50 py-6">
-                      No hay productos registrados todavía.
+                    <td colspan="5" class="text-center py-12">
+                      <div class="flex flex-col items-center justify-center gap-3 text-base-content/40">
+                        <lucide-icon [img]="PackageOpen" class="w-10 h-10 stroke-1"></lucide-icon>
+                        <span class="text-sm font-medium">No hay productos registrados.</span>
+                      </div>
                     </td>
                   </tr>
                   }
                 </tbody>
               </table>
+              }
+
+              <!-- Mobile Card View -->
+              <div class="md:hidden space-y-3">
+                @for (product of products; track product.id) {
+                <div class="card bg-base-100 border border-base-200 shadow-sm p-4"
+                  (click)="onOpenVariantPanel(product)">
+                  <div class="flex justify-between items-start mb-2">
+                    <div class="flex-1">
+                      <h3 class="font-bold text-sm text-base-content">{{ product.name }}</h3>
+                      @if (product.slug) {
+                      <p class="text-[10px] font-mono text-base-content/40 mt-0.5">{{ product.slug }}</p>
+                      }
+                      <p class="text-xs text-base-content/60 mt-1 line-clamp-2">
+                        {{ product.description || 'Sin descripción' }}
+                      </p>
+                    </div>
+                    <div class="badge badge-sm font-bold tracking-wider ml-2 shrink-0" [ngClass]="{
+                          'badge-success text-success-content': product.status === 'PUBLISHED',
+                          'badge-error badge-outline': product.status === 'ARCHIVED',
+                          'badge-ghost': product.status === 'DRAFT'
+                        }">
+                      {{ getProductStatusLabel(product.status) }}
+                    </div>
+                  </div>
+
+                  <div class="flex items-center justify-between mt-3 pt-3 border-t border-base-100">
+                    <div class="text-[10px] text-base-content/40 font-medium">
+                      <!-- Espacio para conteo de variantes si existiera -->
+                    </div>
+                    <div class="flex gap-1">
+                      @if (product.status !== 'PUBLISHED') {
+                      <button class="btn btn-xs btn-circle btn-ghost text-success"
+                        (click)="$event.stopPropagation(); onPublish(product)">
+                        <lucide-icon [img]="UploadCloud" class="w-4 h-4"></lucide-icon>
+                      </button>
+                      } @else {
+                      <button class="btn btn-xs btn-circle btn-ghost text-error"
+                        (click)="$event.stopPropagation(); onArchive(product)">
+                        <lucide-icon [img]="Archive" class="w-4 h-4"></lucide-icon>
+                      </button>
+                      }
+                      <button class="btn btn-xs btn-circle btn-ghost text-primary"
+                        (click)="$event.stopPropagation(); onOpenVariantPanel(product)">
+                        <lucide-icon [img]="Plus" class="w-4 h-4"></lucide-icon>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                } @empty {
+                <div class="flex flex-col items-center justify-center gap-3 text-base-content/40 py-8">
+                  <lucide-icon [img]="PackageOpen" class="w-10 h-10 stroke-1"></lucide-icon>
+                  <span class="text-sm font-medium">No hay productos registrados.</span>
+                </div>
+                }
+              </div>
             </div>
-            }
           </div>
         </div>
       </section>

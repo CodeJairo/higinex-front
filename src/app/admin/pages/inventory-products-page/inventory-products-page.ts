@@ -1,5 +1,18 @@
 import { CommonModule } from '@angular/common';
 import {
+  AlertCircle,
+  AlertTriangle,
+  Archive,
+  CheckCircle,
+  LucideAngularModule,
+  Package,
+  PackageOpen,
+  Plus,
+  Search,
+  UploadCloud,
+  X,
+} from 'lucide-angular';
+import {
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -26,7 +39,7 @@ const PRODUCTS_QUERY_KEY = ['inventory', 'products', PRODUCTS_QUERY] as const;
 
 @Component({
   selector: 'app-inventory-products-page',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule],
   templateUrl: './inventory-products-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -40,6 +53,18 @@ export class InventoryProductsPage implements OnInit {
   readonly actionMessage = signal<{ type: 'success' | 'error'; text: string } | null>(null);
   readonly publishingProductId = signal<string | null>(null);
   readonly archivingProductId = signal<string | null>(null);
+
+  // Icons
+  readonly AlertCircle = AlertCircle;
+  readonly AlertTriangle = AlertTriangle;
+  readonly Archive = Archive;
+  readonly CheckCircle = CheckCircle;
+  readonly Package = Package;
+  readonly PackageOpen = PackageOpen;
+  readonly Plus = Plus;
+  readonly Search = Search;
+  readonly UploadCloud = UploadCloud;
+  readonly X = X;
 
   readonly variantForm = this.formBuilder.nonNullable.group({
     sku: this.formBuilder.nonNullable.control('', [Validators.required]),
