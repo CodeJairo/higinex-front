@@ -80,6 +80,18 @@ export class CartPage {
     this.cartService.updateQuantity(item.variantId, item.quantity + 1);
   }
 
+  onQuantityChange(item: CheckoutCartItem, event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const value = parseInt(input.value, 10);
+    if (!isNaN(value) && value >= 1) {
+      this.cartService.updateQuantity(item.variantId, value);
+    } else {
+      // Reset to 1 if invalid
+      this.cartService.updateQuantity(item.variantId, 1);
+      input.value = '1';
+    }
+  }
+
   removeItem(item: CheckoutCartItem): void {
     this.cartService.removeItem(item.variantId);
   }

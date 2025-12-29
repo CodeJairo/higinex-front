@@ -57,7 +57,9 @@
                   class="btn btn-ghost btn-sm btn-square hover:bg-base-100 text-base-content/60 shadow-none">
                   -
                 </button>
-                <span class="px-5 text-sm font-black text-base-content">{{ item.quantity }}</span>
+                <input type="number" [value]="item.quantity" (change)="onQuantityChange(item, $event)"
+                  class="w-12 text-center text-sm font-black text-base-content bg-transparent border-none p-0 focus:ring-0 appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                  min="1" />
                 <button (click)="increaseQty(item)"
                   class="btn btn-ghost btn-sm btn-square hover:bg-base-100 text-base-content/60 shadow-none">
                   +

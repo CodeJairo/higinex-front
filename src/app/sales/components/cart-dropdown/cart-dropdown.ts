@@ -86,6 +86,18 @@ export class CartDropdown {
   onUpdateQuantity(variantId: string, quantity: number): void {
     this.updateQuantity.emit({ variantId, quantity: Math.max(1, quantity) });
   }
+
+  onQuantityChange(variantId: string, event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const value = parseInt(input.value, 10);
+    if (!isNaN(value) && value >= 1) {
+      this.onUpdateQuantity(variantId, value);
+    } else {
+      // Reset to 1 if invalid
+      this.onUpdateQuantity(variantId, 1);
+      input.value = '1';
+    }
+  }
   onRemove(variantId: string): void {
     this.removeItem.emit(variantId);
   }
