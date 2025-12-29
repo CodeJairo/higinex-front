@@ -60,7 +60,7 @@ export class InventoryMovementsPage {
     // Filter Signals
     readonly filterVariantId = signal<string>('');
     readonly filterOrderId = signal<string>('');
-    readonly filterType = signal<'IN' | 'OUT' | 'ADJUSTMENT' | ''>('');
+    readonly filterType = signal<'IN' | 'OUT' | 'SOLD' | 'RESERVED' | 'UNRESERVED' | 'ADJUSTMENT' | ''>('');
     readonly filterDateFrom = signal<string>(''); // YYYY-MM-DD
     readonly filterDateTo = signal<string>('');
 
@@ -139,15 +139,21 @@ export class InventoryMovementsPage {
 
     // Helpers for UI
     getTypeLabel(type: string, reason: string) {
-        if (type === 'ADJUSTMENT') {
-            if (reason === 'RESERVE') return { label: 'Reserva', class: 'badge-warning', icon: 'lock' };
-            if (reason === 'RELEASE') return { label: 'Liberación', class: 'badge-info', icon: 'unlock' };
-            if (reason === 'COMMIT') return { label: 'Despacho', class: 'badge-success', icon: 'check' };
-            return { label: 'Ajuste', class: 'badge-neutral', icon: 'settings' };
+        switch (type) {
+            case 'IN':
+                return { label: 'Entrada', class: 'badge-success', icon: 'arrow-down' };
+            case 'OUT':
+                return { label: 'Salida', class: 'badge-error', icon: 'arrow-up' };
+            case 'SOLD':
+                return { label: 'Venta', class: 'badge-primary', icon: 'shopping-cart' }; // Using primary for sales
+            case 'RESERVED':
+                return { label: 'Reservado', class: 'badge-warning', icon: 'lock' };
+            case 'UNRESERVED':
+                return { label: 'Liberado', class: 'badge-info', icon: 'unlock' };
+            case 'ADJUSTMENT':
+                return { label: 'Ajuste', class: 'badge-neutral', icon: 'settings' };
+            default:
+                return { label: type, class: 'badge-ghost', icon: 'circle' };
         }
-        if (type === 'IN') return { label: 'Entrada', class: 'badge-success', icon: 'arrow-down' };
-        if (type === 'OUT') return { label: 'Salida', class: 'badge-error', icon: 'arrow-up' };
-
-        return { label: type, class: 'badge-ghost', icon: 'circle' };
     }
 }

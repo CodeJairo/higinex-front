@@ -1,0 +1,130 @@
+<div class="p-6 max-w-[1000px] mx-auto space-y-6">
+    <!-- Breadcrumbs -->
+    <div class="text-sm breadcrumbs text-base-content/50">
+        <ul>
+            <li><a routerLink="/admin/dashboard">Inicio</a></li>
+            <li><a routerLink="/admin/customers">Clientes</a></li>
+            <li><span class="font-medium text-base-content/80 cursor-default">Detalle de Cliente</span></li>
+        </ul>
+    </div>
+
+    @if (isLoading()) {
+    <div class="flex flex-col gap-4 animate-pulse">
+        <div class="h-8 bg-base-200 w-1/3 rounded"></div>
+        <div class="h-64 bg-base-200 rounded-xl"></div>
+    </div>
+    } @else if (customer(); as c) {
+    <!-- Header -->
+    <div class="flex items-center gap-3">
+        <a routerLink="/admin/customers" class="btn btn-circle btn-ghost btn-sm">
+            <lucide-icon [img]="icons.ArrowLeft" class="w-5 h-5"></lucide-icon>
+        </a>
+        <div>
+            <h1 class="text-2xl font-bold flex items-center gap-2">
+                {{ c.name }}
+            </h1>
+            <div class="text-xs font-mono text-base-content/50 mt-1 flex items-center gap-2">
+                ID: {{ c.id }}
+                @if (c.userId) {
+                <a [routerLink]="['/admin/users', c.userId]"
+                    class="badge badge-sm badge-ghost hover:bg-base-200 cursor-pointer gap-1 no-underline">
+                    <lucide-icon [img]="icons.User" class="w-3 h-3"></lucide-icon>
+                    Usuario Vinculado
+                </a>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Main Info Card -->
+        <div class="md:col-span-2 card bg-base-100 shadow-sm border border-base-200">
+            <div class="card-body">
+                <h2 class="card-title text-base font-bold flex items-center gap-2 mb-6 py-2 border-b border-base-100">
+                    <lucide-icon [img]="icons.Building2" class="w-5 h-5 text-secondary"></lucide-icon>
+                    Datos de la Empresa / Cliente
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8">
+                    <div class="bg-base-50 p-3 rounded-lg border border-base-100/50">
+                        <span class="text-xs uppercase font-bold text-base-content/40 block mb-1">Identificación</span>
+                        <div class="flex items-center gap-2">
+                            <lucide-icon [img]="icons.FileText" class="w-4 h-4 text-base-content/60"></lucide-icon>
+                            <span class="font-mono font-bold">{{ c.documentType }} {{ c.documentNumber }}</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-base-50 p-3 rounded-lg border border-base-100/50">
+                        <span class="text-xs uppercase font-bold text-base-content/40 block mb-1">Contacto
+                            Principal</span>
+                        <div class="flex items-center gap-2">
+                            <lucide-icon [img]="icons.Phone" class="w-4 h-4 text-base-content/60"></lucide-icon>
+                            <span class="font-medium">{{ c.phone }}</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-base-50 p-3 rounded-lg border border-base-100/50">
+                        <span class="text-xs uppercase font-bold text-base-content/40 block mb-1">Correo
+                            Electrónico</span>
+                        <div class="flex items-center gap-2">
+                            <lucide-icon [img]="icons.Mail" class="w-4 h-4 text-base-content/60"></lucide-icon>
+                            <span>{{ c.email }}</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-base-50 p-3 rounded-lg border border-base-100/50">
+                        <span class="text-xs uppercase font-bold text-base-content/40 block mb-1">Ubicación</span>
+                        <div class="flex items-center gap-2">
+                            <lucide-icon [img]="icons.MapPin" class="w-4 h-4 text-base-content/60"></lucide-icon>
+                            <span>
+                                {{ c.address || 'Sin dirección' }}
+                                <span class="text-base-content/50 text-xs block">
+                                    {{ c.city || 'Ciudad no registrada' }}
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Info & Shortcuts -->
+        <div class="space-y-6">
+            <!-- System Stats -->
+            <div class="card bg-base-100 shadow-sm border border-base-200">
+                <div class="card-body p-4">
+                    <h3 class="font-bold text-sm mb-4 text-base-content/70">Información del Sistema</h3>
+
+                    <div class="flex justify-between items-center text-sm py-2 border-b border-base-100">
+                        <span class="text-base-content/60">Registrado el</span>
+                        <div class="flex items-center gap-1 font-mono text-xs">
+                            <lucide-icon [img]="icons.Calendar" class="w-3 h-3"></lucide-icon>
+                            {{ c.createdAt | date:'shortDate' }}
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center text-sm py-2">
+                        <span class="text-base-content/60">Última Actualización</span>
+                        <div class="font-mono text-xs">
+                            {{ c.updatedAt | date:'shortDate' }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Useful Links (Placeholder for future features like Contracts/Orders) -->
+            <div class="card bg-base-100 shadow-sm border border-base-200">
+                <div class="card-body p-4">
+                    <h3 class="font-bold text-sm mb-4 text-base-content/70">Gestión</h3>
+                    <a [routerLink]="['/admin/contracts']" [queryParams]="{customerId: c.id}"
+                        class="btn btn-outline btn-sm w-full justification-start gap-2 mb-2">
+                        <lucide-icon [img]="icons.FileText" class="w-4 h-4"></lucide-icon>
+                        Ver Contratos
+                    </a>
+                    <!-- Add Orders link later if needed -->
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+</div>

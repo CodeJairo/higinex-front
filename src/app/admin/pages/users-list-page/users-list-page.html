@@ -1,0 +1,193 @@
+<div class="p-6 max-w-[1400px] mx-auto space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+            <div class="text-sm breadcrumbs text-base-content/50 mb-2">
+                <ul>
+                    <li><a routerLink="/admin/dashboard" class="hover:text-primary transition-colors">Inicio</a></li>
+                    <li><span class="font-medium text-base-content/80 cursor-default">Usuarios</span></li>
+                </ul>
+            </div>
+            <h1 class="text-3xl font-bold tracking-tight text-base-content flex items-center gap-3">
+                <div class="p-2 bg-primary/10 rounded-lg text-primary">
+                    <lucide-icon [img]="icons.User" class="w-6 h-6"></lucide-icon>
+                </div>
+                Gestión de Usuarios
+            </h1>
+            <p class="text-base-content/60 mt-1 max-w-2xl">
+                Administra los usuarios del sistema, sus roles y estados de acceso.
+            </p>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="card bg-base-100 shadow-sm border border-base-200">
+        <div class="card-body p-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <!-- Search -->
+                <div class="form-control md:col-span-2">
+                    <div class="relative">
+                        <lucide-icon [img]="icons.Search"
+                            class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-base-content/50"></lucide-icon>
+                        <input type="text" placeholder="Buscar por email, nombre..." [ngModel]="filterQ()"
+                            (ngModelChange)="filterQ.set($event)" class="input input-bordered w-full pl-10 input-sm" />
+                    </div>
+                </div>
+
+                <!-- Role Filter -->
+                <select [ngModel]="filterRole()" (ngModelChange)="filterRole.set($event)"
+                    class="select select-bordered select-sm w-full">
+                    <option value="">Todos los Roles</option>
+                    <option value="ADMIN">Administrador</option>
+                    <option value="USER">Usuario</option>
+                </select>
+
+                <!-- Status Filter -->
+                <select [ngModel]="filterIsActive()" (ngModelChange)="filterIsActive.set($event)"
+                    class="select select-bordered select-sm w-full">
+                    <option value="">Todos los Estados</option>
+                    <option value="true">Activo</option>
+                    <option value="false">Inactivo</option>
+                </select>
+            </div>
+
+            <div class="flex justify-end mt-2">
+                <button class="btn btn-ghost btn-xs text-error" (click)="clearFilters()">
+                    Limpiar Filtros
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="card bg-base-100 shadow-sm border border-base-200 overflow-hidden">
+        <div class="overflow-x-auto min-h-[400px]">
+            <table class="table table-zebra w-full align-middle">
+                <thead>
+                    <tr class="bg-base-200/50 text-base-content/70">
+                        <th>Usuario / Email</th>
+                        <th>Rol</th>
+                        <th>Cliente Vinculado</th>
+                        <th>Verificación</th>
+                        <th>Estado</th>
+                        <th>Fecha Creación</th>
+                        <th class="w-10"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (isLoading()) {
+                    @for (i of [1,2,3,4,5]; track i) {
+                    <tr class="animate-pulse">
+                        <td colspan="7" class="h-16">
+                            <div class="h-4 bg-base-200 rounded w-full"></div>
+                        </td>
+                    </tr>
+                    }
+                    } @else if (users().length === 0) {
+                    <tr>
+                        <td colspan="7" class="text-center py-10 text-base-content/50">
+                            No se encontraron usuarios.
+                        </td>
+                    </tr>
+                    } @else {
+                    @for (user of users(); track user.id) {
+                    <tr class="hover group">
+                        <td>
+                            <div class="flex flex-col">
+                                <span class="font-bold text-sm">{{ user.email }}</span>
+                                <span class="text-xs text-base-content/50 font-mono">{{ user.id }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            @if (user.role === 'ADMIN') {
+                            <div class="badge badge-primary badge-outline gap-1 font-bold">
+                                <lucide-icon [img]="icons.Shield" class="w-3 h-3"></lucide-icon>
+                                ADMIN
+                            </div>
+                            } @else {
+                            <div class="badge badge-ghost gap-1">
+                                <lucide-icon [img]="icons.User" class="w-3 h-3"></lucide-icon>
+                                USER
+                            </div>
+                            }
+                        </td>
+                        <td>
+                            @if (user.customer) {
+                            <a [routerLink]="['/admin/customers', user.customer.id]"
+                                class="link link-hover text-primary font-medium flex flex-col">
+                                {{ user.customer.name }}
+                                <span class="text-xs text-base-content/50 no-underline">{{ user.customer.documentNumber
+                                    }}</span>
+                            </a>
+                            } @else {
+                            <span class="text-base-content/30 italic text-xs">Sin cliente</span>
+                            }
+                        </td>
+                        <td>
+                            @if (user.emailVerifiedAt) {
+                            <div class="flex items-center gap-1 text-success text-xs"
+                                title="{{ user.emailVerifiedAt | date:'medium' }}">
+                                <lucide-icon [img]="icons.CheckCircle" class="w-4 h-4"></lucide-icon>
+                                Verificado
+                            </div>
+                            } @else {
+                            <div class="flex items-center gap-1 text-warning text-xs">
+                                <lucide-icon [img]="icons.XCircle" class="w-4 h-4"></lucide-icon>
+                                Pendiente
+                            </div>
+                            }
+                        </td>
+                        <td>
+                            <div class="form-control">
+                                <label class="cursor-pointer label p-0">
+                                    <input type="checkbox" class="toggle toggle-sm toggle-success"
+                                        [checked]="user.isActive" (change)="toggleStatus(user)" />
+                                </label>
+                            </div>
+                        </td>
+                        <td class="text-xs font-mono text-base-content/60">
+                            {{ user.createdAt | date:'shortDate' }}
+                        </td>
+                        <td>
+                            <div class="dropdown dropdown-end">
+                                <label tabindex="0" class="btn btn-ghost btn-square btn-sm m-1">
+                                    <lucide-icon [img]="icons.MoreVertical" class="w-4 h-4"></lucide-icon>
+                                </label>
+                                <ul tabindex="0"
+                                    class="dropdown-content z-10 menu p-2 shadow bg-base-100 rounded-box w-52 border border-base-200">
+                                    <li>
+                                        <a [routerLink]="['/admin/users', user.id]">Ver Detalle</a>
+                                    </li>
+                                    <li>
+                                        <button class="text-error" (click)="deleteUser(user)">
+                                            <lucide-icon [img]="icons.Trash2" class="w-4 h-4"></lucide-icon>
+                                            Eliminar
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="p-4 border-t border-base-200 bg-base-50 flex justify-between items-center">
+            <span class="text-xs text-base-content/50">
+                Página {{ (offset() / limit()) + 1 }}
+            </span>
+            <div class="join">
+                <button class="join-item btn btn-sm btn-outline" (click)="prevPage()" [disabled]="offset() === 0">
+                    Anterior
+                </button>
+                <button class="join-item btn btn-sm btn-outline" (click)="nextPage()"
+                    [disabled]="users().length < limit()">
+                    Siguiente
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

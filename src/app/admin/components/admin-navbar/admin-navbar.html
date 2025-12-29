@@ -13,6 +13,12 @@
         <a routerLink="/admin/orders" class="text-base-content">Pedidos</a>
       </li>
       <li routerLinkActive="link-primary">
+        <a routerLink="/admin/users" class="text-base-content">Usuarios</a>
+      </li>
+      <li routerLinkActive="link-primary">
+        <a routerLink="/admin/customers" class="text-base-content">Clientes</a>
+      </li>
+      <li routerLinkActive="link-primary">
         <a routerLink="/admin/contracts" class="text-base-content">Contratos</a>
       </li>
       <li routerLinkActive="link-primary">
@@ -22,34 +28,77 @@
   </div>
 </div>
 
-<div class="dock hidden not-md:flex">
-  <button routerLink="/admin/dashboard" routerLinkActive="dock-active">
-    <lucide-icon [img]="houseIcon"
-      class="w-6 h-6 text-primary group-hover:text-primary-content transition-colors"></lucide-icon>
-    <span class="dock-label text-base-content">Inicio</span>
+<div class="dock hidden not-md:flex bg-base-100/90 backdrop-blur border-t border-base-200 pb-safe">
+  <button routerLink="/admin/dashboard" class="text-base-content/60 hover:text-base-content transition-colors"
+    routerLinkActive="dock-active text-primary">
+    <lucide-icon [img]="houseIcon" class="w-6 h-6"></lucide-icon>
+    <span class="dock-label text-[10px] font-medium mt-1">Inicio</span>
   </button>
 
-  <button routerLink="/admin/inventory" routerLinkActive="dock-active">
-    <lucide-icon [img]="warehouseIcon"
-      class="w-6 h-6 text-success group-hover:text-success-content transition-colors"></lucide-icon>
-    <span class="dock-label text-base-content">Inventario</span>
+  <button routerLink="/admin/inventory" class="text-base-content/60 hover:text-base-content transition-colors"
+    routerLinkActive="dock-active text-success">
+    <lucide-icon [img]="warehouseIcon" class="w-6 h-6"></lucide-icon>
+    <span class="dock-label text-[10px] font-medium mt-1">Inventario</span>
   </button>
 
-  <button routerLink="/admin/orders" routerLinkActive="dock-active">
-    <lucide-icon [img]="packageIcon"
-      class="w-6 h-6 text-base-content group-hover:text-base-content/80 transition-colors"></lucide-icon>
-    <span class="dock-label text-base-content">Pedidos</span>
+  <button routerLink="/admin/orders" class="text-base-content/60 hover:text-base-content transition-colors"
+    routerLinkActive="dock-active text-orange-500">
+    <lucide-icon [img]="packageIcon" class="w-6 h-6"></lucide-icon>
+    <span class="dock-label text-[10px] font-medium mt-1">Pedidos</span>
   </button>
 
-  <button routerLink="/admin/contracts" routerLinkActive="dock-active">
-    <lucide-icon [img]="dolarSignIcon"
-      class="w-6 h-6 text-warning group-hover:text-warning-content transition-colors"></lucide-icon>
-    <span class="dock-label text-base-content">Contratos</span>
-  </button>
-
-  <button routerLink="/admin/billing" routerLinkActive="dock-active">
-    <lucide-icon [img]="fileTextIcon"
-      class="w-6 h-6 text-error group-hover:text-error-content transition-colors"></lucide-icon>
-    <span class="dock-label text-base-content">Facturación</span>
+  <button (click)="mobileMenu.showModal()" class="text-base-content/60 hover:text-base-content transition-colors">
+    <lucide-icon [img]="menuIcon" class="w-6 h-6"></lucide-icon>
+    <span class="dock-label text-[10px] font-medium mt-1">Más</span>
   </button>
 </div>
+
+<!-- Mobile Menu Bottom Sheet -->
+<dialog #mobileMenu class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box p-4 pt-6">
+    <h3 class="font-bold text-lg mb-4 px-2">Menú Principal</h3>
+
+    <div class="grid grid-cols-2 gap-3">
+      <a routerLink="/admin/users" (click)="mobileMenu.close()"
+        class="flex flex-col items-center justify-center p-4 bg-base-200 rounded-xl gap-2 active:scale-95 transition-transform">
+        <div class="p-3 bg-info/10 rounded-full text-info">
+          <lucide-icon [img]="usersIcon" class="w-6 h-6"></lucide-icon>
+        </div>
+        <span class="font-medium text-sm">Usuarios</span>
+      </a>
+
+      <a routerLink="/admin/customers" (click)="mobileMenu.close()"
+        class="flex flex-col items-center justify-center p-4 bg-base-200 rounded-xl gap-2 active:scale-95 transition-transform">
+        <div class="p-3 bg-secondary/10 rounded-full text-secondary">
+          <lucide-icon [img]="buildingIcon" class="w-6 h-6"></lucide-icon>
+        </div>
+        <span class="font-medium text-sm">Clientes</span>
+      </a>
+
+      <a routerLink="/admin/contracts" (click)="mobileMenu.close()"
+        class="flex flex-col items-center justify-center p-4 bg-base-200 rounded-xl gap-2 active:scale-95 transition-transform">
+        <div class="p-3 bg-warning/10 rounded-full text-warning">
+          <lucide-icon [img]="dolarSignIcon" class="w-6 h-6"></lucide-icon>
+        </div>
+        <span class="font-medium text-sm">Contratos</span>
+      </a>
+
+      <a routerLink="/admin/billing" (click)="mobileMenu.close()"
+        class="flex flex-col items-center justify-center p-4 bg-base-200 rounded-xl gap-2 active:scale-95 transition-transform">
+        <div class="p-3 bg-error/10 rounded-full text-error">
+          <lucide-icon [img]="fileTextIcon" class="w-6 h-6"></lucide-icon>
+        </div>
+        <span class="font-medium text-sm">Facturación</span>
+      </a>
+    </div>
+
+    <div class="modal-action">
+      <form method="dialog" class="w-full">
+        <button class="btn btn-block">Cerrar</button>
+      </form>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>

@@ -28,7 +28,7 @@ export interface InventoryBalance {
 export interface InventoryMovement {
     id: string;
     occurredAt: string;
-    type: 'IN' | 'OUT' | 'ADJUSTMENT';
+    type: 'IN' | 'OUT' | 'SOLD' | 'RESERVED' | 'UNRESERVED' | 'ADJUSTMENT';
     reason: string;
     quantity: number;
     notes?: string;

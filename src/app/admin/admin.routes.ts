@@ -19,6 +19,24 @@ export const adminRoutes: Routes = [
     path: 'contracts',
     component: ContractsPage,
   },
+  // Users Routes
+  {
+    path: 'users',
+    loadComponent: () => import('./pages/users-list-page/users-list-page').then(m => m.UsersListPage)
+  },
+  {
+    path: 'users/:id',
+    loadComponent: () => import('./pages/user-detail-page/user-detail-page').then(m => m.UserDetailPage)
+  },
+  // Customers Routes
+  {
+    path: 'customers',
+    loadComponent: () => import('./pages/customers-list-page/customers-list-page').then(m => m.CustomersListPage)
+  },
+  {
+    path: 'customers/:id',
+    loadComponent: () => import('./pages/customer-detail-page/customer-detail-page').then(m => m.CustomerDetailPage)
+  },
   {
     path: 'inventory',
     component: InventoryLayoutPage,

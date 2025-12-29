@@ -1,0 +1,135 @@
+<div class="p-6 max-w-[1400px] mx-auto space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+            <div class="text-sm breadcrumbs text-base-content/50 mb-2">
+                <ul>
+                    <li><a routerLink="/admin/dashboard" class="hover:text-primary transition-colors">Inicio</a></li>
+                    <li><span class="font-medium text-base-content/80 cursor-default">Clientes</span></li>
+                </ul>
+            </div>
+            <h1 class="text-3xl font-bold tracking-tight text-base-content flex items-center gap-3">
+                <div class="p-2 bg-secondary/10 rounded-lg text-secondary">
+                    <lucide-icon [img]="icons.Building2" class="w-6 h-6"></lucide-icon>
+                </div>
+                Gestión de Clientes
+            </h1>
+            <p class="text-base-content/60 mt-1 max-w-2xl">
+                Directorio de clientes registrados y sus datos de contacto.
+            </p>
+        </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="card bg-base-100 shadow-sm border border-base-200">
+        <div class="card-body p-4 flex flex-row gap-4 items-center">
+            <!-- Search -->
+            <div class="form-control w-full max-w-md">
+                <div class="relative">
+                    <lucide-icon [img]="icons.Search"
+                        class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-base-content/50"></lucide-icon>
+                    <input type="text" placeholder="Buscar por nombre, documento, email..." [ngModel]="filterQ()"
+                        (ngModelChange)="filterQ.set($event)" class="input input-bordered w-full pl-10 input-sm" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customers Table -->
+    <div class="card bg-base-100 shadow-sm border border-base-200 overflow-hidden">
+        <div class="overflow-x-auto min-h-[400px]">
+            <table class="table table-zebra w-full align-middle">
+                <thead>
+                    <tr class="bg-base-200/50 text-base-content/70">
+                        <th>Cliente</th>
+                        <th>Documento</th>
+                        <th>Contacto</th>
+                        <th>Usuario Asociado</th>
+                        <th>Fecha Registro</th>
+                        <th class="w-10"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (isLoading()) {
+                    @for (i of [1,2,3,4,5]; track i) {
+                    <tr class="animate-pulse">
+                        <td colspan="6" class="h-16">
+                            <div class="h-4 bg-base-200 rounded w-full"></div>
+                        </td>
+                    </tr>
+                    }
+                    } @else if (customers().length === 0) {
+                    <tr>
+                        <td colspan="6" class="text-center py-10 text-base-content/50">
+                            No se encontraron clientes.
+                        </td>
+                    </tr>
+                    } @else {
+                    @for (customer of customers(); track customer.id) {
+                    <tr class="hover group">
+                        <td>
+                            <div class="font-bold text-base-content">{{ customer.name }}</div>
+                            <div class="text-xs text-base-content/50 flex items-center gap-1 mt-0.5">
+                                <lucide-icon [img]="icons.FileText" class="w-3 h-3"></lucide-icon>
+                                ID: {{ customer.id.split('-')[0] }}...
+                            </div>
+                        </td>
+                        <td class="font-mono text-sm">
+                            {{ customer.documentType }} {{ customer.documentNumber }}
+                        </td>
+                        <td>
+                            <div class="flex flex-col gap-1">
+                                <div class="flex items-center gap-1.5 text-xs">
+                                    <lucide-icon [img]="icons.Phone" class="w-3 h-3 opacity-50"></lucide-icon>
+                                    {{ customer.phone }}
+                                </div>
+                                <div class="flex items-center gap-1.5 text-xs text-base-content/70">
+                                    <span class="w-3 h-3 flex items-center justify-center font-bold">@</span>
+                                    {{ customer.email }}
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            @if (customer.userId) {
+                            <a [routerLink]="['/admin/users', customer.userId]"
+                                class="btn btn-xs btn-ghost gap-1 font-normal normal-case h-auto py-1">
+                                <lucide-icon [img]="icons.User" class="w-3 h-3 text-primary"></lucide-icon>
+                                Ver Usuario
+                            </a>
+                            } @else {
+                            <span class="text-xs italic text-base-content/30">Sin usuario</span>
+                            }
+                        </td>
+                        <td class="text-xs font-mono text-base-content/60">
+                            {{ customer.createdAt | date:'shortDate' }}
+                        </td>
+                        <td>
+                            <a [routerLink]="['/admin/customers', customer.id]"
+                                class="btn btn-ghost btn-square btn-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                                <lucide-icon [img]="icons.ArrowRight" class="w-4 h-4"></lucide-icon>
+                            </a>
+                        </td>
+                    </tr>
+                    }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="p-4 border-t border-base-200 bg-base-50 flex justify-between items-center">
+            <span class="text-xs text-base-content/50">
+                Página {{ (offset() / limit()) + 1 }}
+            </span>
+            <div class="join">
+                <button class="join-item btn btn-sm btn-outline" (click)="prevPage()" [disabled]="offset() === 0">
+                    Anterior
+                </button>
+                <button class="join-item btn btn-sm btn-outline" (click)="nextPage()"
+                    [disabled]="customers().length < limit()">
+                    Siguiente
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

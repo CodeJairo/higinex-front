@@ -70,7 +70,7 @@ export class InventoryManagementService {
     filters: {
       variantId?: string;
       orderId?: string;
-      type?: 'IN' | 'OUT' | 'ADJUSTMENT';
+      type?: 'IN' | 'OUT' | 'SOLD' | 'RESERVED' | 'UNRESERVED' | 'ADJUSTMENT';
       dateFrom?: string;
       dateTo?: string;
     } = {}

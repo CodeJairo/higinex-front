@@ -1,0 +1,152 @@
+<div class="p-6 max-w-[1000px] mx-auto space-y-6">
+    <!-- Breadcrumbs -->
+    <div class="text-sm breadcrumbs text-base-content/50">
+        <ul>
+            <li><a routerLink="/admin/dashboard">Inicio</a></li>
+            <li><a routerLink="/admin/users">Usuarios</a></li>
+            <li><span class="font-medium text-base-content/80 cursor-default">Detalle de Usuario</span></li>
+        </ul>
+    </div>
+
+    @if (isLoading()) {
+    <div class="flex flex-col gap-4 animate-pulse">
+        <div class="h-8 bg-base-200 w-1/3 rounded"></div>
+        <div class="h-64 bg-base-200 rounded-xl"></div>
+    </div>
+    } @else if (user(); as u) {
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start gap-4">
+        <div class="flex items-center gap-3">
+            <a routerLink="/admin/users" class="btn btn-circle btn-ghost btn-sm">
+                <lucide-icon [img]="icons.ArrowLeft" class="w-5 h-5"></lucide-icon>
+            </a>
+            <div>
+                <h1 class="text-2xl font-bold flex items-center gap-2">
+                    {{ u.email }}
+                    @if (u.role === 'ADMIN') {
+                    <span class="badge badge-primary font-mono text-xs">ADMIN</span>
+                    }
+                </h1>
+                <div class="text-xs font-mono text-base-content/50 mt-1">ID: {{ u.id }}</div>
+            </div>
+        </div>
+
+        <div class="flex gap-2">
+            <button class="btn btn-sm" [class.btn-success]="!u.isActive" [class.btn-warning]="u.isActive"
+                (click)="toggleStatus()">
+                {{ u.isActive ? 'Desactivar Cuenta' : 'Activar Cuenta' }}
+            </button>
+            <button class="btn btn-sm btn-error btn-outline" (click)="deleteUser()">
+                Eliminar
+            </button>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- User Info Card -->
+        <div class="card bg-base-100 shadow-sm border border-base-200">
+            <div class="card-body">
+                <h2 class="card-title text-base font-bold flex items-center gap-2 mb-4">
+                    <lucide-icon [img]="icons.User" class="w-5 h-5 text-primary"></lucide-icon>
+                    Información de Cuenta
+                </h2>
+
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center py-2 border-b border-base-100">
+                        <span class="text-sm text-base-content/60">Estado</span>
+                        @if (u.isActive) {
+                        <div class="badge badge-success gap-1">
+                            <lucide-icon [img]="icons.CheckCircle" class="w-3 h-3"></lucide-icon>
+                            Activo
+                        </div>
+                        } @else {
+                        <div class="badge badge-error gap-1">
+                            <lucide-icon [img]="icons.XCircle" class="w-3 h-3"></lucide-icon>
+                            Inactivo
+                        </div>
+                        }
+                    </div>
+
+                    <div class="flex justify-between items-center py-2 border-b border-base-100">
+                        <span class="text-sm text-base-content/60">Verificación Email</span>
+                        @if (u.emailVerifiedAt) {
+                        <span class="text-success text-sm flex items-center gap-1">
+                            <lucide-icon [img]="icons.CheckCircle" class="w-3 h-3"></lucide-icon>
+                            {{ u.emailVerifiedAt | date:'mediumDate' }}
+                        </span>
+                        } @else {
+                        <span class="text-warning text-sm flex items-center gap-1">
+                            <lucide-icon [img]="icons.XCircle" class="w-3 h-3"></lucide-icon>
+                            No verificado
+                        </span>
+                        }
+                    </div>
+
+                    <div class="flex justify-between items-center py-2 border-b border-base-100">
+                        <span class="text-sm text-base-content/60">Cuenta Creada</span>
+                        <span class="font-mono text-sm">{{ u.createdAt | date:'medium' }}</span>
+                    </div>
+
+                    <div class="flex justify-between items-center py-2 border-b border-base-100">
+                        <span class="text-sm text-base-content/60">Última Actualización</span>
+                        <span class="font-mono text-sm">{{ u.updatedAt | date:'medium' }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customer Info Card -->
+        <div class="card bg-base-100 shadow-sm border border-base-200">
+            <div class="card-body">
+                <h2 class="card-title text-base font-bold flex items-center gap-2 mb-4">
+                    <lucide-icon [img]="icons.Building2" class="w-5 h-5 text-secondary"></lucide-icon>
+                    Cliente Asociado
+                </h2>
+
+                @if (u.customer) {
+                <div class="space-y-4">
+                    <div class="flex flex-col gap-1">
+                        <span class="text-xs uppercase font-bold text-base-content/40">Nombre / Razón Social</span>
+                        <span class="font-medium text-lg">{{ u.customer.name }}</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="flex flex-col gap-1">
+                            <span class="text-xs uppercase font-bold text-base-content/40">Documento</span>
+                            <div class="flex items-center gap-2">
+                                <lucide-icon [img]="icons.FileText" class="w-4 h-4 text-base-content/50"></lucide-icon>
+                                <span class="font-mono text-sm">{{ u.customer.documentType }} {{
+                                    u.customer.documentNumber }}</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <span class="text-xs uppercase font-bold text-base-content/40">Teléfono</span>
+                            <div class="flex items-center gap-2">
+                                <lucide-icon [img]="icons.Phone" class="w-4 h-4 text-base-content/50"></lucide-icon>
+                                <span class="font-mono text-sm">{{ u.customer.phone }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                        <span class="text-xs uppercase font-bold text-base-content/40">Email de Contacto</span>
+                        <span class="text-sm">{{ u.customer.email }}</span>
+                    </div>
+
+                    <div class="pt-4 mt-2 border-t border-base-100">
+                        <a [routerLink]="['/admin/customers', u.customer.id]" class="btn btn-outline btn-sm w-full">
+                            Ver Perfil Completo del Cliente
+                        </a>
+                    </div>
+                </div>
+                } @else {
+                <div class="flex flex-col items-center justify-center h-48 text-base-content/30 gap-2">
+                    <lucide-icon [img]="icons.Building2" class="w-12 h-12"></lucide-icon>
+                    <p>Este usuario no tiene cliente asociado.</p>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+    }
+</div>

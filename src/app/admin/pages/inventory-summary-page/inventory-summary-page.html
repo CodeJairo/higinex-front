@@ -33,38 +33,50 @@
         <!-- KPIs -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             <!-- Total On Hand -->
-            <div class="stats shadow-sm border border-base-200 bg-base-100">
-                <div class="stat">
-                    <div class="stat-figure text-primary bg-primary/10 p-2 rounded-full">
+            <div class="card bg-base-100 shadow-sm border border-base-200">
+                <div class="card-body p-4 sm:p-6 flex flex-row items-center justify-between gap-4">
+                    <div>
+                        <div class="text-sm font-medium text-base-content/70">Total en Mano (On Hand)</div>
+                        <div class="text-2xl sm:text-3xl font-bold text-primary mt-1">
+                            {{ summaryQuery.data()?.totalOnHand || 0 | number }}
+                        </div>
+                        <div class="text-xs text-base-content/50 mt-1">Unidades físicas totales</div>
+                    </div>
+                    <div class="p-3 bg-primary/10 rounded-full text-primary shrink-0">
                         <lucide-icon [img]="icons.Box" class="w-6 h-6"></lucide-icon>
                     </div>
-                    <div class="stat-title font-medium">Total en Mano (On Hand)</div>
-                    <div class="stat-value text-primary">{{ summaryQuery.data()?.totalOnHand || 0 | number }}</div>
-                    <div class="stat-desc">Unidades físicas totales en almacén</div>
                 </div>
             </div>
 
             <!-- Total Reserved -->
-            <div class="stats shadow-sm border border-base-200 bg-base-100">
-                <div class="stat">
-                    <div class="stat-figure text-warning bg-warning/10 p-2 rounded-full">
+            <div class="card bg-base-100 shadow-sm border border-base-200">
+                <div class="card-body p-4 sm:p-6 flex flex-row items-center justify-between gap-4">
+                    <div>
+                        <div class="text-sm font-medium text-base-content/70">Reservado</div>
+                        <div class="text-2xl sm:text-3xl font-bold text-warning mt-1">
+                            {{ summaryQuery.data()?.totalReserved || 0 | number }}
+                        </div>
+                        <div class="text-xs text-base-content/50 mt-1">Comprometido en órdenes</div>
+                    </div>
+                    <div class="p-3 bg-warning/10 rounded-full text-warning shrink-0">
                         <lucide-icon [img]="icons.Clipboard" class="w-6 h-6"></lucide-icon>
                     </div>
-                    <div class="stat-title font-medium">Reservado</div>
-                    <div class="stat-value text-warning">{{ summaryQuery.data()?.totalReserved || 0 | number }}</div>
-                    <div class="stat-desc">Comprometido en órdenes activas</div>
                 </div>
             </div>
 
             <!-- Total Available -->
-            <div class="stats shadow-sm border border-base-200 bg-base-100">
-                <div class="stat">
-                    <div class="stat-figure text-success bg-success/10 p-2 rounded-full">
+            <div class="card bg-base-100 shadow-sm border border-base-200">
+                <div class="card-body p-4 sm:p-6 flex flex-row items-center justify-between gap-4">
+                    <div>
+                        <div class="text-sm font-medium text-base-content/70">Disponible para Venta</div>
+                        <div class="text-2xl sm:text-3xl font-bold text-success mt-1">
+                            {{ summaryQuery.data()?.totalAvailable || 0 | number }}
+                        </div>
+                        <div class="text-xs text-base-content/50 mt-1">On Hand - Reservado</div>
+                    </div>
+                    <div class="p-3 bg-success/10 rounded-full text-success shrink-0">
                         <lucide-icon [img]="icons.CheckCircle" class="w-6 h-6"></lucide-icon>
                     </div>
-                    <div class="stat-title font-medium">Disponible para Venta</div>
-                    <div class="stat-value text-success">{{ summaryQuery.data()?.totalAvailable || 0 | number }}</div>
-                    <div class="stat-desc">On Hand - Reservado = Disponible</div>
                 </div>
             </div>
         </div>
@@ -100,7 +112,8 @@
                 </div>
 
                 <!-- Table -->
-                <div class="overflow-x-auto min-h-[400px]">
+                <!-- Desktop Table -->
+                <div class="hidden md:block overflow-x-auto min-h-[400px]">
                     <table class="table table-zebra w-full align-middle">
                         <thead>
                             <tr class="bg-base-200/50 text-base-content/70">
@@ -180,6 +193,80 @@
                             }
                         </tbody>
                     </table>
+                </div>
+
+                <!-- Mobile Cards List -->
+                <div class="md:hidden flex flex-col divide-y divide-base-200">
+                    @if (balancesQuery.isPending()) {
+                    @for (i of [1,2,3]; track i) {
+                    <div class="p-4 animate-pulse space-y-3">
+                        <div class="flex justify-between">
+                            <div class="bg-base-200 h-4 w-3/4 rounded"></div>
+                            <div class="bg-base-200 h-4 w-12 rounded"></div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="bg-base-200 h-10 rounded"></div>
+                            <div class="bg-base-200 h-10 rounded"></div>
+                            <div class="bg-base-200 h-10 rounded"></div>
+                        </div>
+                    </div>
+                    }
+                    } @else if (balances().length === 0) {
+                    <div class="p-8 text-center text-base-content/50">
+                        <div class="flex flex-col items-center gap-2">
+                            <lucide-icon [img]="icons.Box" class="w-10 h-10 opacity-20"></lucide-icon>
+                            <p>No se encontraron productos.</p>
+                        </div>
+                    </div>
+                    } @else {
+                    @for (balance of balances(); track balance.variantId) {
+                    <div class="p-4 flex flex-col gap-3 hover:bg-base-100/50">
+                        <!-- Header: Name & Status -->
+                        <div class="flex justify-between items-start gap-2">
+                            <div>
+                                <div class="font-bold text-base-content text-sm">{{ balance.variant.product.name }}
+                                </div>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="badge badge-xs badge-ghost font-mono">{{ balance.variant.sku }}</span>
+                                    <span class="text-xs text-base-content/60">{{ balance.variant.name }}</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-end gap-2">
+                                @if (balance.variant.isActive) {
+                                <span class="badge badge-xs badge-success">Activo</span>
+                                } @else {
+                                <span class="badge badge-xs badge-neutral">Inactivo</span>
+                                }
+                                <button class="btn btn-xs btn-ghost btn-square" (click)="openAdjustModal(balance)">
+                                    <lucide-icon [img]="icons.Settings" class="w-4 h-4"></lucide-icon>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Stock Grid -->
+                        <div class="grid grid-cols-3 gap-2 bg-base-200/30 p-2 rounded-lg text-center">
+                            <div class="flex flex-col">
+                                <span class="text-[10px] uppercase text-base-content/50 font-bold tracking-wider">On
+                                    Hand</span>
+                                <span class="font-mono font-bold">{{ balance.onHand | number }}</span>
+                            </div>
+                            <div class="flex flex-col border-l border-base-200">
+                                <span
+                                    class="text-[10px] uppercase text-base-content/50 font-bold tracking-wider">Rsrvd</span>
+                                <span class="font-mono font-bold text-warning">{{ balance.reserved | number }}</span>
+                            </div>
+                            <div class="flex flex-col border-l border-base-200">
+                                <span
+                                    class="text-[10px] uppercase text-base-content/50 font-bold tracking-wider">Disp</span>
+                                <span class="font-mono font-bold text-base" [class.text-success]="balance.available > 0"
+                                    [class.text-error]="balance.available <= 0">
+                                    {{ balance.available | number }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                    }
                 </div>
             </div>
         </div>
