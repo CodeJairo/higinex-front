@@ -6,7 +6,7 @@
             <p class="text-sm text-base-content/60 mt-1">Gestiona tus órdenes recientes</p>
         </div>
 
-        <button class="btn btn-warning btn-outline w-full sm:w-auto" (click)="expireReservations()"
+        <button class="md:hidden btn btn-warning btn-outline w-full sm:w-auto" (click)="expireReservations()"
             [disabled]="expireReservationsMutation.isPending()">
             @if(expireReservationsMutation.isPending()) {
             <span class="loading loading-spinner loading-xs"></span>
@@ -157,4 +157,17 @@
         }
         }
     </section>
+    <button
+        class="hidden md:flex btn btn-warning btn-lg fixed bottom-6 right-6 z-50 shadow-xl opacity-90 hover:opacity-100 hover:scale-105 transition-all text-white"
+        (click)="expireReservations()" [disabled]="expireReservationsMutation.isPending()">
+        @if(expireReservationsMutation.isPending()) {
+        <span class="loading loading-spinner loading-md"></span>
+        } @else {
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+            class="w-6 h-6 mr-2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+        </svg>
+        }
+        Expirar Reservas
+    </button>
 </div>
