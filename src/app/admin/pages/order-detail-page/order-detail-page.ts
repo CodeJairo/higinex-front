@@ -144,6 +144,12 @@ export class OrderDetailPage {
     }
 
     // Helpers
+    isPositive(value: string | number | undefined | null): boolean {
+        if (value === undefined || value === null) return false;
+        const num = typeof value === 'string' ? Number(value) : value;
+        return !isNaN(num) && num > 0;
+    }
+
     getStatusLabel(status: OrderStatus): string {
         const labels: Record<OrderStatus, string> = {
             [OrderStatus.CREATED]: 'Creado',
