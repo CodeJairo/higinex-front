@@ -23,41 +23,8 @@
 
     <ng-template #actionButtons>
         @if (order.status === OrderStatus.CREATED || order.status === OrderStatus.PENDING_PAYMENT) {
-        <button class="btn btn-success text-white flex-1 md:flex-none" (click)="openConfirmPaymentModal()">
-            Confirmar Pago
-        </button>
         <button class="btn btn-error btn-outline flex-1 md:flex-none" (click)="openCancelOrderModal()">
             Cancelar
-        </button>
-        }
-
-        @if (order.status === OrderStatus.PAID) {
-        <button class="btn btn-primary flex-1 md:flex-none" (click)="updateOrderStatus(OrderStatus.PREPARING)">
-            Preparar Pedido
-        </button>
-        }
-
-        @if (order.status === OrderStatus.PREPARING) {
-        <button class="btn btn-primary flex-1 md:flex-none" (click)="updateOrderStatus(OrderStatus.SHIPPED)">
-            Marcar Enviado
-        </button>
-        <button class="btn btn-secondary btn-outline flex-1 md:flex-none" (click)="goToShipments()">
-            Crear Envío
-        </button>
-        }
-
-        @if (order.status === OrderStatus.SHIPPED) {
-        <button class="btn btn-primary flex-1 md:flex-none" (click)="updateOrderStatus(OrderStatus.DELIVERED)">
-            Marcar Entregado
-        </button>
-        <button class="btn btn-secondary btn-outline flex-1 md:flex-none" (click)="goToShipments()">
-            Ver Envíos
-        </button>
-        }
-
-        @if (order.status === OrderStatus.DELIVERED) {
-        <button class="btn btn-warning btn-outline flex-1 md:flex-none" (click)="setTab('returns')">
-            Devolución
         </button>
         }
     </ng-template>
@@ -68,7 +35,7 @@
             <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-4">
                 <div>
                     <div class="flex items-center gap-3 mb-1">
-                        <h1 class="text-2xl md:text-3xl font-bold font-mono text-base-content">
+                        <h1 class="text-2xl md:text-3xl font-bold text-base-content">
                             #{{ order.orderNumber }}
                         </h1>
                         <div class="badge {{ getBadgeClass(order.status) }} badge-md">
@@ -97,19 +64,12 @@
                     [class.tab-active]="selectedTab() === 'overview'" [class.bg-base-100]="selectedTab() === 'overview'"
                     [class.shadow-sm]="selectedTab() === 'overview'" (click)="setTab('overview')">Resumen</a>
 
-                <a role="tab" class="tab transition-all duration-200 px-6"
-                    [class.tab-active]="selectedTab() === 'shipments'"
-                    [class.bg-base-100]="selectedTab() === 'shipments'"
-                    [class.shadow-sm]="selectedTab() === 'shipments'" (click)="setTab('shipments')">Envíos</a>
+                <a role="tab" class="tab transition-all duration-200 px-6" (click)="setTab('payments')"
+                    [class.tab-active]="selectedTab() === 'payments'">Pagos</a>
 
                 <a role="tab" class="tab transition-all duration-200 px-6"
                     [class.tab-active]="selectedTab() === 'notes'" [class.bg-base-100]="selectedTab() === 'notes'"
                     [class.shadow-sm]="selectedTab() === 'notes'" (click)="setTab('notes')">Notas</a>
-
-                <a role="tab" class="tab transition-all duration-200 px-6" (click)="setTab('payments')"
-                    [class.tab-active]="selectedTab() === 'payments'">Pagos</a>
-                <a role="tab" class="tab transition-all duration-200 px-6" (click)="setTab('returns')"
-                    [class.tab-active]="selectedTab() === 'returns'">Devoluciones</a>
             </div>
         </div>
     </div>
@@ -142,12 +102,12 @@
                                     <tr class="hover:bg-base-200/30 transition-colors">
                                         <td>
                                             <div class="font-bold">{{ item.productNameSnapshot }}</div>
-                                            <div class="text-xs opacity-50 font-mono">{{ item.skuSnapshot }}</div>
+                                            <div class="text-xs opacity-50">{{ item.skuSnapshot }}</div>
                                         </td>
-                                        <td class="text-right font-mono text-sm opacity-80">{{ item.unitPriceAmount |
+                                        <td class="text-right text-sm opacity-80">{{ item.unitPriceAmount |
                                             currency: order.currency }}</td>
                                         <td class="text-center font-bold">{{ item.quantity }}</td>
-                                        <td class="text-right font-mono font-bold">{{ item.lineTotalAmount | currency:
+                                        <td class="text-right font-bold">{{ item.lineTotalAmount | currency:
                                             order.currency }}</td>
                                     </tr>
                                     }
@@ -160,13 +120,13 @@
                             <div class="p-4 flex flex-col gap-2">
                                 <div class="flex justify-between items-start">
                                     <span class="font-bold text-sm pr-4">{{ item.productNameSnapshot }}</span>
-                                    <span class="badge badge-neutral badge-sm font-mono">x{{ item.quantity }}</span>
+                                    <span class="badge badge-neutral badge-sm">x{{ item.quantity }}</span>
                                 </div>
                                 <div class="text-xs opacity-50">{{ item.skuSnapshot }}</div>
                                 <div class="flex justify-between items-center mt-1">
                                     <span class="text-xs opacity-70">{{ item.unitPriceAmount | currency: order.currency
                                         }} c/u</span>
-                                    <span class="font-bold font-mono">{{ item.lineTotalAmount | currency: order.currency
+                                    <span class="font-bold">{{ item.lineTotalAmount | currency: order.currency
                                         }}</span>
                                 </div>
                             </div>
@@ -218,28 +178,28 @@
                         <div class="space-y-2 text-sm">
                             <div class="flex justify-between">
                                 <span class="opacity-70">Subtotal</span>
-                                <span class="font-mono">{{ order.subtotalAmount | currency: order.currency }}</span>
+                                <span class="">{{ order.subtotalAmount | currency: order.currency }}</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="opacity-70">Envío</span>
-                                <span class="font-mono">{{ order.shippingAmount | currency: order.currency }}</span>
+                                <span class="">{{ order.shippingAmount | currency: order.currency }}</span>
                             </div>
                             @if(isPositive(order.discountAmount)) {
                             <div class="flex justify-between text-success font-medium">
                                 <span>Descuento</span>
-                                <span class="font-mono">-{{ order.discountAmount | currency: order.currency }}</span>
+                                <span class="">-{{ order.discountAmount | currency: order.currency }}</span>
                             </div>
                             }
                             <div class="flex justify-between">
                                 <span class="opacity-70">Impuestos</span>
-                                <span class="font-mono">{{ order.taxesAmount | currency: order.currency }}</span>
+                                <span class="">{{ order.taxesAmount | currency: order.currency }}</span>
                             </div>
 
                             <div class="divider my-2"></div>
 
                             <div class="flex justify-between items-end">
                                 <span class="font-bold text-lg">Total</span>
-                                <span class="font-bold text-xl font-mono">{{ order.totalAmount | currency:
+                                <span class="font-bold text-xl">{{ order.totalAmount | currency:
                                     order.currency }}</span>
                             </div>
                         </div>
@@ -302,14 +262,63 @@
         </div>
         }
 
-        @if (selectedTab() === 'shipments') {
-        <div class="text-center py-10 opacity-50">Contenido de envíos...</div>
-        }
-        @if (selectedTab() === 'payments' || selectedTab() === 'returns') {
+        @if (selectedTab() === 'payments') {
         <div class="text-center py-10 opacity-50">Contenido en desarrollo...</div>
         }
 
     </main>
+
+    @if (order.status === OrderStatus.CREATED || order.status === OrderStatus.PENDING_PAYMENT) {
+    <button
+        class="btn btn-success text-white fixed bottom-6 right-6 z-[1000] shadow-xl opacity-90 hover:opacity-100 hover:scale-105 transition-all"
+        (click)="openConfirmPaymentModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+            class="w-6 h-6 mr-2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+        </svg>
+        Confirmar Pago
+    </button>
+    }
+
+    @if (order.status === OrderStatus.PAID) {
+    <button
+        class="btn btn-primary fixed bottom-6 right-6 z-[1000] shadow-xl opacity-90 hover:opacity-100 hover:scale-105 transition-all"
+        (click)="updateOrderStatus(OrderStatus.PREPARING)">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+            class="w-6 h-6 mr-2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+        </svg>
+        Preparar Pedido
+    </button>
+    }
+
+    @if (order.status === OrderStatus.PREPARING) {
+    <button
+        class="btn btn-primary fixed bottom-6 right-6 z-[1000] shadow-xl opacity-90 hover:opacity-100 hover:scale-105 transition-all"
+        (click)="updateOrderStatus(OrderStatus.SHIPPED)">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+            class="w-6 h-6 mr-2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
+        </svg>
+        Marcar Enviado
+    </button>
+    }
+
+    @if (order.status === OrderStatus.SHIPPED) {
+    <button
+        class="btn btn-primary fixed bottom-6 right-6 z-[1000] shadow-xl opacity-90 hover:opacity-100 hover:scale-105 transition-all"
+        (click)="updateOrderStatus(OrderStatus.DELIVERED)">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+            class="w-6 h-6 mr-2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+        </svg>
+        Marcar Entregado
+    </button>
+    }
 
     <div
         class="md:hidden fixed bottom-0 left-0 right-0 p-3 bg-base-100 border-t border-base-200 z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
@@ -321,11 +330,30 @@
     <dialog id="confirm_payment_modal" class="modal modal-bottom sm:modal-middle">
         <div class="modal-box">
             <h3 class="font-bold text-lg mb-4">Confirmar Pago</h3>
-            <select class="select select-bordered w-full mb-3" [ngModel]="paymentMethod()"
-                (ngModelChange)="paymentMethod.set($event)">
-                <option value="BANK_TRANSFER">Transferencia</option>
-                <option value="CASH_ON_DELIVERY">Efectivo</option>
-            </select>
+            <div class="form-control w-full mb-3">
+                <label class="label"><span class="label-text">Método de Pago</span></label>
+                <select class="select select-bordered w-full" [ngModel]="paymentMethod()"
+                    (ngModelChange)="paymentMethod.set($event)">
+                    <option value="BANK_TRANSFER">Transferencia Bancaria</option>
+                    <option value="CARD_TERMINAL">Datáfono / Terminal</option>
+                    <option value="CASH_ON_DELIVERY">Efectivo contra entrega</option>
+                    <option value="EXTERNAL_LINK">Link de Pago</option>
+                    <option value="OTHER">Otro</option>
+                </select>
+            </div>
+
+            <div class="form-control w-full mb-3">
+                <label class="label"><span class="label-text">Referencia (Opcional)</span></label>
+                <input type="text" placeholder="Ej: TRX-123456" class="input input-bordered w-full"
+                    [ngModel]="paymentReference()" (ngModelChange)="paymentReference.set($event)" />
+            </div>
+
+            <div class="form-control w-full">
+                <label class="label"><span class="label-text">Notas (Opcional)</span></label>
+                <textarea class="textarea textarea-bordered h-24 resize-none"
+                    placeholder="Detalles adicionales del pago..." [ngModel]="paymentNotes()"
+                    (ngModelChange)="paymentNotes.set($event)"></textarea>
+            </div>
             <div class="modal-action">
                 <form method="dialog"><button class="btn">Cancelar</button></form>
                 <button class="btn btn-success text-white" (click)="confirmPayment()">Confirmar</button>

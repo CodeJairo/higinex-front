@@ -25,11 +25,7 @@ export class OrderDetailPage {
         queryFn: () => lastValueFrom(this.ordersService.getOrder(this.orderId)),
     }));
 
-    shipmentsQuery = injectQuery(() => ({
-        queryKey: ['order-shipments', this.orderId],
-        queryFn: () => lastValueFrom(this.ordersService.getShipments(this.orderId)),
-        enabled: this.selectedTab() === 'shipments',
-    }));
+
 
     paymentsQuery = injectQuery(() => ({
         queryKey: ['order-payments', this.orderId],
@@ -37,17 +33,7 @@ export class OrderDetailPage {
         enabled: this.selectedTab() === 'payments',
     }));
 
-    returnsQuery = injectQuery(() => ({
-        queryKey: ['order-returns', this.orderId],
-        queryFn: () => lastValueFrom(this.ordersService.getReturns(this.orderId)),
-        enabled: this.selectedTab() === 'returns',
-    }));
 
-    refundsQuery = injectQuery(() => ({
-        queryKey: ['order-refunds', this.orderId],
-        queryFn: () => lastValueFrom(this.ordersService.getRefunds(this.orderId)),
-        enabled: this.selectedTab() === 'refunds',
-    }));
 
     notesQuery = injectQuery(() => ({
         queryKey: ['order-notes', this.orderId],
@@ -57,7 +43,7 @@ export class OrderDetailPage {
 
 
     // UI State
-    selectedTab = signal<'overview' | 'shipments' | 'payments' | 'returns' | 'refunds' | 'notes'>('overview');
+    selectedTab = signal<'overview' | 'payments' | 'notes'>('overview');
 
     // Note Form
     noteMessage = signal('');
@@ -87,10 +73,11 @@ export class OrderDetailPage {
     // Form Signals
     paymentMethod = signal<PaymentMethod>(PaymentMethod.BANK_TRANSFER);
     paymentReference = signal('');
+    paymentNotes = signal('');
     cancelReason = signal('');
 
     // Tab Navigation
-    setTab(tab: 'overview' | 'shipments' | 'payments' | 'returns' | 'refunds' | 'notes'): void {
+    setTab(tab: 'overview' | 'payments' | 'notes'): void {
         this.selectedTab.set(tab);
     }
 
@@ -123,7 +110,8 @@ export class OrderDetailPage {
     confirmPayment() {
         this.confirmPaymentMutation.mutate({
             method: this.paymentMethod(),
-            reference: this.paymentReference()
+            reference: this.paymentReference(),
+            notes: this.paymentNotes()
         });
         (document.getElementById('confirm_payment_modal') as any).close();
     }
@@ -139,9 +127,7 @@ export class OrderDetailPage {
         (document.getElementById('cancel_order_modal') as any).close();
     }
 
-    goToShipments() {
-        this.setTab('shipments');
-    }
+
 
     // Helpers
     isPositive(value: string | number | undefined | null): boolean {
