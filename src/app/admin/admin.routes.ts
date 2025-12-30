@@ -37,6 +37,15 @@ export const adminRoutes: Routes = [
     path: 'customers/:id',
     loadComponent: () => import('./pages/customer-detail-page/customer-detail-page').then(m => m.CustomerDetailPage)
   },
+  // Orders Routes
+  {
+    path: 'orders',
+    loadComponent: () => import('./pages/orders-list-page/orders-list-page').then(m => m.OrdersListPage)
+  },
+  {
+    path: 'orders/:id',
+    loadComponent: () => import('./pages/order-detail-page/order-detail-page').then(m => m.OrderDetailPage)
+  },
   {
     path: 'inventory',
     component: InventoryLayoutPage,

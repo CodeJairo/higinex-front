@@ -1,0 +1,99 @@
+<div class="p-6 max-w-7xl mx-auto min-h-screen">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold text-base-content">Pedidos</h1>
+        <button class="btn btn-warning btn-outline btn-sm" (click)="expireReservations()"
+            [disabled]="expireReservationsMutation.isPending()">
+            @if(expireReservationsMutation.isPending()) { <span class="loading loading-spinner loading-xs"></span> }
+            Expirar Reservas
+        </button>
+    </div>
+
+    <div class="flex flex-wrap gap-4 mb-6">
+        <label class="input input-bordered flex items-center gap-2 flex-1 max-w-md">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70">
+                <path fill-rule="evenodd"
+                    d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+                    clip-rule="evenodd" />
+            </svg>
+            <input type="text" class="grow" placeholder="Buscar por # pedido, cliente, email..." [ngModel]="filters().q"
+                (ngModelChange)="onSearch($event)" />
+        </label>
+
+        <select [ngModel]="filters().status" (ngModelChange)="onStatusChange($event)"
+            class="select select-bordered w-full max-w-xs">
+            <option [value]="undefined">Todos los estados</option>
+            <option *ngFor="let status of statusOptions" [value]="status">
+                {{ getStatusLabel(status) }}
+            </option>
+        </select>
+    </div>
+
+    <div class="overflow-x-auto bg-base-100 rounded-box shadow">
+        @if (ordersQuery.isLoading()) {
+        <div class="flex justify-center items-center py-20">
+            <span class="loading loading-spinner loading-lg text-primary"></span>
+        </div>
+        } @else if (ordersQuery.isError()) {
+        <div class="alert alert-error my-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Error al cargar pedidos.</span>
+        </div>
+        } @else {
+        @let response = ordersQuery.data();
+        @let orders = getOrdersList(response);
+
+        @if (orders.length === 0) {
+        <div class="flex flex-col items-center justify-center py-20 text-base-content/60">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="w-16 h-16 mb-4">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+            </svg>
+            <p class="text-lg font-medium">No se encontraron pedidos.</p>
+        </div>
+        } @else {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Pedido</th>
+                    <th>Fecha</th>
+                    <th>Cliente</th>
+                    <th>Total</th>
+                    <th>Estado</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (order of orders; track order.id) {
+                <tr class="hover cursor-pointer" (click)="goToDetail(order.id)">
+                    <td class="font-bold">#{{ order.orderNumber }}</td>
+                    <td>{{ order.createdAt | date:'medium' }}</td>
+                    <td>
+                        <div>
+                            <div class="font-bold">{{ order.buyerFullName || 'Desconocido' }}</div>
+                            <div class="text-sm opacity-50">{{ order.buyerEmail || 'Sin email' }}</div>
+                        </div>
+                    </td>
+                    <td class="font-medium">
+                        {{ order.totalAmount | currency: order.currency }}
+                    </td>
+                    <td>
+                        <div class="badge {{ getBadgeClass(order.status) }} gap-2">
+                            {{ getStatusLabel(order.status) }}
+                        </div>
+                    </td>
+                    <th>
+                        <button class="btn btn-ghost btn-xs">Detalles</button>
+                    </th>
+                </tr>
+                }
+            </tbody>
+        </table>
+        }
+        }
+    </div>
+</div>

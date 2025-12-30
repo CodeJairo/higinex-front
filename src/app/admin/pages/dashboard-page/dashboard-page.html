@@ -130,17 +130,25 @@
         <div class="bg-base-100 rounded-xl border border-base-200 p-6">
           <div class="flex items-center justify-between mb-6">
             <h2 class="text-base-content font-bold">Últimos Pedidos</h2>
-            <button class="text-sm text-primary hover:text-primary-focus cursor-pointer font-medium">
+            <button class="text-sm text-primary hover:text-primary-focus cursor-pointer font-medium"
+              (click)="navigateToOrders()">
               Ver todos
             </button>
           </div>
           <div class="space-y-4">
-            @for (order of recentOrders; track order.id) {
+            @let orders = getOrdersList(recentOrdersQuery.data());
+            @if (recentOrdersQuery.isLoading()) {
+            <div class="flex justify-center p-8">
+              <span class="loading loading-spinner text-primary"></span>
+            </div>
+            } @else {
+            @for (order of orders; track order.id) {
             <div
-              class="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-base-200/50 rounded-lg hover:bg-base-200 transition-colors cursor-pointer gap-3 sm:gap-0">
+              class="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-base-200/50 rounded-lg hover:bg-base-200 transition-colors cursor-pointer gap-3 sm:gap-0"
+              (click)="navigateToOrderDetail(order.id)">
               <div class="flex-1">
                 <div class="flex items-center gap-3 mb-2">
-                  <h3 class="text-base-content font-medium">{{ order.id }}</h3>
+                  <h3 class="text-base-content font-medium">#{{ order.orderNumber }}</h3>
                   <span class="px-2 py-1 rounded-full text-xs flex items-center gap-1"
                     [ngClass]="getOrderStatusInfo(order.status).colorClass">
                     <lucide-icon [img]="getStatusIcon(order.status)" class="w-3 h-3"></lucide-icon>
@@ -148,7 +156,8 @@
                   </span>
                 </div>
                 <p class="text-sm text-base-content/60">
-                  {{ order.date }} • {{ order.items }} items • {{ formatPrice(order.total) }}
+                  {{ order.createdAt | date:'d MMM y' }} • {{ order.items?.length || 0 }} items • {{
+                  formatPrice(order.totalAmount) }}
                 </p>
               </div>
               <button
@@ -156,6 +165,10 @@
                 Ver detalles
               </button>
             </div>
+            }
+            @if (orders.length === 0) {
+            <p class="text-sm text-base-content/60 text-center py-4">No hay pedidos recientes.</p>
+            }
             }
           </div>
         </div>
