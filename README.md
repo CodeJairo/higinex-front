@@ -394,12 +394,4 @@ pnpm ng generate --help
 
 Este proyecto es de código abierto y está disponible para uso personal y educativo.
 
----
-
-<div align="center">
-
-**⭐ Si este proyecto te resulta útil, considera darle una estrella en GitHub ⭐**
-
-Desarrollado con ❤️ usando Angular 21
-
 </div>
