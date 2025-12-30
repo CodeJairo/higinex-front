@@ -292,7 +292,7 @@
 
     @if (order.status === OrderStatus.CREATED || order.status === OrderStatus.PENDING_PAYMENT) {
     <button
-        class="hidden md:flex btn btn-success text-white fixed bottom-6 right-6 z-[1000] shadow-xl opacity-90 hover:opacity-100 hover:scale-105 transition-all"
+        class="hidden md:flex btn btn-success text-white fixed bottom-6 right-6 z-1000 shadow-xl opacity-90 hover:opacity-100 hover:scale-105 transition-all"
         (click)="openConfirmPaymentModal()">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
             class="w-6 h-6 mr-2">
@@ -305,7 +305,7 @@
 
     @if (order.status === OrderStatus.PAID) {
     <button
-        class="hidden md:flex btn btn-primary fixed bottom-6 right-6 z-[1000] shadow-xl opacity-90 hover:opacity-100 hover:scale-105 transition-all"
+        class="hidden md:flex btn btn-primary fixed bottom-6 right-6 z-1000 shadow-xl opacity-90 hover:opacity-100 hover:scale-105 transition-all"
         (click)="updateOrderStatus(OrderStatus.PREPARING)">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
             class="w-6 h-6 mr-2">
@@ -318,7 +318,7 @@
 
     @if (order.status === OrderStatus.PREPARING) {
     <button
-        class="hidden md:flex btn btn-primary fixed bottom-6 right-6 z-[1000] shadow-xl opacity-90 hover:opacity-100 hover:scale-105 transition-all"
+        class="hidden md:flex btn btn-primary fixed bottom-6 right-6 z-1000 shadow-xl opacity-90 hover:opacity-100 hover:scale-105 transition-all"
         (click)="updateOrderStatus(OrderStatus.SHIPPED)">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
             class="w-6 h-6 mr-2">
@@ -331,7 +331,7 @@
 
     @if (order.status === OrderStatus.SHIPPED) {
     <button
-        class="hidden md:flex btn btn-primary fixed bottom-6 right-6 z-[1000] shadow-xl opacity-90 hover:opacity-100 hover:scale-105 transition-all"
+        class="hidden md:flex btn btn-primary fixed bottom-6 right-6 z-1000 shadow-xl opacity-90 hover:opacity-100 hover:scale-105 transition-all"
         (click)="updateOrderStatus(OrderStatus.DELIVERED)">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
             class="w-6 h-6 mr-2">
