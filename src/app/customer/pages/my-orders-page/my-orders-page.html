@@ -1,0 +1,94 @@
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold">Mis Pedidos</h1>
+    </div>
+
+    <div role="tablist" class="tabs tabs-lifted tabs-lg mb-6">
+        <a role="tab" class="tab" [class.tab-active]="activeTab === 'active'" (click)="activeTab = 'active'">Pedidos
+            Activos</a>
+        <a role="tab" class="tab" [class.tab-active]="activeTab === 'history'"
+            (click)="activeTab = 'history'">Historial</a>
+    </div>
+
+    <div *ngIf="ordersQuery.isLoading()" class="flex justify-center py-12">
+        <span class="loading loading-spinner loading-lg"></span>
+    </div>
+
+    <div *ngIf="ordersQuery.isError()" class="alert alert-error">
+        <span>Error al cargar los pedidos. Por favor, inténtelo de nuevo.</span>
+    </div>
+
+    <div *ngIf="ordersQuery.isSuccess()">
+        <!-- Active Orders List -->
+        <div *ngIf="activeTab === 'active'">
+            <div *ngIf="activeOrders.length === 0" class="text-center py-12 bg-base-200 rounded-box">
+                <h3 class="text-xl font-semibold mb-2">No hay pedidos activos</h3>
+                <p class="text-base-content/70">No tienes pedidos activos en este momento.</p>
+            </div>
+
+            <div class="space-y-4">
+                <div *ngFor="let order of activeOrders"
+                    class="card bg-base-100 shadow-sm border border-base-300 hover:shadow-md transition-shadow">
+                    <div class="card-body p-6">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                            <div>
+                                <div class="flex items-center gap-3 mb-1">
+                                    <h3 class="text-lg font-bold">Pedido #{{ order.orderNumber }}</h3>
+                                    <div class="badge {{ order.status | orderStatusBadge }}">
+                                        {{ order.status | orderStatusLabel }}
+                                    </div>
+                                </div>
+                                <p class="text-sm text-base-content/70">Realizado el {{ order.createdAt |
+                                    date:'mediumDate' }}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xl font-bold">{{ order.totalAmount | currency: order.currency }}</p>
+                                <p class="text-sm text-base-content/70">{{ order.items?.length || 0 }} artículos</p>
+                            </div>
+                        </div>
+                        <div class="card-actions justify-end mt-4">
+                            <a [routerLink]="['/customer/orders', order.id]" class="btn btn-primary btn-sm">Ver
+                                Detalles</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Orders List -->
+        <div *ngIf="activeTab === 'history'">
+            <div *ngIf="historyOrders.length === 0" class="text-center py-12 bg-base-200 rounded-box">
+                <h3 class="text-xl font-semibold mb-2">Sin historial de pedidos</h3>
+                <p class="text-base-content/70">Aún no has realizado ningún pedido.</p>
+            </div>
+
+            <div class="space-y-4">
+                <div *ngFor="let order of historyOrders"
+                    class="card bg-base-100 shadow-sm border border-base-300 hover:shadow-md transition-shadow">
+                    <div class="card-body p-6">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                            <div>
+                                <div class="flex items-center gap-3 mb-1">
+                                    <h3 class="text-lg font-bold">Pedido #{{ order.orderNumber }}</h3>
+                                    <div class="badge {{ order.status | orderStatusBadge }}">
+                                        {{ order.status | orderStatusLabel }}
+                                    </div>
+                                </div>
+                                <p class="text-sm text-base-content/70">Realizado el {{ order.createdAt |
+                                    date:'mediumDate' }}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xl font-bold">{{ order.totalAmount | currency: order.currency }}</p>
+                                <p class="text-sm text-base-content/70">{{ order.items?.length || 0 }} artículos</p>
+                            </div>
+                        </div>
+                        <div class="card-actions justify-end mt-4">
+                            <a [routerLink]="['/customer/orders', order.id]" class="btn btn-outline btn-sm">Ver
+                                Detalles</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

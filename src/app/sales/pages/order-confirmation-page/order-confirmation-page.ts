@@ -5,10 +5,11 @@ import { injectQuery } from '@tanstack/angular-query-experimental';
 import { Bookmark, CircleCheckBig, Clock, LucideAngularModule, Map, Phone, X } from 'lucide-angular';
 import { CheckoutOrder, OrderStatus } from '../../interfaces';
 import { CheckoutService } from '../../services/checkout.service';
+import { OrderStatusLabelPipe } from '../../../shared/pipes/order-status-label.pipe';
 
 @Component({
   selector: 'app-order-confirmation-page',
-  imports: [CurrencyPipe, LucideAngularModule, DatePipe],
+  imports: [CurrencyPipe, LucideAngularModule, DatePipe, OrderStatusLabelPipe],
   templateUrl: './order-confirmation-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -61,21 +62,7 @@ export class OrderConfirmationPage {
     return 'badge badge-ghost badge-lg text-base-content/70';
   }
 
-  getStatusLabel(status: OrderStatus): string {
-    const labels: Record<OrderStatus, string> = {
-      CREATED: 'Creado',
-      PENDING_PAYMENT: 'Pendiente de Pago',
-      PAID: 'Pagado',
-      PREPARING: 'Preparando',
-      SHIPPED: 'Enviado',
-      DELIVERED: 'Entregado',
-      CANCELED: 'Cancelado',
-      RETURN_REQUESTED: 'Devolución Solicitada',
-      RETURNED: 'Devuelto',
-      REFUNDED: 'Reembolsado',
-    };
-    return labels[status] ?? status;
-  }
+
 
   toAmount(value: string | number | null | undefined): number {
     if (value == null) {

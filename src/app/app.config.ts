@@ -1,8 +1,11 @@
+import { registerLocaleData } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
+import localeEs from '@angular/common/locales/es';
 import {
   ApplicationConfig,
   inject,
   isDevMode,
+  LOCALE_ID,
   provideAppInitializer,
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
@@ -23,6 +26,8 @@ const queryClient = new QueryClient({
   },
 });
 
+registerLocaleData(localeEs);
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZonelessChangeDetection(),
@@ -34,5 +39,6 @@ export const appConfig: ApplicationConfig = {
       inject(AuthService).initialize();
       inject(AppearanceService); // Ensure service starts to apply theme
     }),
+    { provide: LOCALE_ID, useValue: 'es' },
   ],
 };
