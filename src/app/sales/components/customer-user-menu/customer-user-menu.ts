@@ -52,4 +52,8 @@ export class CustomerUserMenu {
   onLogout() {
     this.logout.emit();
   }
+
+  goToMyOrders(): void {
+    this.router.navigateByUrl('/customer/orders');
+  }
 }
