@@ -1,0 +1,76 @@
+<aside class="w-72 min-h-screen bg-base-100 border-r border-base-200 flex flex-col transition-transform duration-300">
+    <!-- Header / Branding -->
+    <div class="p-6 border-b border-base-200/60">
+        <div class="flex items-center gap-3.5 hover:opacity-90 transition-all duration-300 group cursor-default">
+            <div
+                class="relative w-12 h-12 bg-base-100 flex items-center justify-center shrink-0 rounded-2xl shadow-sm border border-base-200 group-hover:shadow-md group-hover:-translate-y-0.5 transition-all duration-300">
+                <img src="/logo.svg" alt="Higinex Logo" class="w-full h-full object-cover p-1" />
+            </div>
+            <div class="flex flex-col items-start min-w-0">
+                <span
+                    class="text-xl font-black text-base-content leading-none tracking-tighter uppercase">Higinex</span>
+                <span class="text-[10px] font-bold text-primary uppercase tracking-[0.15em] mt-1 opacity-80">
+                    Inventario
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu -->
+    <ul class="menu flex-1 gap-2 p-4 text-sm font-medium text-base-content/70">
+        <!-- Bloque Inventario -->
+        <li class="menu-title px-4 py-2 text-xs font-bold uppercase tracking-widest text-base-content/40 mt-2">
+            Inventario General
+        </li>
+        <li>
+            <a routerLink="/admin/inventory"
+                routerLinkActive="bg-base-200 text-base-content font-bold active-menu-item shadow-sm"
+                [routerLinkActiveOptions]="{ exact: true }" class="rounded-xl group hover:bg-base-200 transition-all">
+                <lucide-icon [img]="dashboardIcon"
+                    class="w-[18px] h-[18px] group-[.active-menu-item]:text-primary text-base-content/60 transition-colors"></lucide-icon>
+                Resumen
+            </a>
+        </li>
+        <li>
+            <a routerLink="/admin/inventory/movements"
+                routerLinkActive="bg-base-200 text-base-content font-bold active-menu-item shadow-sm"
+                [routerLinkActiveOptions]="{ exact: true }" class="rounded-xl group hover:bg-base-200 transition-all">
+                <lucide-icon [img]="movementsIcon"
+                    class="w-[18px] h-[18px] group-[.active-menu-item]:text-primary text-base-content/60 transition-colors"></lucide-icon>
+                Movimientos
+            </a>
+        </li>
+
+        <div class="divider my-2 h-px bg-base-200 mx-4"></div>
+
+        <!-- Bloque Catálogo -->
+        <li class="menu-title px-4 py-2 text-xs font-bold uppercase tracking-widest text-base-content/40">
+            Catálogo
+        </li>
+        <li>
+            <a routerLink="/admin/inventory/products"
+                routerLinkActive="bg-base-200 text-base-content font-bold active-menu-item shadow-sm"
+                [routerLinkActiveOptions]="{ exact: true }" class="rounded-xl group hover:bg-base-200 transition-all">
+                <lucide-icon [img]="productsIcon"
+                    class="w-[18px] h-[18px] group-[.active-menu-item]:text-primary text-base-content/60 transition-colors"></lucide-icon>
+                Productos
+            </a>
+        </li>
+
+    </ul>
+
+    <!-- Footer / espacio inferior -->
+    <div class="p-6 border-t border-base-200">
+        <div class="rounded-xl bg-base-200/50 p-4 border border-base-200/50">
+            <p class="text-[10px] font-bold text-base-content/60 uppercase tracking-wider mb-2">Estado del Sistema</p>
+            <div class="flex items-center gap-2 text-xs text-base-content/80 font-bold">
+                <div class="relative flex h-2.5 w-2.5">
+                    <span
+                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-success"></span>
+                </div>
+                <span>Operativo</span>
+            </div>
+        </div>
+    </div>
+</aside>
