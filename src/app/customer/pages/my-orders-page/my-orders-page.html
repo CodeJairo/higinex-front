@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-base-100 py-8 px-4 sm:px-6">
+<div class="min-h-screen py-8 px-4 sm:px-6">
     <div class="container mx-auto max-w-4xl space-y-8">
 
         <!-- Header -->
@@ -71,13 +71,16 @@
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <!-- Left: Info -->
                         <div class="space-y-2">
-                            <div class="flex items-center gap-3">
-                                <span class="font-bold text-lg text-base-content">Pedido #{{ order.orderNumber }}</span>
-                                <div class="badge font-bold border-none {{ order.status | orderStatusBadge }}">
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                                <span class="font-bold text-lg text-base-content break-all sm:break-normal">
+                                    Pedido #{{ order.orderNumber }}
+                                </span>
+                                <div
+                                    class="badge font-bold border-none h-auto py-1 self-start sm:self-center {{ order.status | orderStatusBadge }}">
                                     {{ order.status | orderStatusLabel }}
                                 </div>
                             </div>
-                            <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-base-content/60">
+                            <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-base-content/60 pt-1">
                                 <span class="flex items-center gap-2">
                                     <lucide-icon [img]="calendarIcon" class="h-4 w-4"></lucide-icon>
                                     {{ order.createdAt | date:'mediumDate' }}
@@ -131,17 +134,17 @@
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
 
                         <div class="group-hover:opacity-100 transition-opacity space-y-2">
-                            <div class="flex items-center gap-3">
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
                                 <span
-                                    class="font-bold text-lg text-base-content/80 group-hover:text-base-content">Pedido
-                                    #{{
-                                    order.orderNumber }}</span>
+                                    class="font-bold text-lg text-base-content/80 group-hover:text-base-content break-all sm:break-normal">
+                                    Pedido #{{ order.orderNumber }}
+                                </span>
                                 <div
-                                    class="badge badge-ghost font-medium border-none {{ order.status | orderStatusBadge }}">
+                                    class="badge badge-ghost font-medium border-none h-auto py-1 self-start sm:self-center {{ order.status | orderStatusBadge }}">
                                     {{ order.status | orderStatusLabel }}
                                 </div>
                             </div>
-                            <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-base-content/60">
+                            <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-base-content/60 pt-1">
                                 <span class="flex items-center gap-2">
                                     <lucide-icon [img]="calendarIcon" class="h-4 w-4"></lucide-icon>
                                     {{ order.createdAt | date:'mediumDate' }}

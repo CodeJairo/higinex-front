@@ -14,11 +14,11 @@ interface AccentOption {
 }
 
 const ACCENT_SWATCHES: Record<string, string> = {
-  emerald: 'bg-emerald-500',
-  sky: 'bg-sky-500',
-  violet: 'bg-violet-500',
-  amber: 'bg-amber-400',
-  rose: 'bg-rose-500',
+  emerald: '#10b981',
+  sky: '#0ea5e9',
+  violet: '#8b5cf6',
+  amber: '#fbbf24',
+  rose: '#f43f5e',
 };
 
 @Component({
@@ -132,9 +132,13 @@ export class AppearancePage {
       : `${base} border-base-300`;
   }
 
-  accentSwatchClasses(id: string): string {
-    const swatch = ACCENT_SWATCHES[id] ?? 'bg-slate-300';
-    return `inline-block w-4 h-4 rounded-full ${swatch}`;
+  accentSwatchClasses(): string {
+    return `inline-block w-4 h-4 rounded-full border border-base-content/10`;
+  }
+
+  accentSwatchStyle(id: string): Record<string, string> {
+    const color = ACCENT_SWATCHES[id] ?? '#cbd5e1';
+    return { 'background-color': color };
   }
 
   saveAppearance(): void {

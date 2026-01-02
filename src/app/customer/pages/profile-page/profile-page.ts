@@ -1,7 +1,23 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import {
+  AlertCircle,
+  Calendar,
+  CheckCircle,
+  Key,
+  Lock,
+  LogOut,
+  LucideAngularModule,
+  Mail,
+  MapPin,
+  Palette,
+  Settings,
+  Shield,
+  Smartphone,
+  User,
+} from 'lucide-angular';
 
 interface CustomerProfile {
   name: string;
@@ -15,13 +31,28 @@ interface CustomerProfile {
 
 @Component({
   selector: 'customer-profile-page',
-
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, LucideAngularModule],
   templateUrl: './profile-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfilePage implements OnInit {
-  private router = new Router(); // si usas DI normal, cámbialo a inject(Router)
+  private readonly router = inject(Router);
+
+  // Icons
+  readonly checkCircleIcon = CheckCircle;
+  readonly alertCircleIcon = AlertCircle;
+  readonly userIcon = User;
+  readonly mailIcon = Mail;
+  readonly smartphoneIcon = Smartphone;
+  readonly shieldLockIcon = Shield; // Replaced ShieldLock with Shield as requested by linter
+  readonly lockIcon = Lock;
+  readonly calendarIcon = Calendar;
+  readonly shieldIcon = Shield;
+  readonly keyIcon = Key;
+  readonly logOutIcon = LogOut;
+  readonly settingsIcon = Settings;
+  readonly mapPinIcon = MapPin;
+  readonly paletteIcon = Palette;
 
   // Mock: lo ideal es que esto venga de tu AuthService / endpoint
   private readonly initialProfile: CustomerProfile = {
@@ -70,9 +101,13 @@ export class ProfilePage implements OnInit {
     console.log('Guardar perfil (mock)', this.profile());
 
     // Simulamos que se guardó y actualizamos "initialProfile" en memoria
-    (this.initialProfile as any) = { ...this.profile() };
+    // Nota: en una app real, esto actualizaría el store o recargaría datos.
+    Object.assign(this.initialProfile, this.profile());
 
-    this.isSaving.set(false);
+    // Simulamos delay de red
+    setTimeout(() => {
+      this.isSaving.set(false);
+    }, 1000);
   }
 
   resetChanges() {

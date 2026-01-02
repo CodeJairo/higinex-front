@@ -1,306 +1,215 @@
-<section class="space-y-6">
-  <!-- Encabezado -->
-  <header>
-    <h1 class="font-semibold text-base-content">Mi cuenta</h1>
-    <p class="text-sm text-base-content/60 mt-1">
-      Administra tu información personal y datos de contacto. Algunos campos están bloqueados por
-      seguridad y temas legales.
-    </p>
-  </header>
+<div class="min-h-screen py-8 px-4 sm:px-6">
+  <div class="container mx-auto max-w-4xl space-y-8">
 
-  <!-- Información principal -->
-  <div class="card bg-base-100 border border-base-200 shadow-sm overflow-hidden">
-    <div class="card-body p-6 md:p-8">
-      <div
-        class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-base-200 pb-4 mb-6"
-      >
-        <div>
-          <h2 class="card-title text-lg font-bold text-base-content">Información Personal</h2>
-          <p class="text-sm text-base-content/60">
-            Datos utilizados para la comunicación y facturación.
+    <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div>
+        <h1 class="text-3xl font-extrabold tracking-tight text-base-content">Mi Cuenta</h1>
+        <p class="text-base-content/60 text-sm mt-1">
+          Administra tu información personal, seguridad y preferencias.
+        </p>
+      </div>
+      <div class="badge badge-lg gap-2 py-4 px-4 border-base-200 shadow-sm"
+        [class.badge-success]="profile().emailVerified" [class.bg-success-content]="false"
+        [class.text-success-content]="profile().emailVerified" [class.badge-ghost]="!profile().emailVerified">
+        @if (profile().emailVerified) {
+        <lucide-icon [img]="checkCircleIcon" class="h-4 w-4"></lucide-icon>
+        <span>Perfil Verificado</span>
+        } @else {
+        <lucide-icon [img]="alertCircleIcon" class="h-4 w-4"></lucide-icon>
+        <span>Verificación Pendiente</span>
+        }
+      </div>
+    </header>
+
+    <div class="card bg-base-100 border border-base-200 shadow-sm rounded-2xl overflow-hidden">
+      <div class="card-body p-6 md:p-8">
+
+        <div class="border-b border-base-200 pb-6 mb-6">
+          <h2 class="text-xl font-bold text-base-content flex items-center gap-2">
+            <lucide-icon [img]="userIcon" class="h-5 w-5 text-primary"></lucide-icon>
+            Información Personal
+          </h2>
+          <p class="text-sm text-base-content/60 mt-1">
+            Datos básicos para tu identificación y facturación.
           </p>
         </div>
-        <div class="badge badge-ghost gap-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="w-4 h-4 text-primary"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A7.5 7.5 0 014.5 20.118z"
-            />
-          </svg>
-          Perfil {{ profile().emailVerified ? 'Verificado' : 'Incompleto' }}
-        </div>
-      </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-6">
-        <div class="space-y-4">
-          <h3 class="text-xs font-bold uppercase text-base-content/40 tracking-wider mb-2">
-            Datos de Contacto
-          </h3>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-8">
+          <div class="space-y-5">
+            <h3 class="text-xs font-bold uppercase text-base-content/40 tracking-wider">
+              Datos de Contacto
+            </h3>
 
-          <div class="form-control w-full">
-            <label class="label">
-              <span class="label-text font-medium">Nombre completo</span>
-            </label>
-            <label
-              class="input input-bordered flex items-center gap-2 focus-within:outline-primary"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 16 16"
-                fill="currentColor"
-                class="w-4 h-4 opacity-70"
-              >
-                <path
-                  d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z"
-                />
-              </svg>
-              <input
-                type="text"
-                class="grow"
-                placeholder="Nombre y apellidos"
-                [ngModel]="profile().name"
-                (ngModelChange)="onNameChange($event)"
-              />
-            </label>
-            <span class="label-text-alt text-xs text-base-content/40 mt-1 ml-1"
-              >Visible en facturas.</span
-            >
-          </div>
-
-          <div class="form-control w-full">
-            <label class="label justify-start gap-2">
-              <span class="label-text font-medium">Correo electrónico</span>
-              <span
-                class="badge badge-xs"
-                [ngClass]="
-                  profile().emailVerified
-                    ? 'badge-success badge-outline'
-                    : 'badge-warning badge-outline'
-                "
-              >
-                {{ profile().emailVerified ? 'Verificado' : 'Pendiente' }}
-              </span>
-            </label>
-            <label
-              class="input input-bordered flex items-center gap-2 focus-within:outline-primary"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 16 16"
-                fill="currentColor"
-                class="w-4 h-4 opacity-70"
-              >
-                <path
-                  d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z"
-                />
-                <path
-                  d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z"
-                />
-              </svg>
-              <input
-                type="email"
-                class="grow"
-                placeholder="email@ejemplo.com"
-                [ngModel]="profile().email"
-                (ngModelChange)="onEmailChange($event)"
-              />
-            </label>
-            <span class="label-text-alt text-xs text-base-content/40 mt-1 ml-1"
-              >Cambiarlo requiere re-verificación.</span
-            >
-          </div>
-
-          <div class="form-control w-full">
-            <label class="label">
-              <span class="label-text font-medium">Teléfono móvil</span>
-            </label>
-            <label
-              class="input input-bordered flex items-center gap-2 focus-within:outline-primary"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="w-4 h-4 opacity-70"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"
-                />
-              </svg>
-              <input
-                type="tel"
-                class="grow"
-                placeholder="+57 300 000 0000"
-                [ngModel]="profile().phone"
-                (ngModelChange)="onPhoneChange($event)"
-              />
-            </label>
-          </div>
-        </div>
-
-        <div class="space-y-4">
-          <h3 class="text-xs font-bold uppercase text-base-content/40 tracking-wider mb-2">
-            Identidad Legal
-          </h3>
-
-          <div class="bg-base-200/50 border border-base-200 rounded-lg p-5">
-            <div class="flex items-start gap-3 mb-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="w-5 h-5 text-base-content/40 mt-0.5"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
-                />
-              </svg>
-              <div>
-                <h4 class="text-sm font-semibold text-base-content">Información Protegida</h4>
-                <p class="text-xs text-base-content/60 mt-1 leading-relaxed">
-                  Por seguridad legal y fiscal, estos datos no se pueden editar libremente. Contacta
-                  a soporte para cambios.
-                </p>
-              </div>
+            <div class="form-control w-full">
+              <label class="label pt-0 pb-1">
+                <span class="label-text font-medium">Nombre</span>
+              </label>
+              <label class="input input-bordered flex items-center gap-3 focus-within:outline-primary bg-base-100">
+                <lucide-icon [img]="userIcon" class="h-4 w-4 opacity-50"></lucide-icon>
+                <input type="text" class="grow" placeholder="Nombre" [ngModel]="profile().name"
+                  (ngModelChange)="onNameChange($event)" />
+              </label>
+              <span class="label-text-alt text-xs text-base-content/40 mt-1 ml-1">Visible en facturas.</span>
             </div>
 
-            <div class="grid grid-cols-1 gap-3">
-              <div class="form-control">
-                <label class="label pt-0 pb-1">
-                  <span class="label-text text-xs text-base-content/60">Tipo de documento</span>
-                </label>
-                <input
-                  type="text"
-                  class="input input-bordered input-sm bg-base-100 text-base-content/70 border-base-300"
-                  [value]="profile().documentType"
-                  readonly
-                />
+            <div class="form-control w-full">
+              <label class="label pt-0 pb-1 justify-between">
+                <span class="label-text font-medium">Correo electrónico</span>
+              </label>
+              <label class="input input-bordered flex items-center gap-3 focus-within:outline-primary bg-base-100">
+                <lucide-icon [img]="mailIcon" class="h-4 w-4 opacity-50"></lucide-icon>
+                <input type="email" class="grow" placeholder="email@ejemplo.com" [ngModel]="profile().email"
+                  (ngModelChange)="onEmailChange($event)" />
+                @if (profile().emailVerified) {
+                <lucide-icon [img]="checkCircleIcon" class="h-4 w-4 text-success tooltip"
+                  data-tip="Verificado"></lucide-icon>
+                }
+              </label>
+              <span class="label-text-alt text-xs text-base-content/40 mt-1 ml-1">Cambiarlo requiere
+                re-verificación.</span>
+            </div>
+
+            <div class="form-control w-full">
+              <label class="label pt-0 pb-1">
+                <span class="label-text font-medium">Teléfono móvil</span>
+              </label>
+              <label class="input input-bordered flex items-center gap-3 focus-within:outline-primary bg-base-100">
+                <lucide-icon [img]="smartphoneIcon" class="h-4 w-4 opacity-50"></lucide-icon>
+                <input type="tel" class="grow" placeholder="+57 300 000 0000" [ngModel]="profile().phone"
+                  (ngModelChange)="onPhoneChange($event)" />
+              </label>
+            </div>
+          </div>
+
+          <div class="space-y-5">
+            <h3 class="text-xs font-bold uppercase text-base-content/40 tracking-wider">
+              Identidad Legal
+            </h3>
+
+            <div class="bg-base-200/40 border border-base-200 rounded-xl p-5">
+              <div class="flex items-start gap-3 mb-4">
+                <div class="bg-base-100 p-2 rounded-lg text-base-content/60 shadow-sm">
+                  <lucide-icon [img]="shieldLockIcon" class="h-5 w-5"></lucide-icon>
+                </div>
+                <div>
+                  <h4 class="text-sm font-bold text-base-content">Información Protegida</h4>
+                  <p class="text-xs text-base-content/60 mt-1 leading-relaxed">
+                    Por seguridad fiscal, estos datos no son editables. Contacta a soporte si necesitas corregirlos.
+                  </p>
+                </div>
               </div>
 
-              <div class="form-control">
-                <label class="label pt-0 pb-1">
-                  <span class="label-text text-xs text-base-content/60">Número de documento</span>
-                </label>
-                <div
-                  class="input input-bordered input-sm bg-base-100 text-base-content/70 border-base-300 flex items-center justify-between"
-                >
-                  <span>{{ profile().documentNumber }}</span>
-                  <span class="badge badge-ghost badge-xs text-base-content/40">ID</span>
+              <div class="space-y-3">
+                <div class="form-control">
+                  <label class="label pt-0 pb-1">
+                    <span class="label-text text-xs text-base-content/60">Tipo de documento</span>
+                  </label>
+                  <input type="text"
+                    class="input input-bordered input-sm bg-base-100 text-base-content/80 border-base-300 cursor-not-allowed focus:outline-none"
+                    [value]="profile().documentType" readonly />
+                </div>
+
+                <div class="form-control">
+                  <label class="label pt-0 pb-1">
+                    <span class="label-text text-xs text-base-content/60">Número de documento</span>
+                  </label>
+                  <div
+                    class="input input-bordered input-sm bg-base-100 text-base-content/80 border-base-300 flex items-center justify-between cursor-not-allowed">
+                    <span>{{ profile().documentNumber }}</span>
+                    <lucide-icon [img]="lockIcon" class="h-3 w-3 text-base-content/30"></lucide-icon>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div class="flex items-center justify-end gap-2 text-xs text-base-content/40 mt-2 px-1">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-3 h-3"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            Miembro desde: {{ profile().createdAt | date : 'longDate' }}
+            <div class="flex items-center justify-end gap-2 text-xs text-base-content/40 px-1">
+              <lucide-icon [img]="calendarIcon" class="h-3 w-3"></lucide-icon>
+              Miembro desde: {{ profile().createdAt | date : 'longDate' }}
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="card-actions justify-end mt-8 border-t border-base-200 pt-5">
-        <div class="flex items-center gap-3">
-          <button
-            type="button"
-            class="btn btn-ghost hover:bg-base-200"
-            [disabled]="!isDirty"
-            (click)="resetChanges()"
-          >
-            Cancelar
-          </button>
-          <button
-            type="button"
-            class="btn btn-primary px-8"
-            [class.btn-disabled]="!isDirty || isSaving()"
-            [disabled]="!isDirty || isSaving()"
-            (click)="saveProfile()"
-          >
-            <span *ngIf="isSaving()" class="loading loading-spinner loading-xs"></span>
-            {{ isSaving() ? 'Guardando...' : 'Guardar Cambios' }}
-          </button>
+        <div class="card-actions justify-end mt-8 border-t border-base-200 pt-6">
+          <div class="flex items-center gap-3">
+            <button type="button" class="btn btn-ghost hover:bg-base-200 rounded-xl" [disabled]="!isDirty"
+              (click)="resetChanges()">
+              Cancelar
+            </button>
+            <button type="button" class="btn btn-primary px-8 rounded-xl shadow-sm"
+              [class.btn-disabled]="!isDirty || isSaving()" [disabled]="!isDirty || isSaving()" (click)="saveProfile()">
+              @if (isSaving()) {
+              <span class="loading loading-spinner loading-xs"></span>
+              Guardando...
+              } @else {
+              Guardar Cambios
+              }
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Seguridad de la cuenta -->
-  <div class="card bg-base-100 border border-base-200 shadow-sm">
-    <div class="card-body">
-      <h2 class="card-title text-base">Seguridad</h2>
-      <p class="text-sm text-base-content/60">
-        Mantén tu cuenta protegida. Te recomendamos actualizar tu contraseña periódicamente.
-      </p>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-      <div class="mt-4 divide-y divide-base-200">
-        <div class="py-3 flex items-center justify-between gap-4">
-          <div>
-            <p class="text-sm font-medium text-base-content">Contraseña</p>
-            <p class="text-xs text-base-content/60">
-              Cambia tu contraseña y cierra sesión en otros dispositivos.
-            </p>
+      <div class="card bg-base-100 border border-base-200 shadow-sm rounded-2xl h-full">
+        <div class="card-body p-6">
+          <h2 class="card-title text-base font-bold flex items-center gap-2 mb-2">
+            <lucide-icon [img]="shieldIcon" class="h-5 w-5 text-warning"></lucide-icon>
+            Seguridad
+          </h2>
+
+          <div class="divide-y divide-base-200">
+            <div class="py-4 flex items-center justify-between gap-4">
+              <div>
+                <p class="text-sm font-medium text-base-content">Contraseña</p>
+                <p class="text-xs text-base-content/60 mt-0.5">Último cambio hace 3 meses</p>
+              </div>
+              <button type="button" class="btn btn-outline btn-sm rounded-lg" (click)="goToChangePassword()">
+                <lucide-icon [img]="keyIcon" class="h-4 w-4"></lucide-icon>
+                Actualizar
+              </button>
+            </div>
+
+            <div class="py-4 flex items-center justify-between gap-4">
+              <div>
+                <p class="text-sm font-medium text-base-content">Sesiones activas</p>
+                <p class="text-xs text-base-content/60 mt-0.5">Gestiona tus dispositivos</p>
+              </div>
+              <button type="button" class="btn btn-ghost btn-sm text-error hover:bg-error/10 rounded-lg">
+                <lucide-icon [img]="logOutIcon" class="h-4 w-4"></lucide-icon>
+                Cerrar otras
+              </button>
+            </div>
           </div>
-          <button type="button" class="btn btn-outline btn-sm" (click)="goToChangePassword()">
-            Cambiar contraseña
-          </button>
         </div>
+      </div>
 
-        <div class="py-3 flex items-center justify-between gap-4">
-          <div>
-            <p class="text-sm font-medium text-base-content">Sesiones activas</p>
-            <p class="text-xs text-base-content/60">
-              Si sospechas que alguien más tiene acceso, cierra sesión en todos los dispositivos.
-            </p>
+      <div class="card bg-base-100 border border-base-200 shadow-sm rounded-2xl h-full">
+        <div class="card-body p-6">
+          <h2 class="card-title text-base font-bold flex items-center gap-2 mb-2">
+            <lucide-icon [img]="settingsIcon" class="h-5 w-5 text-secondary"></lucide-icon>
+            Configuraciones
+          </h2>
+          <p class="text-sm text-base-content/60 mb-4">Accesos directos a otras áreas de tu cuenta.</p>
+
+          <div class="flex flex-col gap-3">
+            <button type="button"
+              class="btn btn-outline border-base-300 justify-start hover:border-primary hover:text-primary rounded-xl group"
+              (click)="goToAddresses()">
+              <lucide-icon [img]="mapPinIcon" class="h-4 w-4 group-hover:scale-110 transition-transform"></lucide-icon>
+              Gestionar direcciones de entrega
+            </button>
+
+            <button type="button"
+              class="btn btn-outline border-base-300 justify-start hover:border-primary hover:text-primary rounded-xl group"
+              (click)="goToAppearance()">
+              <lucide-icon [img]="paletteIcon" class="h-4 w-4 group-hover:scale-110 transition-transform"></lucide-icon>
+              Personalizar apariencia y estilo
+            </button>
           </div>
-          <button type="button" class="btn btn-ghost btn-sm btn-disabled">Cerrar sesiones</button>
         </div>
       </div>
     </div>
+
   </div>
-
-  <!-- Accesos rápidos -->
-  <div class="card bg-base-100 border border-base-200 shadow-sm">
-    <div class="card-body">
-      <h2 class="card-title text-base">Accesos rápidos</h2>
-      <p class="text-sm text-base-content/60">Otras configuraciones relacionadas con tu cuenta.</p>
-
-      <div class="mt-4 flex flex-wrap gap-3">
-        <button type="button" class="btn btn-outline btn-sm" (click)="goToAddresses()">
-          Gestionar direcciones
-        </button>
-
-        <button type="button" class="btn btn-outline btn-sm" (click)="goToAppearance()">
-          Apariencia y estilo
-        </button>
-      </div>
-    </div>
-  </div>
-</section>
+</div>

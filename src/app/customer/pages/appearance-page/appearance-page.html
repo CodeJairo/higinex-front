@@ -47,7 +47,7 @@
       <div class="mt-4 flex flex-wrap gap-3">
         @for (accent of accentOptions; track accent.id) {
         <button type="button" [class]="accentButtonClasses(accent.id)" (click)="selectAccent(accent.id)">
-          <span [class]="accentSwatchClasses(accent.id)"></span>
+          <span [class]="accentSwatchClasses()" [style]="accentSwatchStyle(accent.id)"></span>
           <span class="font-medium text-base-content/80">
             {{ accent.label }}
           </span>
