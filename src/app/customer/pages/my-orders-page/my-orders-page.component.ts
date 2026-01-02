@@ -1,8 +1,8 @@
-
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { injectQuery } from '@tanstack/angular-query-experimental';
+import { AlertCircle, ArrowLeft, Calendar, ChevronRight, CircleX, Clock, CreditCard, Download, LucideAngularModule, MapPin, Package, Printer, ShoppingBag, Tag } from 'lucide-angular';
 import { lastValueFrom } from 'rxjs';
 import { Order, OrderStatus } from '../../../admin/interfaces/orders.interface';
 import { CustomerOrdersService } from '../../services/customer-orders.service';
@@ -11,12 +11,26 @@ import { OrderStatusBadgePipe } from '../../../shared/pipes/order-status-badge.p
 
 @Component({
     selector: 'app-my-orders-page',
-    standalone: true,
-    imports: [CommonModule, RouterLink, OrderStatusLabelPipe, OrderStatusBadgePipe],
+    imports: [CommonModule, RouterLink, OrderStatusLabelPipe, OrderStatusBadgePipe, LucideAngularModule],
     templateUrl: './my-orders-page.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MyOrdersPageComponent {
     private readonly ordersService = inject(CustomerOrdersService);
+
+    readonly circleXIcon = CircleX;
+    readonly shoppingBagIcon = ShoppingBag;
+    readonly calendarIcon = Calendar;
+    readonly clockIcon = Clock;
+    readonly chevronRightIcon = ChevronRight;
+    readonly arrowLeftIcon = ArrowLeft;
+    readonly packageIcon = Package;
+    readonly mapPinIcon = MapPin;
+    readonly alertCircleIcon = AlertCircle;
+    readonly creditCardIcon = CreditCard;
+    readonly tagIcon = Tag;
+    readonly printerIcon = Printer;
+    readonly downloadIcon = Download;
 
     readonly ordersQuery = injectQuery(() => ({
         queryKey: ['customer-orders'],
@@ -27,9 +41,9 @@ export class MyOrdersPageComponent {
         },
     }));
 
-    activeTab: 'active' | 'history' = 'active';
+    activeTab = signal<'active' | 'history'>('active');
 
-    get activeOrders(): Order[] {
+    activeOrders = computed(() => {
         const orders = this.ordersQuery.data() || [];
         const activeStatuses = [
             OrderStatus.CREATED,
@@ -40,9 +54,9 @@ export class MyOrdersPageComponent {
             OrderStatus.RETURN_REQUESTED,
         ];
         return orders.filter((o) => activeStatuses.includes(o.status));
-    }
+    });
 
-    get historyOrders(): Order[] {
+    historyOrders = computed(() => {
         const orders = this.ordersQuery.data() || [];
         const historyStatuses = [
             OrderStatus.DELIVERED,
@@ -51,7 +65,7 @@ export class MyOrdersPageComponent {
             OrderStatus.REFUNDED,
         ];
         return orders.filter((o) => historyStatuses.includes(o.status));
-    }
+    });
 
 
 }

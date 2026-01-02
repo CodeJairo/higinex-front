@@ -1,107 +1,200 @@
-<div class="container mx-auto px-4 py-8 max-w-4xl">
-    <div class="mb-6">
-        <a routerLink="/customer/orders"
-            class="btn btn-ghost btn-sm gap-2 pl-0 hover:bg-transparent text-base-content/70">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd"
-                    d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                    clip-rule="evenodd" />
-            </svg>
-            Volver a Mis Pedidos
-        </a>
-    </div>
+<section class="space-y-6 pb-20 sm:pb-10">
+    <header class="flex flex-col gap-4">
+        <div>
+            <a routerLink="/customer/orders"
+                class="btn btn-ghost btn-sm -ml-2 gap-2 text-base-content/60 hover:text-base-content hover:bg-base-200/50 group w-fit">
+                <lucide-icon [img]="arrowLeftIcon"
+                    class="h-4 w-4 group-hover:-translate-x-1 transition-transform"></lucide-icon>
+                Volver a mis pedidos
+            </a>
+        </div>
 
-    <div *ngIf="orderQuery.isLoading()" class="flex justify-center py-12">
-        <span class="loading loading-spinner loading-lg"></span>
-    </div>
-
-    <div *ngIf="orderQuery.isError()" class="alert alert-error">
-        <span>Error al cargar los detalles del pedido. Por favor, inténtelo de nuevo.</span>
-    </div>
-
-    <div *ngIf="orderQuery.isSuccess() && orderQuery.data() as order" class="space-y-6">
-        <!-- Header -->
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        @if (orderQuery.isSuccess() && orderQuery.data(); as order) {
+        <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
             <div>
-                <h1 class="text-3xl font-bold mb-2">Pedido #{{ order.orderNumber }}</h1>
-                <p class="text-base-content/70">Realizado el {{ order.createdAt | date:'medium' }}</p>
+                <div class="flex items-center gap-3 mb-1">
+                    <h1 class="text-3xl font-extrabold text-base-content tracking-tight">
+                        Pedido #{{ order.orderNumber }}
+                    </h1>
+                    <div class="badge badge-lg font-semibold {{ order.status | orderStatusBadge }}">
+                        {{ order.status | orderStatusLabel }}
+                    </div>
+                </div>
+                <p class="text-sm text-base-content/60 flex items-center gap-2">
+                    <lucide-icon [img]="calendarIcon" class="h-4 w-4"></lucide-icon>
+                    Realizado el {{ order.createdAt | date:'longDate' }} a las {{ order.createdAt | date:'shortTime' }}
+                </p>
             </div>
-            <div class="badge {{ order.status | orderStatusBadge }} badge-lg p-4 font-semibold text-white">
-                {{ order.status | orderStatusLabel }}
+
+            <div class="flex gap-2">
+                <button class="btn btn-outline btn-sm gap-2 hidden sm:flex">
+                    <lucide-icon [img]="printerIcon" class="h-4 w-4"></lucide-icon>
+                    Imprimir factura
+                </button>
+                <button class="btn btn-ghost btn-sm gap-2 sm:hidden text-primary">
+                    <lucide-icon [img]="downloadIcon" class="h-4 w-4"></lucide-icon>
+                    Factura
+                </button>
             </div>
         </div>
+        }
+    </header>
 
-        <!-- Order Items -->
-        <div class="card bg-base-100 shadow-sm border border-base-300">
-            <div class="card-body">
-                <h2 class="card-title text-lg mb-4">Artículos</h2>
-                <div class="divide-y divide-base-200">
-                    <div *ngFor="let item of order.items" class="py-4 flex justify-between items-center">
-                        <div>
-                            <p class="font-bold">{{ item.productNameSnapshot }}</p>
-                            <p class="text-sm text-base-content/70">{{ item.variantNameSnapshot }}</p>
-                            <p class="text-sm mt-1">Cant: {{ item.quantity }}</p>
+    @if (orderQuery.isLoading()) {
+    <div class="card bg-base-100 border border-base-200 shadow-sm h-96">
+        <div class="card-body items-center justify-center">
+            <span class="loading loading-spinner loading-lg text-primary"></span>
+            <p class="text-base-content/50 mt-4 animate-pulse">Recuperando detalles del pedido...</p>
+        </div>
+    </div>
+    }
+
+    @if (orderQuery.isError()) {
+    <div role="alert" class="alert alert-error shadow-sm bg-error/10 text-error border-error/20">
+        <lucide-icon [img]="alertCircleIcon" class="h-6 w-6"></lucide-icon>
+        <div>
+            <h3 class="font-bold">Error al cargar el pedido</h3>
+            <div class="text-xs">No pudimos obtener la información. Por favor intenta nuevamente.</div>
+        </div>
+        <button class="btn btn-sm btn-ghost text-error hover:bg-error/20">Reintentar</button>
+    </div>
+    }
+
+    @if (orderQuery.isSuccess() && orderQuery.data(); as order) {
+    <div class="fade-in space-y-6">
+
+        <div class="card bg-base-100 border border-base-200 shadow-sm overflow-hidden">
+            <div
+                class="card-header px-6 py-4 border-b border-base-200 bg-base-200/30 flex justify-between items-center">
+                <h2 class="font-bold text-base-content flex items-center gap-2">
+                    <lucide-icon [img]="packageIcon" class="h-5 w-5 text-primary"></lucide-icon>
+                    Artículos ({{ order.items?.length || 0 }})
+                </h2>
+            </div>
+            <div class="divide-y divide-base-200">
+                @for (item of order.items; track item.id) {
+                <div class="p-4 sm:p-6 hover:bg-base-200/20 transition-colors group">
+                    <div class="flex justify-between items-start gap-4">
+                        <div class="flex-1">
+                            <h3
+                                class="font-bold text-base-content text-base sm:text-lg leading-tight group-hover:text-primary transition-colors">
+                                {{ item.productNameSnapshot }}
+                            </h3>
+                            @if (item.variantNameSnapshot) {
+                            <p class="text-sm text-base-content/60 mt-1">
+                                Variante: <span class="text-base-content/80 font-medium">{{ item.variantNameSnapshot
+                                    }}</span>
+                            </p>
+                            }
+                            <div class="mt-2 flex items-center gap-2 text-xs text-base-content/50">
+                                <span class="bg-base-200 px-2 py-1 rounded-md text-base-content/70 font-mono">
+                                    x{{ item.quantity }} unidad(es)
+                                </span>
+                            </div>
                         </div>
+
                         <div class="text-right">
-                            <p class="font-medium">{{ item.lineTotalAmount | currency: order.currency }}</p>
-                            <p class="text-xs text-base-content/70">{{ item.unitPriceAmount | currency: order.currency
-                                }} c/u</p>
+                            <p class="font-bold text-base-content text-lg">
+                                {{ item.lineTotalAmount | currency: order.currency }}
+                            </p>
+                            <p class="text-xs text-base-content/50 mt-1">
+                                {{ item.unitPriceAmount | currency: order.currency }} c/u
+                            </p>
                         </div>
                     </div>
                 </div>
+                }
             </div>
         </div>
 
-        <!-- Order Summary & Shipping -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Shipping Address -->
-            <div class="card bg-base-100 shadow-sm border border-base-300">
-                <div class="card-body">
-                    <h2 class="card-title text-md mb-2 text-base-content/70 uppercase text-sm tracking-wider">Dirección
-                        de Envío</h2>
-                    <div class="space-y-1" *ngIf="order.shippingAddress as address">
-                        <p class="font-bold">{{ address.recipientName }}</p>
-                        <p>{{ address.line1 }}</p>
-                        <p *ngIf="address.line2">{{ address.line2 }}</p>
-                        <p>{{ address.city }}, {{ address.state }} {{ address.postalCode }}</p>
-                        <p *ngIf="address.phone" class="text-sm mt-2 text-base-content/70">Teléfono: {{ address.phone }}
-                        </p>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+            <div class="card bg-base-100 border border-base-200 shadow-sm h-full">
+                <div class="card-body p-6">
+                    <h2
+                        class="card-title text-base font-bold text-base-content/70 uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <lucide-icon [img]="mapPinIcon" class="h-4 w-4"></lucide-icon>
+                        Detalles de Envío
+                    </h2>
+
+                    @if (order.shippingAddress; as address) {
+                    <div class="space-y-3">
+                        <div class="flex items-start gap-3">
+
+                            <div>
+                                <p class="font-bold text-base-content">{{ address.recipientName }}</p>
+                                <p class="text-sm text-base-content/60">{{ address.phone }}</p>
+                            </div>
+                        </div>
+
+                        <div class="p-4 bg-base-200/50 rounded-xl border border-base-200 text-sm space-y-1 mt-2">
+                            <p class="font-medium text-base-content">{{ address.line1 }}</p>
+                            @if (address.line2) { <p>{{ address.line2 }}</p> }
+                            <p class="text-base-content/60">{{ address.city }}, {{ address.state }} {{
+                                address.postalCode }}</p>
+                        </div>
                     </div>
-                    <p *ngIf="!order.shippingAddress" class="text-base-content/70 italic">No se proporcionó dirección de
-                        envío.</p>
+                    } @else {
+                    <div class="alert bg-base-200/50 border-none text-sm">
+                        <lucide-icon [img]="alertCircleIcon" class="h-4 w-4"></lucide-icon>
+                        <span>No se especificó dirección de envío (Recogida en tienda o Digital).</span>
+                    </div>
+                    }
                 </div>
             </div>
 
-            <!-- Payment Summary -->
-            <div class="card bg-base-100 shadow-sm border border-base-300">
-                <div class="card-body">
-                    <h2 class="card-title text-md mb-2 text-base-content/70 uppercase text-sm tracking-wider">Resumen
-                        del Pedido</h2>
-                    <div class="space-y-2">
-                        <div class="flex justify-between">
-                            <span class="text-base-content/70">Subtotal</span>
-                            <span>{{ order.subtotalAmount | currency: order.currency }}</span>
+            <div class="card bg-base-100 border border-base-200 shadow-sm h-full">
+                <div class="card-body p-6">
+                    <h2
+                        class="card-title text-base font-bold text-base-content/70 uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <lucide-icon [img]="creditCardIcon" class="h-4 w-4"></lucide-icon>
+                        Resumen de Pago
+                    </h2>
+
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between text-base-content/70">
+                            <span>Subtotal</span>
+                            <span class="font-medium text-base-content">{{ order.subtotalAmount | currency:
+                                order.currency }}</span>
                         </div>
-                        <div class="flex justify-between">
-                            <span class="text-base-content/70">Envío</span>
-                            <span>{{ order.shippingAmount | currency: order.currency }}</span>
+
+                        <div class="flex justify-between text-base-content/70">
+                            <span>Costo de envío</span>
+                            <span class="font-medium text-base-content">{{ order.shippingAmount | currency:
+                                order.currency }}</span>
                         </div>
-                        <div class="flex justify-between" *ngIf="+order.discountAmount > 0">
-                            <span class="text-base-content/70">Descuento</span>
-                            <span class="text-error">-{{ order.discountAmount | currency: order.currency }}</span>
+
+                        @if (+order.discountAmount > 0) {
+                        <div class="flex justify-between text-success">
+                            <span class="flex items-center gap-1"><lucide-icon [img]="tagIcon"
+                                    class="h-3 w-3"></lucide-icon> Descuento</span>
+                            <span class="font-bold">-{{ order.discountAmount | currency: order.currency }}</span>
                         </div>
-                        <div class="flex justify-between" *ngIf="+order.taxesAmount > 0">
-                            <span class="text-base-content/70">Impuestos</span>
-                            <span>{{ order.taxesAmount | currency: order.currency }}</span>
+                        }
+
+                        @if (+order.taxesAmount > 0) {
+                        <div class="flex justify-between text-base-content/70">
+                            <span>Impuestos</span>
+                            <span class="font-medium text-base-content">{{ order.taxesAmount | currency: order.currency
+                                }}</span>
                         </div>
+                        }
+
                         <div class="divider my-2"></div>
-                        <div class="flex justify-between font-bold text-lg">
-                            <span>Total</span>
-                            <span>{{ order.totalAmount | currency: order.currency }}</span>
+
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-lg text-base-content">Total</span>
+                            <span class="font-extrabold text-2xl text-primary">{{ order.totalAmount | currency:
+                                order.currency }}</span>
+                        </div>
+
+                        <div class="text-right text-xs text-base-content/40 mt-1">
+                            IVA incluido donde aplique
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+    }
+</section>
