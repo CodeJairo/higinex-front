@@ -1,0 +1,535 @@
+<div class="min-h-screen bg-base-200 p-3 md:p-6 lg:p-8 pt-20 md:pt-24">
+    <div class="max-w-7xl mx-auto space-y-6">
+
+        <div class="flex flex-col xl:flex-row xl:justify-between xl:items-start gap-6">
+            <div class="flex flex-col gap-2">
+                <div class="text-sm breadcrumbs text-base-content/50 mb-0 hidden sm:block">
+                    <ul>
+                        <li><a routerLink="/admin/dashboard" class="hover:text-primary transition-colors">Inicio</a>
+                        </li>
+                        <li><span class="font-medium text-base-content/80 cursor-default">Finanzas</span></li>
+                    </ul>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <h1
+                        class="text-2xl md:text-3xl lg:text-4xl font-black text-base-content tracking-tight flex items-center gap-3">
+                        Finanzas
+                        <span
+                            class="badge badge-primary badge-outline text-[10px] font-bold font-mono tracking-widest uppercase">Beta</span>
+                    </h1>
+                    <p class="text-sm md:text-base text-base-content/70 font-medium leading-relaxed max-w-2xl">
+                        Resumen financiero y gestión de transacciones.
+                    </p>
+                </div>
+            </div>
+
+            <div
+                class="flex flex-col sm:flex-row gap-3 w-full xl:w-auto bg-base-100 p-3 rounded-2xl shadow-sm border border-base-200 xl:bg-transparent xl:shadow-none xl:border-none xl:p-0">
+
+                <div class="join shadow-sm w-full sm:w-auto grid grid-cols-3 sm:flex bg-base-100">
+                    <button class="join-item btn btn-sm border-base-300" (click)="setMonth(-1)">
+                        <lucide-icon [img]="calendarIcon" class="w-4 h-4"></lucide-icon>
+                    </button>
+                    <button
+                        class="join-item btn btn-sm border-base-300 bg-base-100 font-medium capitalize min-w-0 sm:min-w-[160px] flex-1 justify-between group"
+                        (click)="openFilterModal()">
+                        <span class="truncate">{{ formatDateRange() }}</span>
+                        <lucide-icon [img]="chevronRight" class="w-3 h-3 opacity-50 rotate-90"></lucide-icon>
+                    </button>
+                    <button class="join-item btn btn-sm border-base-300" (click)="setMonth(1)">
+                        <lucide-icon [img]="chevronRight" class="w-4 h-4"></lucide-icon>
+                    </button>
+                </div>
+
+                <div class="dropdown dropdown-bottom dropdown-end w-full sm:w-auto">
+                    <div tabindex="0" role="button"
+                        class="btn btn-sm btn-primary w-full sm:w-auto gap-2 text-white shadow-md shadow-primary/20">
+                        <lucide-icon [img]="downloadIcon" class="w-4 h-4"></lucide-icon>
+                        <span>Exportar</span>
+                    </div>
+                    <ul tabindex="0"
+                        class="dropdown-content z-[1] menu p-2 shadow-xl bg-base-100 rounded-box w-52 border border-base-200 mt-1">
+                        <li class="menu-title text-xs uppercase tracking-wider opacity-50">Descargar como CSV</li>
+                        <li><a (click)="generateReportMutation.mutate({type: 'summary', format: 'csv'})">Resumen
+                                General</a></li>
+                        <li><a (click)="generateReportMutation.mutate({type: 'payments', format: 'csv'})">Listado de
+                                Pagos</a></li>
+                        <li><a (click)="generateReportMutation.mutate({type: 'refunds', format: 'csv'})">Reembolsos</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        @if (summaryQuery.isLoading()) {
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            @for (i of [1,2,3]; track i) {
+            <div class="skeleton h-32 w-full rounded-2xl bg-base-100"></div>
+            }
+        </div>
+        } @else {
+        @let summary = summaryQuery.data()!;
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+            <div class="card bg-base-100 shadow-sm border border-base-200">
+                <div class="card-body p-5 flex-row items-center justify-between">
+                    <div>
+                        <div class="text-xs font-bold uppercase tracking-wider opacity-50 mb-1">Ingresos Netos</div>
+                        <div class="text-2xl md:text-3xl font-black text-success tracking-tight">
+                            {{ summary.netRevenue | currency:'COP':'symbol-narrow':'1.0-0' }}
+                        </div>
+                    </div>
+                    <div class="p-3 bg-success/10 rounded-xl text-success">
+                        <lucide-icon [img]="dollarSignIcon" class="w-6 h-6"></lucide-icon>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card bg-base-100 shadow-sm border border-base-200">
+                <div class="card-body p-5 flex-row items-center justify-between">
+                    <div>
+                        <div class="text-xs font-bold uppercase tracking-wider opacity-50 mb-1">Total Cobrado</div>
+                        <div class="text-2xl md:text-3xl font-black text-base-content tracking-tight">
+                            {{ summary.totalPaid | currency:'COP':'symbol-narrow':'1.0-0' }}
+                        </div>
+                        <div class="text-xs font-medium opacity-60 mt-1 flex items-center gap-1">
+                            <span class="badge badge-xs bg-base-content/10 border-none font-mono px-1 py-2">{{
+                                summary.paymentsCount }}</span>
+                            transacciones
+                        </div>
+                    </div>
+                    <div class="p-3 bg-primary/10 rounded-xl text-primary">
+                        <lucide-icon [img]="receiptIcon" class="w-6 h-6"></lucide-icon>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card bg-base-100 shadow-sm border border-base-200">
+                <div class="card-body p-5 flex-row items-center justify-between">
+                    <div>
+                        <div class="text-xs font-bold uppercase tracking-wider opacity-50 mb-1">Reembolsado</div>
+                        <div class="text-2xl md:text-3xl font-black text-warning tracking-tight">
+                            {{ summary.totalRefunded | currency:'COP':'symbol-narrow':'1.0-0' }}
+                        </div>
+                        <div class="text-xs font-medium opacity-60 mt-1 flex items-center gap-1">
+                            <span class="badge badge-xs bg-warning/10 text-warning border-none font-mono px-1 py-2">{{
+                                summary.refundsCount }}</span>
+                            devoluciones
+                        </div>
+                    </div>
+                    <div class="p-3 bg-warning/10 rounded-xl text-warning">
+                        <lucide-icon [img]="refreshIcon" class="w-6 h-6"></lucide-icon>
+                    </div>
+                </div>
+            </div>
+        </div>
+        }
+
+        <div class="card bg-base-100 shadow-sm border border-base-200 overflow-hidden min-h-[500px]">
+
+            <div
+                class="border-b border-base-200 bg-base-200/30 p-4 flex flex-col md:flex-row justify-between items-center gap-4">
+
+                <div role="tablist"
+                    class="tabs tabs-boxed bg-base-100 border border-base-200 p-1 w-full md:w-auto grid grid-cols-2 md:block">
+                    <a role="tab" class="tab h-9 px-6 font-medium text-sm"
+                        [class.tab-active]="filters().tab === 'payments'"
+                        [class.bg-base-content]="filters().tab === 'payments'"
+                        [class.text-base-100]="filters().tab === 'payments'" (click)="setTab('payments')">Pagos</a>
+                    <a role="tab" class="tab h-9 px-6 font-medium text-sm"
+                        [class.tab-active]="filters().tab === 'refunds'"
+                        [class.bg-base-content]="filters().tab === 'refunds'"
+                        [class.text-base-100]="filters().tab === 'refunds'" (click)="setTab('refunds')">Reembolsos</a>
+                </div>
+
+                <div class="relative w-full md:w-auto group">
+                    <lucide-icon [img]="searchIcon"
+                        class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-base-content/40 group-focus-within:text-primary transition-colors"></lucide-icon>
+                    <input type="text"
+                        class="input input-sm input-bordered w-full md:w-72 pl-10 focus:input-primary bg-base-100"
+                        placeholder="Buscar referencia, cliente..." [ngModel]="filters().q"
+                        (ngModelChange)="onSearch($event)" />
+                </div>
+            </div>
+
+            <div class="bg-base-100">
+
+                @if ((filters().tab === 'payments' && paymentsQuery.isLoading()) || (filters().tab === 'refunds' &&
+                refundsQuery.isLoading())) {
+                <div class="flex flex-col justify-center items-center h-64 gap-3 animate-pulse">
+                    <span class="loading loading-spinner loading-lg text-primary"></span>
+                    <span class="text-sm text-base-content/50 font-medium">Cargando registros...</span>
+                </div>
+                }
+
+                @if (filters().tab === 'payments' && paymentsQuery.isSuccess()) {
+
+                <div class="hidden md:block overflow-x-auto">
+                    <table class="table table-zebra w-full">
+                        <thead class="bg-base-200/50 text-xs uppercase font-bold text-base-content/60">
+                            <tr>
+                                <th class="pl-6">Referencia</th>
+                                <th>Fecha</th>
+                                <th>Cliente</th>
+                                <th>Método</th>
+                                <th>Estado</th>
+                                <th class="text-right">Monto</th>
+                                <th class="text-center w-14"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (payment of paymentsQuery.data()?.data; track payment.id) {
+                            <tr class="hover group">
+                                <td class="pl-6">
+                                    <a [href]="'/admin/orders/' + payment.orderId"
+                                        class="font-mono font-bold text-primary hover:underline text-sm">
+                                        #{{ payment.orderNumber }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-medium">{{ payment.paidAt | date:'mediumDate'
+                                            }}</span>
+                                        <span class="text-[10px] text-base-content/50">{{ payment.paidAt |
+                                            date:'shortTime' }}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="flex flex-col max-w-[150px]">
+                                        <span class="text-sm font-bold truncate">{{ payment.customerName || 'Cliente
+                                            General' }}</span>
+                                        <span class="text-xs text-base-content/50 truncate">{{ payment.customerEmail
+                                            }}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="flex items-center gap-2" title="{{ payment.method }}">
+                                        <lucide-icon [img]="getPaymentMethodIcon(payment.method)"
+                                            class="w-4 h-4 opacity-70"></lucide-icon>
+                                        <span class="text-xs capitalize">{{ payment.method.toLowerCase().replace('_', '
+                                            ') }}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="badge badge-sm font-bold gap-1"
+                                        [class]="getStatusClass(payment.status)">
+                                        {{ getStatusLabel(payment.status) }}
+                                    </div>
+                                </td>
+                                <td class="text-right font-mono font-bold text-base-content">
+                                    {{ payment.amount | currency:'COP':'symbol-narrow':'1.0-0' }}
+                                </td>
+                                <td class="text-center pr-4">
+                                    <button
+                                        class="btn btn-ghost btn-xs btn-square opacity-70 hover:opacity-100 hover:text-primary tooltip tooltip-left"
+                                        data-tip="Factura" (click)="downloadInvoiceMutation.mutate(payment.orderId)">
+                                        <lucide-icon [img]="fileTextIcon" class="w-4 h-4"></lucide-icon>
+                                    </button>
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="md:hidden flex flex-col divide-y divide-base-200">
+                    @for (payment of paymentsQuery.data()?.data; track payment.id) {
+                    <div class="p-4 flex flex-col gap-3 hover:bg-base-50 transition-colors">
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs text-base-content/50 font-medium">{{ payment.paidAt |
+                                    date:'shortDate' }}</span>
+                                <span class="badge badge-sm badge-ghost font-mono">#{{ payment.orderNumber }}</span>
+                            </div>
+                            <div class="badge badge-sm font-bold" [class]="getStatusClass(payment.status)">
+                                {{ getStatusLabel(payment.status) }}
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="w-8 h-8 rounded-full bg-base-200 flex items-center justify-center text-base-content/60">
+                                <lucide-icon [img]="getPaymentMethodIcon(payment.method)" class="w-4 h-4"></lucide-icon>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="text-sm font-bold truncate">{{ payment.customerName || 'Cliente General' }}
+                                </div>
+                                <div class="text-xs text-base-content/50 capitalize">{{
+                                    payment.method.toLowerCase().replace('_', ' ') }}</div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-end pt-2 border-t border-base-100">
+                            <div class="flex flex-col">
+                                <span class="text-[10px] uppercase font-bold text-base-content/40">Total</span>
+                                <span class="text-lg font-black text-base-content tracking-tight">
+                                    {{ payment.amount | currency:'COP':'symbol-narrow':'1.0-0' }}
+                                </span>
+                            </div>
+                            <button class="btn btn-sm btn-ghost text-primary gap-1 px-2"
+                                (click)="downloadInvoiceMutation.mutate(payment.orderId)">
+                                <lucide-icon [img]="fileTextIcon" class="w-4 h-4"></lucide-icon>
+                                Factura
+                            </button>
+                        </div>
+                    </div>
+                    }
+                </div>
+
+                @if (paymentsQuery.data()?.data?.length === 0) {
+                <div class="flex flex-col items-center justify-center py-12 text-center opacity-60">
+                    <lucide-icon [img]="receiptIcon" class="w-10 h-10 mb-2 text-base-content/30"></lucide-icon>
+                    <p class="text-sm">No se encontraron pagos.</p>
+                </div>
+                }
+                }
+
+                @if (filters().tab === 'refunds' && refundsQuery.isSuccess()) {
+                <div class="hidden md:block overflow-x-auto">
+                    <table class="table table-zebra w-full">
+                        <thead class="bg-base-200/50 text-xs uppercase font-bold text-base-content/60">
+                            <tr>
+                                <th class="pl-6">Referencia</th>
+                                <th>Fecha</th>
+                                <th>Cliente</th>
+                                <th>Estado</th>
+                                <th class="text-right">Monto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (refund of refundsQuery.data()?.data; track refund.id) {
+                            <tr class="hover">
+                                <td class="pl-6">
+                                    <a [href]="'/admin/orders/' + refund.orderId"
+                                        class="font-mono font-bold text-primary hover:underline text-sm">
+                                        #{{ refund.orderNumber }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-medium">{{ refund.processedAt | date:'mediumDate'
+                                            }}</span>
+                                        <span class="text-[10px] text-base-content/50">{{ refund.processedAt |
+                                            date:'shortTime' }}</span>
+                                    </div>
+                                </td>
+                                <td class="text-sm font-bold">{{ refund.customerName || 'Cliente General' }}</td>
+                                <td>
+                                    <div class="badge badge-sm font-bold" [class]="getStatusClass(refund.status)">
+                                        {{ getStatusLabel(refund.status) }}
+                                    </div>
+                                </td>
+                                <td class="text-right font-mono font-bold text-warning">
+                                    -{{ refund.amount | currency:'COP':'symbol-narrow':'1.0-0' }}
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="md:hidden flex flex-col divide-y divide-base-200">
+                    @for (refund of refundsQuery.data()?.data; track refund.id) {
+                    <div class="p-4 flex flex-col gap-3 hover:bg-base-50 transition-colors">
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs text-base-content/50 font-medium">{{ refund.processedAt |
+                                    date:'shortDate' }}</span>
+                                <span class="badge badge-sm badge-ghost font-mono">#{{ refund.orderNumber }}</span>
+                            </div>
+                            <div class="badge badge-sm font-bold" [class]="getStatusClass(refund.status)">
+                                {{ getStatusLabel(refund.status) }}
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="w-8 h-8 rounded-full bg-warning/10 flex items-center justify-center text-warning">
+                                <lucide-icon [img]="refreshIcon" class="w-4 h-4"></lucide-icon>
+                            </div>
+                            <div class="text-sm font-bold truncate flex-1">{{ refund.customerName || 'Cliente General'
+                                }}</div>
+                        </div>
+                        <div class="flex justify-between items-end pt-2 border-t border-base-100">
+                            <span class="text-[10px] uppercase font-bold text-base-content/40">Reembolso</span>
+                            <span class="text-lg font-black text-warning tracking-tight">
+                                -{{ refund.amount | currency:'COP':'symbol-narrow':'1.0-0' }}
+                            </span>
+                        </div>
+                    </div>
+                    }
+                </div>
+
+                @if (refundsQuery.data()?.data?.length === 0) {
+                <div class="flex flex-col items-center justify-center py-12 text-center opacity-60">
+                    <lucide-icon [img]="refreshIcon" class="w-10 h-10 mb-2 text-base-content/30"></lucide-icon>
+                    <p class="text-sm">No se encontraron reembolsos.</p>
+                </div>
+                }
+                }
+            </div>
+
+            <div
+                class="border-t border-base-200 bg-base-50 p-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <span class="text-xs font-bold text-base-content/40 uppercase tracking-widest">Mostrando registros
+                    actuales</span>
+                <div class="join bg-base-100 shadow-sm">
+                    <button class="join-item btn btn-sm border-base-200" [disabled]="filters().page === 1"
+                        (click)="onPageChange(filters().page - 1)">«</button>
+                    <button class="join-item btn btn-sm border-base-200 pointer-events-none px-4 font-mono">{{
+                        filters().page }}</button>
+                    <button class="join-item btn btn-sm border-base-200"
+                        (click)="onPageChange(filters().page + 1)">»</button>
+                </div>
+            </div>
+        </div>
+
+        @if (showDateFilterModal()) {
+        <dialog class="modal modal-bottom sm:modal-middle modal-open backdrop-blur-sm">
+            <div class="modal-box p-0 max-w-2xl bg-base-100 h-[80vh] sm:h-auto overflow-hidden flex flex-col">
+                <div class="p-4 border-b border-base-200 flex justify-between items-center bg-base-200/50">
+                    <h3 class="font-bold text-lg flex items-center gap-2">
+                        <lucide-icon [img]="calendarIcon" class="w-5 h-5 text-primary"></lucide-icon>
+                        Filtrar Periodo
+                    </h3>
+                    <button class="btn btn-sm btn-circle btn-ghost" (click)="showDateFilterModal.set(false)">
+                        <lucide-icon [img]="xIcon" class="w-5 h-5"></lucide-icon>
+                    </button>
+                </div>
+
+                <div class="flex flex-col sm:flex-row flex-1 overflow-hidden">
+
+                    <div
+                        class="w-full sm:w-48 bg-base-200/30 border-b sm:border-b-0 sm:border-r border-base-200 p-2 flex sm:flex-col gap-1 overflow-x-auto sm:overflow-visible shrink-0">
+                        <button class="btn btn-sm sm:justify-start gap-2 flex-1 sm:flex-none whitespace-nowrap"
+                            [class.btn-active]="tempFilters().periodType === 'month'"
+                            [class.btn-ghost]="tempFilters().periodType !== 'month'"
+                            (click)="updateTempFilter({periodType: 'month'})">
+                            Mes
+                        </button>
+                        <button class="btn btn-sm sm:justify-start gap-2 flex-1 sm:flex-none whitespace-nowrap"
+                            [class.btn-active]="tempFilters().periodType === 'semester'"
+                            [class.btn-ghost]="tempFilters().periodType !== 'semester'"
+                            (click)="updateTempFilter({periodType: 'semester'})">
+                            Semestre
+                        </button>
+                        <button class="btn btn-sm sm:justify-start gap-2 flex-1 sm:flex-none whitespace-nowrap"
+                            [class.btn-active]="tempFilters().periodType === 'year'"
+                            [class.btn-ghost]="tempFilters().periodType !== 'year'"
+                            (click)="updateTempFilter({periodType: 'year'})">
+                            Año
+                        </button>
+                        <button class="btn btn-sm sm:justify-start gap-2 flex-1 sm:flex-none whitespace-nowrap"
+                            [class.btn-active]="tempFilters().periodType === 'custom'"
+                            [class.btn-ghost]="tempFilters().periodType !== 'custom'"
+                            (click)="updateTempFilter({periodType: 'custom'})">
+                            Personalizado
+                        </button>
+                    </div>
+
+                    <div class="flex-1 p-6 overflow-y-auto bg-base-100">
+
+                        @if (tempFilters().periodType === 'month') {
+                        <div class="space-y-4 animate-in fade-in zoom-in duration-200">
+                            <div class="form-control">
+                                <label class="label pt-0"><span class="label-text font-bold">Año</span></label>
+                                <div class="join w-full">
+                                    @for (year of availableYears; track year) {
+                                    <input class="join-item btn btn-sm flex-1" type="radio" name="yearMonth"
+                                        [attr.aria-label]="year" [checked]="tempFilters().selectedYear === year"
+                                        (click)="updateTempFilter({selectedYear: year})" />
+                                    }
+                                </div>
+                            </div>
+                            <div class="form-control">
+                                <label class="label"><span class="label-text font-bold">Mes</span></label>
+                                <div class="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                                    @for (month of availableMonths; track month; let i = $index) {
+                                    <button class="btn btn-sm font-normal"
+                                        [class.btn-primary]="tempFilters().selectedMonth === i"
+                                        [class.btn-outline]="tempFilters().selectedMonth !== i"
+                                        (click)="updateTempFilter({selectedMonth: i})">
+                                        {{ month.slice(0, 3) }}
+                                    </button>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        }
+
+                        @if (tempFilters().periodType === 'custom') {
+                        <div class="space-y-4 animate-in fade-in zoom-in duration-200">
+                            <div class="alert bg-base-200/50 text-xs border-none py-2">
+                                <lucide-icon [img]="calendarIcon" class="w-4 h-4"></lucide-icon>
+                                <span>Selecciona rango exacto.</span>
+                            </div>
+                            <div class="grid grid-cols-1 gap-4">
+                                <div class="form-control">
+                                    <label class="label pt-0"><span class="label-text font-bold">Desde</span></label>
+                                    <input type="date" class="input input-bordered w-full"
+                                        [ngModel]="tempFilters().customFrom"
+                                        (ngModelChange)="updateTempFilter({customFrom: $event})" />
+                                </div>
+                                <div class="form-control">
+                                    <label class="label"><span class="label-text font-bold">Hasta</span></label>
+                                    <input type="date" class="input input-bordered w-full"
+                                        [ngModel]="tempFilters().customTo"
+                                        (ngModelChange)="updateTempFilter({customTo: $event})" />
+                                </div>
+                            </div>
+                        </div>
+                        }
+
+                        @if (tempFilters().periodType === 'semester') {
+                        <div class="space-y-4 animate-in fade-in zoom-in duration-200">
+                            <div class="join w-full mb-4">
+                                @for (year of availableYears; track year) {
+                                <input class="join-item btn btn-sm flex-1" type="radio" name="yearSem"
+                                    [attr.aria-label]="year" [checked]="tempFilters().selectedYear === year"
+                                    (click)="updateTempFilter({selectedYear: year})" />
+                                }
+                            </div>
+                            <button class="btn btn-block justify-between"
+                                [class.btn-primary]="tempFilters().semester === 1"
+                                [class.btn-outline]="tempFilters().semester !== 1"
+                                (click)="updateTempFilter({semester: 1})">
+                                <span>Primer Semestre</span>
+                                <span class="text-xs opacity-70">Ene - Jun</span>
+                            </button>
+                            <button class="btn btn-block justify-between"
+                                [class.btn-primary]="tempFilters().semester === 2"
+                                [class.btn-outline]="tempFilters().semester !== 2"
+                                (click)="updateTempFilter({semester: 2})">
+                                <span>Segundo Semestre</span>
+                                <span class="text-xs opacity-70">Jul - Dic</span>
+                            </button>
+                        </div>
+                        }
+
+                        @if (tempFilters().periodType === 'year') {
+                        <div class="grid grid-cols-1 gap-3 animate-in fade-in zoom-in duration-200">
+                            @for (year of availableYears; track year) {
+                            <button class="btn btn-lg text-xl" [class.btn-primary]="tempFilters().selectedYear === year"
+                                [class.btn-outline]="tempFilters().selectedYear !== year"
+                                (click)="updateTempFilter({selectedYear: year})">
+                                {{ year }}
+                            </button>
+                            }
+                        </div>
+                        }
+
+                    </div>
+                </div>
+
+                <div class="p-4 border-t border-base-200 flex justify-end gap-2 bg-base-100">
+                    <button class="btn btn-ghost" (click)="showDateFilterModal.set(false)">Cancelar</button>
+                    <button class="btn btn-primary px-6" (click)="applyFilter()">Aplicar</button>
+                </div>
+            </div>
+            <form method="dialog" class="modal-backdrop">
+                <button (click)="showDateFilterModal.set(false)">close</button>
+            </form>
+        </dialog>
+        }
+
+    </div>
+</div>

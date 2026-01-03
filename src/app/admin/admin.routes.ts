@@ -83,6 +83,10 @@ export const adminRoutes: Routes = [
   },
 
   {
+    path: 'billing',
+    loadComponent: () => import('./pages/billing-page/billing-page').then(m => m.BillingPage)
+  },
+  {
     path: '',
     redirectTo: 'dashboard',
     pathMatch: 'full',

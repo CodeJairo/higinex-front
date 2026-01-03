@@ -1,34 +1,54 @@
-<div
-  class="hidden md:flex navbar z-50 glass mx-auto w-fit rounded-xl mt-2 fixed top-2 right-1 sm:right-2 transition-transform duration-300"
-  [class.translate-y-0]="isVisible()" [class.-translate-y-full]="!isVisible()">
-  <div class="navbar-center">
-    <ul class="menu menu-horizontal px-1">
-      <li routerLinkActive="link-primary">
-        <a routerLink="/admin/dashboard" class="text-base-content">Inicio</a>
-      </li>
-      <li routerLinkActive="link-primary">
-        <a routerLink="/admin/inventory" class="text-base-content">Inventario</a>
-      </li>
-      <li routerLinkActive="link-primary">
-        <a routerLink="/admin/orders" class="text-base-content">Pedidos</a>
-      </li>
-      <li routerLinkActive="link-primary">
-        <a routerLink="/admin/users" class="text-base-content">Usuarios</a>
-      </li>
-      <li routerLinkActive="link-primary">
-        <a routerLink="/admin/customers" class="text-base-content">Clientes</a>
-      </li>
-      <li routerLinkActive="link-primary">
-        <a routerLink="/admin/contracts" class="text-base-content">Contratos</a>
-      </li>
-      <li routerLinkActive="link-primary">
-        <a routerLink="/admin/billing" class="text-base-content">Facturación</a>
-      </li>
-    </ul>
-  </div>
-</div>
+<header
+  class="hidden md:block sticky top-0 z-50 w-full border-b border-base-200 bg-base-100/80 backdrop-blur supports-[backdrop-filter]:bg-base-100/60">
+  <div class="container mx-auto max-w-7xl">
+    <div class="navbar px-4 sm:px-6">
 
-<div class="dock hidden not-md:flex bg-base-100/90 backdrop-blur border-t border-base-200 pb-safe">
+      <div class="navbar-start">
+        <a routerLink="/admin/dashboard" class="btn btn-ghost text-xl font-bold tracking-tight text-primary">
+          Higinex
+        </a>
+      </div>
+
+      <div class="navbar-center">
+        <ul class="menu menu-horizontal px-1 gap-1">
+          <li>
+            <a routerLink="/admin/dashboard" routerLinkActive="active font-bold text-primary bg-primary/10"
+              class="rounded-lg text-sm font-medium transition-colors">Inicio</a>
+          </li>
+          <li>
+            <a routerLink="/admin/inventory" routerLinkActive="active font-bold text-primary bg-primary/10"
+              class="rounded-lg text-sm font-medium transition-colors">Inventario</a>
+          </li>
+          <li>
+            <a routerLink="/admin/orders" routerLinkActive="active font-bold text-primary bg-primary/10"
+              class="rounded-lg text-sm font-medium transition-colors">Pedidos</a>
+          </li>
+          <li>
+            <a routerLink="/admin/users" routerLinkActive="active font-bold text-primary bg-primary/10"
+              class="rounded-lg text-sm font-medium transition-colors">Usuarios</a>
+          </li>
+          <li>
+            <a routerLink="/admin/customers" routerLinkActive="active font-bold text-primary bg-primary/10"
+              class="rounded-lg text-sm font-medium transition-colors">Clientes</a>
+          </li>
+          <li>
+            <a routerLink="/admin/contracts" routerLinkActive="active font-bold text-primary bg-primary/10"
+              class="rounded-lg text-sm font-medium transition-colors">Contratos</a>
+          </li>
+          <li>
+            <a routerLink="/admin/billing" routerLinkActive="active font-bold text-primary bg-primary/10"
+              class="rounded-lg text-sm font-medium transition-colors">Facturación</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="navbar-end">
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="dock hidden not-md:flex bg-base-100/90 backdrop-blur border-t border-base-200 pb-safe z-50">
   <button routerLink="/admin/dashboard" class="text-base-content/60 hover:text-base-content transition-colors"
     routerLinkActive="dock-active text-primary">
     <lucide-icon [img]="houseIcon" class="w-6 h-6"></lucide-icon>
@@ -53,7 +73,6 @@
   </button>
 </div>
 
-<!-- Mobile Menu Bottom Sheet -->
 <dialog #mobileMenu class="modal modal-bottom sm:modal-middle">
   <div class="modal-box p-4 pt-6">
     <h3 class="font-bold text-lg mb-4 px-2">Menú Principal</h3>
