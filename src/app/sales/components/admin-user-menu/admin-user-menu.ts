@@ -6,7 +6,7 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import {
   CircleUser,
   FileText,
@@ -20,7 +20,7 @@ import {
 
 @Component({
   selector: 'sales-admin-user-menu',
-  imports: [LucideAngularModule],
+  imports: [LucideAngularModule, RouterLink],
   templateUrl: './admin-user-menu.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
