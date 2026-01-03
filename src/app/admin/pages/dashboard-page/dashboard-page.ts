@@ -21,6 +21,10 @@ import {
   Warehouse
 } from 'lucide-angular';
 import { lastValueFrom } from 'rxjs';
+import { startOfMonth, endOfMonth, format } from 'date-fns';
+import { InventoryManagementService } from '../../services/inventory.service';
+import { AnalyticsService } from '../../services/analytics.service';
+import { FinanceService } from '../../services/finance.service';
 import { Order, OrderStatus } from '../../interfaces/orders.interface';
 import { OrdersService } from '../../services/orders.service';
 
@@ -33,6 +37,9 @@ import { OrdersService } from '../../services/orders.service';
 export class DashboardPage {
   private router = inject(Router);
   private ordersService = inject(OrdersService);
+  private inventoryService = inject(InventoryManagementService);
+  private analyticsService = inject(AnalyticsService);
+  private financeService = inject(FinanceService);
 
   // Icons
   readonly cartIcon = ShoppingCart;
@@ -49,26 +56,23 @@ export class DashboardPage {
   readonly userPlusIcon = UserPlus;
   readonly fileTextIcon = FileText;
   readonly warehouseIcon = Warehouse;
-  readonly alertIcon = AlertCircle; // Added for canceled/returned
+  readonly alertIcon = AlertCircle;
 
-  // Stats (keeping mock for now as per request only mentioned orders)
-  readonly stats = {
-    ordersThisMonth: 12,
-    totalSavings: 1250000,
-    pendingOrders: 3,
-    preparingOrders: 2,
-    readyToShipOrders: 4,
-  };
+  // Queries
+  dashboardQuery = injectQuery(() => ({
+    queryKey: ['dashboard-kpi'],
+    queryFn: () => lastValueFrom(this.analyticsService.getDashboardKPIs())
+  }));
 
-  readonly lowStockProducts: { id: string; name: string; stock: number }[] | null = [
-    { id: 'PRD-2024-0987', name: 'Camiseta Deportiva Azul', stock: 5 },
-    { id: 'PRD-2024-1023', name: 'Zapatillas Running Pro', stock: 2 },
-  ];
-
-  // Recent orders query
   recentOrdersQuery = injectQuery(() => ({
     queryKey: ['recent-orders'],
-    queryFn: () => lastValueFrom(this.ordersService.getOrders({ limit: 3, offset: 0 })),
+    queryFn: () => lastValueFrom(this.ordersService.getOrders({ limit: 5, offset: 0 })),
+  }));
+
+  lowStockQuery = injectQuery(() => ({
+    queryKey: ['low-stock'],
+    queryFn: () => lastValueFrom(this.inventoryService.getInventoryBalances(50, 0))
+      .then(balances => balances.filter(item => item.onHand < 10).slice(0, 5))
   }));
 
   get currentDate(): string {
@@ -140,6 +144,30 @@ export class DashboardPage {
     }
   }
 
+  navigateToReport() {
+    const from = startOfMonth(new Date());
+    const to = endOfMonth(new Date());
+
+    // We can use the logic from billing page or simpler window.open if using cookie auth, 
+    // but better to use the service method if available. 
+    // Since we don't have a direct 'download' method exposed that returns a URL without blob handling in the snippet I saw earlier,
+    // I will use the blob approach from FinanceService similar to BillingPage.
+
+    this.financeService.generateReport({
+      type: 'summary',
+      format: 'csv',
+      from: from.toISOString(),
+      to: to.toISOString()
+    }).subscribe(blob => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `reporte-mensual-${format(new Date(), 'yyyy-MM-dd')}.csv`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    });
+  }
+
   navigateToInventory(): void {
     this.router.navigateByUrl('admin/inventory');
   }
@@ -151,8 +179,6 @@ export class DashboardPage {
   navigateToOrderDetail(id: string): void {
     this.router.navigate(['admin', 'orders', id]);
   }
-
-
 
   navigateToBilling(): void {
     this.router.navigateByUrl('admin/billing');

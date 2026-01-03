@@ -1,4 +1,4 @@
-<section class="min-h-screen bg-base-100">
+<section class="min-h-screen bg-base-200">
   <div class="max-w-7xl mx-auto p-6 lg:p-8">
     <!-- Header -->
     <div class="mb-8 bg-base-100 rounded-2xl p-6 sm:p-10 border border-base-200 shadow-sm relative overflow-hidden">
@@ -22,7 +22,7 @@
         </div>
 
         <div class="flex items-center gap-3">
-          <button class="btn btn-primary shadow-lg shadow-primary/20">
+          <button class="btn btn-primary shadow-lg shadow-primary/20" (click)="navigateToReport()">
             <lucide-icon [img]="fileTextIcon" class="w-4 h-4"></lucide-icon>
             Reporte Mensual
           </button>
@@ -32,15 +32,20 @@
 
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6 mb-8">
+      @if (dashboardQuery.isLoading()) {
+      <div class="skeleton h-40 w-full rounded-xl"></div>
+      <div class="skeleton h-40 w-full rounded-xl"></div>
+      } @else {
+      @let stats = dashboardQuery.data();
       <!-- Card 1: Pedidos -->
       <div
-        class="bg-base-200/50 border border-base-200 rounded-xl p-6 shadow-sm transition-all hover:shadow-md hover:border-primary/20 group hover:bg-base-200">
+        class="bg-base-100 border border-base-200 rounded-xl p-6 shadow-sm transition-all hover:shadow-md hover:border-primary/20 group ">
         <div class="flex items-center justify-between mb-4">
           <div class="p-3 bg-base-100 rounded-xl shadow-sm group-hover:bg-primary/10 transition-colors">
             <lucide-icon [img]="packageIcon"
               class="w-6 h-6 text-base-content/70 group-hover:text-primary transition-colors"></lucide-icon>
           </div>
-          <span class="text-4xl font-black tracking-tight text-base-content">{{ stats.ordersThisMonth }}</span>
+          <span class="text-4xl font-black tracking-tight text-base-content">{{ stats?.ordersCount || 0 }}</span>
         </div>
         <div>
           <h3 class="text-lg font-bold mb-1 text-base-content">Pedidos este mes</h3>
@@ -52,13 +57,13 @@
 
       <!-- Card 2: Ingresos -->
       <div
-        class="bg-base-200/50 border border-base-200 rounded-xl p-6 shadow-sm transition-all hover:shadow-md hover:border-success/20 group hover:bg-base-200">
+        class="bg-base-100 border border-base-200 rounded-xl p-6 shadow-sm transition-all hover:shadow-md hover:border-success/20 group ">
         <div class="flex items-center justify-between mb-4">
           <div class="p-3 bg-base-100 rounded-xl shadow-sm group-hover:bg-success/10 transition-colors">
             <lucide-icon [img]="tagIcon"
               class="w-6 h-6 text-base-content/70 group-hover:text-success transition-colors"></lucide-icon>
           </div>
-          <span class="text-4xl font-black tracking-tight text-base-content">{{ formatPrice(stats.totalSavings)
+          <span class="text-4xl font-black tracking-tight text-base-content">{{ formatPrice(stats?.revenue || 0)
             }}</span>
         </div>
         <div>
@@ -68,6 +73,7 @@
           </p>
         </div>
       </div>
+      }
     </div>
 
     <!-- Quick Actions -->
@@ -184,26 +190,33 @@
           </div>
 
           <div class="space-y-3 text-sm">
+            @if (dashboardQuery.isLoading()) {
+            <div class="skeleton h-4 w-full"></div>
+            <div class="skeleton h-4 w-full"></div>
+            <div class="skeleton h-4 w-full"></div>
+            } @else {
+            @let opStats = dashboardQuery.data()?.operational;
             <div class="flex items-center justify-between">
               <span class="text-base-content/70">Pedidos pendientes de confirmación</span>
               <span class="font-medium text-base-content">
-                {{ stats.pendingOrders }}
+                {{ opStats?.pending || 0 }}
               </span>
             </div>
 
             <div class="flex items-center justify-between">
               <span class="text-base-content/70">Pedidos en preparación</span>
               <span class="font-medium text-base-content">
-                {{ stats.preparingOrders }}
+                {{ opStats?.preparing || 0 }}
               </span>
             </div>
 
             <div class="flex items-center justify-between">
               <span class="text-base-content/70">Pedidos listos para despacho</span>
               <span class="font-medium text-base-content">
-                {{ stats.readyToShipOrders }}
+                {{ opStats?.shipped || 0 }}
               </span>
             </div>
+            }
           </div>
         </div>
 
@@ -215,14 +228,19 @@
           </div>
 
           <div class="space-y-3 text-sm">
-            @if (lowStockProducts?.length) { @for (product of lowStockProducts; track product.id) {
+            @if (lowStockQuery.isLoading()) {
+            <div class="skeleton h-12 w-full rounded-lg"></div>
+            <div class="skeleton h-12 w-full rounded-lg"></div>
+            } @else {
+            @let lowStockProducts = lowStockQuery.data();
+            @if (lowStockProducts?.length) { @for (product of lowStockProducts; track product.variantId) {
             <div class="flex items-center justify-between">
               <div class="min-w-0">
                 <p class="text-base-content truncate font-medium">
-                  {{ product.name }}
+                  {{ product.variant.product.name }}
                 </p>
                 <p class="text-xs text-base-content/60 truncate">
-                  Stock actual: {{ product.stock }} unidades
+                  {{ product.variant.name || 'Variante' }} • Stock actual: {{ product.onHand }}
                 </p>
               </div>
               <span class="px-2 py-1 rounded-full text-xs bg-warning/20 text-warning-content font-bold">
@@ -231,6 +249,7 @@
             </div>
             } } @else {
             <p class="text-sm text-base-content/60">No hay alertas de stock crítico por ahora.</p>
+            }
             }
           </div>
         </div>
