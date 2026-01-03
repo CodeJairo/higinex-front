@@ -2,12 +2,17 @@ import { Routes } from '@angular/router';
 import { adminGuard } from './auth/guards/admin.guard';
 import { guestGuard } from './auth/guards/guest.guard';
 import { authGuard } from './auth/guards/auth.guard';
+import { VerifyEmailPage } from './auth/pages/verify-email-page/verify-email-page';
 
 export const routes: Routes = [
   {
     path: 'auth',
     canActivate: [guestGuard],
     loadChildren: () => import('./auth/auth.routes').then((m) => m.authRoutes),
+  },
+  {
+    path: 'auth/verify',
+    component: VerifyEmailPage,
   },
   {
     path: 'customer',

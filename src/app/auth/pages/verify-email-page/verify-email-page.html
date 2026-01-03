@@ -1,0 +1,91 @@
+<div class="min-h-screen bg-base-200 flex flex-col items-center justify-center p-4">
+    <div class="w-full max-w-md animate-fade-in-up">
+
+        <!-- BRAND HEADER -->
+        <div class="text-center mb-8">
+            <div
+                class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 text-primary mb-4 shadow-sm border border-primary/20">
+                <img src="/logo.svg" alt="Higinex Logo" class="w-10 h-10 object-contain" />
+            </div>
+            <h1 class="text-3xl font-black text-base-content tracking-tight">Higinex</h1>
+        </div>
+
+        <!-- CARD CONTENT -->
+        <div class="card bg-base-100 shadow-xl border border-base-200 overflow-hidden relative">
+
+            <!-- Background Decoration -->
+            <div
+                class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none">
+            </div>
+
+            <div class="card-body p-8 text-center items-center">
+
+                <!-- LOADING STATE -->
+                @if (isLoading()) {
+                <div class="flex flex-col items-center gap-4 py-8">
+                    <span class="loading loading-spinner loading-lg text-primary"></span>
+                    <div class="flex flex-col gap-1">
+                        <h2 class="text-xl font-bold text-base-content">Verificando Correo</h2>
+                        <p class="text-base-content/60">Por favor espera un momento...</p>
+                    </div>
+                </div>
+                }
+
+                <!-- SUCCESS STATE -->
+                @if (isSuccess()) {
+                <div class="flex flex-col items-center gap-4 animate-in zoom-in duration-300">
+                    <div
+                        class="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center text-success mb-2">
+                        <lucide-icon [img]="checkCircleIcon" class="w-8 h-8"></lucide-icon>
+                    </div>
+
+                    <div class="space-y-2">
+                        <h2 class="text-2xl font-bold text-base-content">¡Correo Verificado!</h2>
+                        <p class="text-base-content/60">
+                            Tu dirección de correo electrónico ha sido confirmada correctamente. Ya puedes acceder a tu
+                            cuenta.
+                        </p>
+                    </div>
+
+                    <div class="w-full pt-6 mt-2">
+                        <a routerLink="/auth/login" class="btn btn-primary w-full shadow-lg shadow-primary/20">
+                            Iniciar Sesión
+                            <lucide-icon [img]="arrowRightIcon" class="w-4 h-4 ml-1"></lucide-icon>
+                        </a>
+                    </div>
+                </div>
+                }
+
+                <!-- ERROR STATE -->
+                @if (isError()) {
+                <div class="flex flex-col items-center gap-4 animate-in zoom-in duration-300">
+                    <div class="w-16 h-16 rounded-full bg-error/10 flex items-center justify-center text-error mb-2">
+                        <lucide-icon [img]="xCircleIcon" class="w-8 h-8"></lucide-icon>
+                    </div>
+
+                    <div class="space-y-2">
+                        <h2 class="text-2xl font-bold text-base-content">Verificación Fallida</h2>
+                        <p class="text-base-content/60">
+                            El enlace de verificación es inválido o ha expirado. Por favor, solicita uno nuevo o
+                            contacta a soporte.
+                        </p>
+                    </div>
+
+                    <div class="w-full pt-6 mt-2 flex flex-col gap-3">
+                        <a routerLink="/auth/login" class="btn btn-outline w-full">
+                            Volver al Inicio
+                        </a>
+                    </div>
+                </div>
+                }
+
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="text-center mt-8 text-xs text-base-content/40 font-medium">
+            &copy; 2026 Higinex. Todos los derechos reservados.
+        </div>
+
+    </div>
+</div>

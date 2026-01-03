@@ -172,7 +172,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @for (payment of paymentsQuery.data()?.data; track payment.id) {
+                            @for (payment of paymentsQuery.data().data; track payment.id) {
                             <tr class="hover group">
                                 <td class="pl-6">
                                     <a [href]="'/admin/orders/' + payment.orderId"
@@ -227,7 +227,7 @@
                 </div>
 
                 <div class="md:hidden flex flex-col divide-y divide-base-200">
-                    @for (payment of paymentsQuery.data()?.data; track payment.id) {
+                    @for (payment of paymentsQuery.data().data; track payment.id) {
                     <div class="p-4 flex flex-col gap-3 hover:bg-base-50 transition-colors">
                         <div class="flex justify-between items-start">
                             <div class="flex items-center gap-2">
@@ -270,7 +270,7 @@
                     }
                 </div>
 
-                @if (paymentsQuery.data()?.data?.length === 0) {
+                @if (paymentsQuery.data().data.length === 0) {
                 <div class="flex flex-col items-center justify-center py-12 text-center opacity-60">
                     <lucide-icon [img]="receiptIcon" class="w-10 h-10 mb-2 text-base-content/30"></lucide-icon>
                     <p class="text-sm">No se encontraron pagos.</p>
@@ -291,7 +291,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @for (refund of refundsQuery.data()?.data; track refund.id) {
+                            @for (refund of refundsQuery.data().data; track refund.id) {
                             <tr class="hover">
                                 <td class="pl-6">
                                     <a [href]="'/admin/orders/' + refund.orderId"
@@ -323,7 +323,7 @@
                 </div>
 
                 <div class="md:hidden flex flex-col divide-y divide-base-200">
-                    @for (refund of refundsQuery.data()?.data; track refund.id) {
+                    @for (refund of refundsQuery.data().data; track refund.id) {
                     <div class="p-4 flex flex-col gap-3 hover:bg-base-50 transition-colors">
                         <div class="flex justify-between items-start">
                             <div class="flex items-center gap-2">
@@ -353,7 +353,7 @@
                     }
                 </div>
 
-                @if (refundsQuery.data()?.data?.length === 0) {
+                @if (refundsQuery.data().data.length === 0) {
                 <div class="flex flex-col items-center justify-center py-12 text-center opacity-60">
                     <lucide-icon [img]="refreshIcon" class="w-10 h-10 mb-2 text-base-content/30"></lucide-icon>
                     <p class="text-sm">No se encontraron reembolsos.</p>

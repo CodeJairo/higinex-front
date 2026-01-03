@@ -38,7 +38,7 @@ const PRODUCTS_QUERY_KEY = ['inventory', 'products', PRODUCTS_QUERY] as const;
 
 @Component({
   selector: 'app-inventory-products-page',
-  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule],
   templateUrl: './inventory-products-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

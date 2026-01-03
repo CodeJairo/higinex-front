@@ -33,7 +33,7 @@ import { InventoryManagementService } from '../../services/inventory.service';
 @Component({
     selector: 'app-inventory-movements-page',
     standalone: true,
-    imports: [CommonModule, RouterLink, FormsModule, LucideAngularModule],
+    imports: [CommonModule, FormsModule, LucideAngularModule],
     templateUrl: './inventory-movements-page.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })

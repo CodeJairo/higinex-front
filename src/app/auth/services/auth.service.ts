@@ -127,6 +127,19 @@ export class AuthService {
     }
   }
 
+  async verifyEmail(token: string): Promise<boolean> {
+    try {
+      await firstValueFrom(
+        this.http.get(this.buildUrl('/auth/email/verify'), {
+          params: { token },
+        })
+      );
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
   logout(): void {
     this.logoutMutation.mutate();
   }

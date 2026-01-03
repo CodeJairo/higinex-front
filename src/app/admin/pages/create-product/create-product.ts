@@ -17,7 +17,7 @@ import { InventoryManagementService } from '../../services/inventory.service';
 
 @Component({
   selector: 'app-create-product',
-  imports: [ReactiveFormsModule, LucideAngularModule, RouterLink],
+  imports: [ReactiveFormsModule, LucideAngularModule],
   templateUrl: './create-product.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
