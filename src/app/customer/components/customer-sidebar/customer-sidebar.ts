@@ -8,6 +8,7 @@ interface customerNavItem {
   route: string;
   icon: any;
   description?: string;
+  disabled?: boolean; // Added disabled property
 }
 
 @Component({
@@ -48,12 +49,14 @@ export class CustomerSidebar {
       route: '/customer/favorites',
       icon: Heart,
       description: 'Productos que te gustan',
+      disabled: true, // Favorites disabled
     },
     {
       label: 'Notificaciones',
       route: '/customer/notifications',
       icon: Bell,
       description: 'Alertas y preferencias',
+      disabled: true, // Notifications disabled
     },
     {
       label: 'Apariencia',

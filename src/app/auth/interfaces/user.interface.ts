@@ -66,3 +66,13 @@ export interface ResetPasswordPayload {
   code: string;
   newPassword: string;
 }
+
+export interface ChangePasswordPayload {
+  currentPassword: string;
+  newPassword: string;
+}
+
+export interface UpdateCustomerProfilePayload {
+  email?: string;
+  phone?: string;
+}

@@ -6,6 +6,7 @@ import { injectMutation, injectQuery, QueryClient } from '@tanstack/angular-quer
 import { firstValueFrom, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
+  ChangePasswordPayload,
   LoginCredentials,
   LoginResponse,
   LogoutResponse,
@@ -56,6 +57,10 @@ export class AuthService {
       this.resetPasswordRequest(payload),
   }));
 
+  private readonly changePasswordMutation = injectMutation(() => ({
+    mutationFn: (payload: ChangePasswordPayload) => this.changePasswordRequest(payload),
+  }));
+
   private readonly refreshMutation = injectMutation(() => ({
     mutationFn: () => this.refreshRequest(),
     onSuccess: (data) => {
@@ -94,7 +99,8 @@ export class AuthService {
       this.logoutMutation.isPending() ||
       this.meQuery.isLoading() ||
       this.requestPasswordRecoveryMutation.isPending() ||
-      this.resetPasswordMutation.isPending()
+      this.resetPasswordMutation.isPending() ||
+      this.changePasswordMutation.isPending()
   );
   readonly isLoading$ = toObservable(this.isLoading);
   readonly sessionStatus = computed<SessionStatus>(() => {
@@ -136,6 +142,15 @@ export class AuthService {
   async resetPassword(payload: { email: string; code: string; newPassword: string }): Promise<boolean> {
     try {
       await this.resetPasswordMutation.mutateAsync(payload);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  async changePassword(payload: ChangePasswordPayload): Promise<boolean> {
+    try {
+      await this.changePasswordMutation.mutateAsync(payload);
       return true;
     } catch (error) {
       return false;
@@ -265,6 +280,14 @@ export class AuthService {
   }): Promise<void> {
     return firstValueFrom(
       this.http.post<void>(this.buildUrl('/auth/password/reset'), payload)
+    );
+  }
+
+  private async changePasswordRequest(payload: ChangePasswordPayload): Promise<void> {
+    return firstValueFrom(
+      this.http.patch<void>(this.buildUrl('/auth/password/change'), payload, {
+        headers: this.authHeaders(),
+      })
     );
   }
 

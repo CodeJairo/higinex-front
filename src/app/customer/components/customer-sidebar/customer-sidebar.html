@@ -7,14 +7,21 @@
     <nav class="p-2">
       <ul class="space-y-1">
         <li *ngFor="let item of navItems">
-          <a [routerLink]="item.route"
+          <a [routerLink]="item.disabled ? null : item.route" [attr.aria-disabled]="item.disabled"
+            [class.opacity-50]="item.disabled" [class.pointer-events-none]="item.disabled"
             routerLinkActive="bg-primary/5 text-primary !font-semibold shadow-[inset_3px_0_0_0_currentColor]"
             class="flex items-center gap-3 px-4 py-3 rounded-xl text-base-content/60 hover:bg-base-200 hover:text-base-content transition-all group">
             <lucide-icon [img]="item.icon" class="w-5 h-5 transition-colors group-hover:text-primary"
               routerLinkActive="text-primary"></lucide-icon>
 
             <div class="flex flex-col min-w-0">
-              <span class="text-sm leading-none">{{ item.label }}</span>
+              <span class="text-sm leading-none flex items-center justify-between w-full">
+                {{ item.label }}
+                @if(item.disabled) {
+                <span
+                  class="text-[9px] uppercase font-bold tracking-widest text-base-content/40 border border-base-content/10 px-1.5 py-0.5 rounded ml-2">Pronto</span>
+                }
+              </span>
               @if (item.description) {
               <span class="text-[11px] text-base-content/40 font-normal mt-1 truncate">
                 {{ item.description }}
@@ -43,7 +50,8 @@
 
 <nav
   class="md:hidden sticky top-16.25 z-20 bg-base-200/95 backdrop-blur-sm -mx-4 px-4 py-3 mb-6 border-b border-base-300 overflow-x-auto flex gap-2 no-scrollbar">
-  <a *ngFor="let item of navItems" [routerLink]="item.route"
+  <a *ngFor="let item of navItems" [routerLink]="item.disabled ? null : item.route" [class.opacity-50]="item.disabled"
+    [class.pointer-events-none]="item.disabled"
     routerLinkActive="!bg-primary !text-white !border-primary shadow-md shadow-primary/20"
     class="px-4 py-2 rounded-full bg-base-100 border border-base-300 text-xs font-bold text-base-content/60 whitespace-nowrap transition-all">
     {{ item.label }}

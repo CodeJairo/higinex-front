@@ -8,10 +8,10 @@
           Administra tu información personal, seguridad y preferencias.
         </p>
       </div>
-      <div class="badge badge-lg gap-2 py-4 px-4 border-base-200 shadow-sm"
-        [class.badge-success]="profile().emailVerified" [class.bg-success-content]="false"
-        [class.text-success-content]="profile().emailVerified" [class.badge-ghost]="!profile().emailVerified">
-        @if (profile().emailVerified) {
+      <div class="badge badge-lg gap-2 py-4 px-4 border-base-200 shadow-sm" [class.badge-success]="form().emailVerified"
+        [class.bg-success-content]="false" [class.text-success-content]="form().emailVerified"
+        [class.badge-ghost]="!form().emailVerified">
+        @if (form().emailVerified) {
         <lucide-icon [img]="checkCircleIcon" class="h-4 w-4"></lucide-icon>
         <span>Perfil Verificado</span>
         } @else {
@@ -44,12 +44,14 @@
               <label class="label pt-0 pb-1">
                 <span class="label-text font-medium">Nombre</span>
               </label>
-              <label class="input input-bordered flex items-center gap-3 focus-within:outline-primary bg-base-100">
+              <label
+                class="input input-bordered flex items-center gap-3 focus-within:outline-primary bg-base-100 cursor-not-allowed opacity-70">
                 <lucide-icon [img]="userIcon" class="h-4 w-4 opacity-50"></lucide-icon>
-                <input type="text" class="grow" placeholder="Nombre" [ngModel]="profile().name"
-                  (ngModelChange)="onNameChange($event)" />
+                <input type="text" class="grow cursor-not-allowed" placeholder="Nombre" [value]="form().name"
+                  readonly />
               </label>
-              <span class="label-text-alt text-xs text-base-content/40 mt-1 ml-1">Visible en facturas.</span>
+              <span class="label-text-alt text-xs text-base-content/40 mt-1 ml-1">Visible en facturas. (No
+                editable)</span>
             </div>
 
             <div class="form-control w-full">
@@ -58,15 +60,15 @@
               </label>
               <label class="input input-bordered flex items-center gap-3 focus-within:outline-primary bg-base-100">
                 <lucide-icon [img]="mailIcon" class="h-4 w-4 opacity-50"></lucide-icon>
-                <input type="email" class="grow" placeholder="email@ejemplo.com" [ngModel]="profile().email"
+                <input type="email" class="grow" placeholder="email@ejemplo.com" [ngModel]="form().email"
                   (ngModelChange)="onEmailChange($event)" />
-                @if (profile().emailVerified) {
+                @if (form().emailVerified) {
                 <lucide-icon [img]="checkCircleIcon" class="h-4 w-4 text-success tooltip"
                   data-tip="Verificado"></lucide-icon>
                 }
               </label>
-              <span class="label-text-alt text-xs text-base-content/40 mt-1 ml-1">Cambiarlo requiere
-                re-verificación.</span>
+              <span class="label-text-alt text-xs text-base-content/40 mt-1 ml-1">Usado para notificaciones de tus
+                pedidos.</span>
             </div>
 
             <div class="form-control w-full">
@@ -75,7 +77,7 @@
               </label>
               <label class="input input-bordered flex items-center gap-3 focus-within:outline-primary bg-base-100">
                 <lucide-icon [img]="smartphoneIcon" class="h-4 w-4 opacity-50"></lucide-icon>
-                <input type="tel" class="grow" placeholder="+57 300 000 0000" [ngModel]="profile().phone"
+                <input type="tel" class="grow" placeholder="+57 300 000 0000" [ngModel]="form().phone"
                   (ngModelChange)="onPhoneChange($event)" />
               </label>
             </div>
@@ -106,7 +108,7 @@
                   </label>
                   <input type="text"
                     class="input input-bordered input-sm bg-base-100 text-base-content/80 border-base-300 cursor-not-allowed focus:outline-none"
-                    [value]="profile().documentType" readonly />
+                    [value]="form().documentType" readonly />
                 </div>
 
                 <div class="form-control">
@@ -115,7 +117,7 @@
                   </label>
                   <div
                     class="input input-bordered input-sm bg-base-100 text-base-content/80 border-base-300 flex items-center justify-between cursor-not-allowed">
-                    <span>{{ profile().documentNumber }}</span>
+                    <span>{{ form().documentNumber }}</span>
                     <lucide-icon [img]="lockIcon" class="h-3 w-3 text-base-content/30"></lucide-icon>
                   </div>
                 </div>
@@ -124,19 +126,20 @@
 
             <div class="flex items-center justify-end gap-2 text-xs text-base-content/40 px-1">
               <lucide-icon [img]="calendarIcon" class="h-3 w-3"></lucide-icon>
-              Miembro desde: {{ profile().createdAt | date : 'longDate' }}
+              Miembro desde: {{ form().createdAt | date : 'longDate' }}
             </div>
           </div>
         </div>
 
         <div class="card-actions justify-end mt-8 border-t border-base-200 pt-6">
           <div class="flex items-center gap-3">
-            <button type="button" class="btn btn-ghost hover:bg-base-200 rounded-xl" [disabled]="!isDirty"
+            <button type="button" class="btn btn-ghost hover:bg-base-200 rounded-xl" [disabled]="!isDirty()"
               (click)="resetChanges()">
               Cancelar
             </button>
             <button type="button" class="btn btn-primary px-8 rounded-xl shadow-sm"
-              [class.btn-disabled]="!isDirty || isSaving()" [disabled]="!isDirty || isSaving()" (click)="saveProfile()">
+              [class.btn-disabled]="!isDirty() || isSaving()" [disabled]="!isDirty() || isSaving()"
+              (click)="saveProfile()">
               @if (isSaving()) {
               <span class="loading loading-spinner loading-xs"></span>
               Guardando...
@@ -162,9 +165,9 @@
             <div class="py-4 flex items-center justify-between gap-4">
               <div>
                 <p class="text-sm font-medium text-base-content">Contraseña</p>
-                <p class="text-xs text-base-content/60 mt-0.5">Último cambio hace 3 meses</p>
+                <p class="text-xs text-base-content/60 mt-0.5">Cambia tu contraseña para mayor seguridad.</p>
               </div>
-              <button type="button" class="btn btn-outline btn-sm rounded-lg" (click)="goToChangePassword()">
+              <button type="button" class="btn btn-outline btn-sm rounded-lg" (click)="openPasswordModal()">
                 <lucide-icon [img]="keyIcon" class="h-4 w-4"></lucide-icon>
                 Actualizar
               </button>
@@ -175,7 +178,8 @@
                 <p class="text-sm font-medium text-base-content">Sesiones activas</p>
                 <p class="text-xs text-base-content/60 mt-0.5">Gestiona tus dispositivos</p>
               </div>
-              <button type="button" class="btn btn-ghost btn-sm text-error hover:bg-error/10 rounded-lg">
+              <button type="button" class="btn btn-ghost btn-sm text-error hover:bg-error/10 rounded-lg"
+                (click)="logoutOtherSessions()">
                 <lucide-icon [img]="logOutIcon" class="h-4 w-4"></lucide-icon>
                 Cerrar otras
               </button>
@@ -213,3 +217,52 @@
 
   </div>
 </div>
+
+<!-- Change Password Modal -->
+@if (showPasswordModal()) {
+<div class="modal modal-open z-50">
+  <div class="modal-box relative">
+    <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" (click)="closePasswordModal()">✕</button>
+    <h3 class="font-bold text-lg mb-6 flex items-center gap-2">
+      <lucide-icon [img]="keyIcon" class="h-5 w-5"></lucide-icon>
+      Cambiar Contraseña
+    </h3>
+
+    <form (ngSubmit)="savePassword()">
+      <div class="form-control mb-4">
+        <label class="label">
+          <span class="label-text font-bold">Contraseña Actual</span>
+        </label>
+        <input type="password" [ngModel]="currentPassword()" (ngModelChange)="currentPassword.set($event)"
+          name="currentPassword" class="input input-bordered w-full" placeholder="••••••••" required />
+      </div>
+
+      <div class="form-control mb-8">
+        <label class="label">
+          <span class="label-text font-bold">Nueva Contraseña</span>
+        </label>
+        <input type="password" [ngModel]="newPassword()" (ngModelChange)="newPassword.set($event)" name="newPassword"
+          class="input input-bordered w-full" placeholder="••••••••" required minlength="6" />
+        <label class="label">
+          <span class="label-text-alt text-base-content/50">Mínimo 6 caracteres</span>
+        </label>
+      </div>
+
+      <div class="modal-action">
+        <button type="button" class="btn" (click)="closePasswordModal()" [disabled]="isPasswordSaving()">
+          Cancelar
+        </button>
+        <button type="submit" class="btn btn-primary"
+          [disabled]="isPasswordSaving() || !currentPassword() || !newPassword()">
+          @if (isPasswordSaving()) {
+          <span class="loading loading-spinner"></span>
+          } @else {
+          Actualizar Contraseña
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+  <div class="modal-backdrop bg-black/50" (click)="closePasswordModal()"></div>
+</div>
+}

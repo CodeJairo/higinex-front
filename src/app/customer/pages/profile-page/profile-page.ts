@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, Injector, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
@@ -18,6 +18,8 @@ import {
   Smartphone,
   User,
 } from 'lucide-angular';
+import { AuthService } from '../../../auth/services/auth.service';
+import { CustomerProfileService } from '../../services/customer-profile.service';
 
 interface CustomerProfile {
   name: string;
@@ -37,6 +39,8 @@ interface CustomerProfile {
 })
 export class ProfilePage implements OnInit {
   private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
+  private readonly customerProfileService = inject(CustomerProfileService);
 
   // Icons
   readonly checkCircleIcon = CheckCircle;
@@ -44,7 +48,7 @@ export class ProfilePage implements OnInit {
   readonly userIcon = User;
   readonly mailIcon = Mail;
   readonly smartphoneIcon = Smartphone;
-  readonly shieldLockIcon = Shield; // Replaced ShieldLock with Shield as requested by linter
+  readonly shieldLockIcon = Shield;
   readonly lockIcon = Lock;
   readonly calendarIcon = Calendar;
   readonly shieldIcon = Shield;
@@ -54,68 +58,123 @@ export class ProfilePage implements OnInit {
   readonly mapPinIcon = MapPin;
   readonly paletteIcon = Palette;
 
-  // Mock: lo ideal es que esto venga de tu AuthService / endpoint
-  private readonly initialProfile: CustomerProfile = {
-    name: 'Daniel Herrera',
-    email: 'daniel@example.com',
-    phone: '+57 300 123 4567',
-    documentType: 'CC',
-    documentNumber: '1234567890',
-    emailVerified: true,
-    createdAt: '2024-10-15T12:00:00.000Z',
-  };
+  // Real data signals
+  readonly user = this.authService.user;
 
-  profile = signal<CustomerProfile>({ ...this.initialProfile });
+  // Editable form state initialized with user data
+  readonly form = signal<CustomerProfile>({
+    name: '',
+    email: '',
+    phone: '',
+    documentType: '',
+    documentNumber: '',
+    emailVerified: false,
+    createdAt: '',
+  });
 
-  isSaving = signal(false);
+  // Change Password state
+  readonly showPasswordModal = signal(false);
+  readonly currentPassword = signal('');
+  readonly newPassword = signal('');
+  readonly isPasswordSaving = signal(false);
+
+  // Computed helper to detect changes
+  readonly isDirty = computed(() => {
+    const user = this.user();
+    if (!user?.customer) return false;
+
+    const current = this.form();
+    return current.email !== user.email || current.phone !== user.customer.phone;
+  });
+
+  readonly isSaving = computed(() => this.customerProfileService.updateProfileMutation.isPending());
+
+  constructor() {
+    // Initialize form with real data when available
+    effect(() => {
+      const user = this.user();
+      if (user && user.customer) {
+        this.form.set({
+          name: user.customer.name,
+          email: user.email,
+          phone: user.customer.phone,
+          documentType: user.customer.documentType,
+          documentNumber: user.customer.documentNumber,
+          emailVerified: true,
+          createdAt: user.customer.createdAt
+        });
+      }
+    });
+  }
 
   ngOnInit(): void {
-    // Más adelante: cargar perfil real desde un servicio si lo necesitas
-  }
-
-  get isDirty(): boolean {
-    const value = this.profile();
-    const base = this.initialProfile;
-    return value.name !== base.name || value.email !== base.email || value.phone !== base.phone;
-  }
-
-  onNameChange(value: string) {
-    this.profile.update((p) => ({ ...p, name: value }));
   }
 
   onEmailChange(value: string) {
-    this.profile.update((p) => ({ ...p, email: value }));
+    this.form.update((p) => ({ ...p, email: value }));
   }
 
   onPhoneChange(value: string) {
-    this.profile.update((p) => ({ ...p, phone: value }));
+    this.form.update((p) => ({ ...p, phone: value }));
   }
 
-  saveProfile() {
-    if (!this.isDirty) return;
+  async saveProfile() {
+    if (!this.isDirty()) return;
 
-    this.isSaving.set(true);
+    const success = await this.customerProfileService.updateProfile({
+      email: this.form().email,
+      phone: this.form().phone,
+    });
 
-    // Aquí luego llamas a tu servicio HTTP.
-    // Mock:
-    console.log('Guardar perfil (mock)', this.profile());
-
-    // Simulamos que se guardó y actualizamos "initialProfile" en memoria
-    // Nota: en una app real, esto actualizaría el store o recargaría datos.
-    Object.assign(this.initialProfile, this.profile());
-
-    // Simulamos delay de red
-    setTimeout(() => {
-      this.isSaving.set(false);
-    }, 1000);
+    // Toast or notification could go here
   }
 
   resetChanges() {
-    this.profile.set({ ...this.initialProfile });
+    const user = this.user();
+    if (user && user.customer) {
+      this.form.set({
+        name: user.customer.name,
+        email: user.email,
+        phone: user.customer.phone,
+        documentType: user.customer.documentType,
+        documentNumber: user.customer.documentNumber,
+        emailVerified: true,
+        createdAt: user.customer.createdAt
+      });
+    }
+  }
+
+  // Password Change Logic
+  openPasswordModal() {
+    this.currentPassword.set('');
+    this.newPassword.set('');
+    this.showPasswordModal.set(true);
+  }
+
+  closePasswordModal() {
+    this.showPasswordModal.set(false);
+  }
+
+  async savePassword() {
+    this.isPasswordSaving.set(true);
+    const success = await this.authService.changePassword({
+      currentPassword: this.currentPassword(),
+      newPassword: this.newPassword()
+    });
+    this.isPasswordSaving.set(false);
+
+    if (success) {
+      this.closePasswordModal();
+      // Could add success toast here
+    }
   }
 
   goToChangePassword() {
-    // this.router.navigateByUrl('/account/change-password');
+    this.openPasswordModal();
+  }
+
+  logoutOtherSessions() {
+    alert('Esta funcionalidad estará disponible en futuras versiones.');
   }
 
   goToAddresses() {
