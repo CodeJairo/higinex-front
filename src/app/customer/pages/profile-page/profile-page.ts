@@ -6,6 +6,8 @@ import {
   AlertCircle,
   Calendar,
   CheckCircle,
+  Eye,
+  EyeOff,
   Key,
   Lock,
   LogOut,
@@ -57,6 +59,8 @@ export class ProfilePage implements OnInit {
   readonly settingsIcon = Settings;
   readonly mapPinIcon = MapPin;
   readonly paletteIcon = Palette;
+  readonly eyeIcon = Eye;
+  readonly eyeOffIcon = EyeOff;
 
   // Real data signals
   readonly user = this.authService.user;
@@ -78,6 +82,10 @@ export class ProfilePage implements OnInit {
   readonly newPassword = signal('');
   readonly isPasswordSaving = signal(false);
 
+  // Password visibility signals
+  readonly showCurrentPassword = signal(false);
+  readonly showNewPassword = signal(false);
+
   // Computed helper to detect changes
   readonly isDirty = computed(() => {
     const user = this.user();
@@ -85,6 +93,14 @@ export class ProfilePage implements OnInit {
 
     const current = this.form();
     return current.email !== user.email || current.phone !== user.customer.phone;
+  });
+
+  // Password Validation
+  readonly isValidPassword = computed(() => {
+    const password = this.newPassword();
+    // Min 8 chars, at least one uppercase, one lowercase, one number
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/;
+    return password.length >= 8 && regex.test(password);
   });
 
   readonly isSaving = computed(() => this.customerProfileService.updateProfileMutation.isPending());
@@ -148,6 +164,8 @@ export class ProfilePage implements OnInit {
   openPasswordModal() {
     this.currentPassword.set('');
     this.newPassword.set('');
+    this.showCurrentPassword.set(false);
+    this.showNewPassword.set(false);
     this.showPasswordModal.set(true);
   }
 
@@ -155,7 +173,17 @@ export class ProfilePage implements OnInit {
     this.showPasswordModal.set(false);
   }
 
+  toggleCurrentPasswordVisibility() {
+    this.showCurrentPassword.update(v => !v);
+  }
+
+  toggleNewPasswordVisibility() {
+    this.showNewPassword.update(v => !v);
+  }
+
   async savePassword() {
+    if (!this.isValidPassword()) return;
+
     this.isPasswordSaving.set(true);
     const success = await this.authService.changePassword({
       currentPassword: this.currentPassword(),
@@ -175,6 +203,10 @@ export class ProfilePage implements OnInit {
 
   logoutOtherSessions() {
     alert('Esta funcionalidad estará disponible en futuras versiones.');
+  }
+
+  matchesRegex(value: string, pattern: string): boolean {
+    return new RegExp(pattern).test(value);
   }
 
   goToAddresses() {

@@ -220,49 +220,123 @@
 
 <!-- Change Password Modal -->
 @if (showPasswordModal()) {
-<div class="modal modal-open z-50">
-  <div class="modal-box relative">
-    <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" (click)="closePasswordModal()">✕</button>
-    <h3 class="font-bold text-lg mb-6 flex items-center gap-2">
-      <lucide-icon [img]="keyIcon" class="h-5 w-5"></lucide-icon>
-      Cambiar Contraseña
-    </h3>
+<div class="modal modal-open z-200">
+  <div class="modal-backdrop bg-base-300/30 backdrop-blur-sm" (click)="closePasswordModal()"></div>
 
-    <form (ngSubmit)="savePassword()">
-      <div class="form-control mb-4">
-        <label class="label">
-          <span class="label-text font-bold">Contraseña Actual</span>
-        </label>
-        <input type="password" [ngModel]="currentPassword()" (ngModelChange)="currentPassword.set($event)"
-          name="currentPassword" class="input input-bordered w-full" placeholder="••••••••" required />
-      </div>
+  <div class="modal-box relative max-w-md overflow-hidden border border-base-content/5 bg-base-100 p-0 shadow-2xl">
 
-      <div class="form-control mb-8">
-        <label class="label">
-          <span class="label-text font-bold">Nueva Contraseña</span>
-        </label>
-        <input type="password" [ngModel]="newPassword()" (ngModelChange)="newPassword.set($event)" name="newPassword"
-          class="input input-bordered w-full" placeholder="••••••••" required minlength="6" />
-        <label class="label">
-          <span class="label-text-alt text-base-content/50">Mínimo 6 caracteres</span>
-        </label>
-      </div>
+    <button
+      class="btn btn-circle btn-ghost btn-sm absolute right-4 top-4 text-base-content/40 hover:bg-base-content/10 hover:text-base-content"
+      (click)="closePasswordModal()">
+      ✕
+    </button>
 
-      <div class="modal-action">
-        <button type="button" class="btn" (click)="closePasswordModal()" [disabled]="isPasswordSaving()">
-          Cancelar
-        </button>
-        <button type="submit" class="btn btn-primary"
-          [disabled]="isPasswordSaving() || !currentPassword() || !newPassword()">
-          @if (isPasswordSaving()) {
-          <span class="loading loading-spinner"></span>
-          } @else {
-          Actualizar Contraseña
-          }
-        </button>
+    <div class="flex flex-col items-center bg-base-200/30 px-8 pt-10 pb-6 text-center">
+      <div
+        class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary ring-4 ring-base-100">
+        <lucide-icon [img]="keyIcon" class="h-8 w-8"></lucide-icon>
       </div>
-    </form>
+      <h3 class="text-xl font-bold text-base-content">Seguridad de la Cuenta</h3>
+      <p class="mt-1 text-sm text-base-content/60">Actualiza tus credenciales periódicamente</p>
+    </div>
+
+    <div class="px-8 py-8">
+      <form (ngSubmit)="savePassword()" class="flex flex-col gap-5">
+
+        <div class="form-control">
+          <label class="label px-1 pt-0 pb-2">
+            <span class="label-text text-xs font-semibold uppercase tracking-wider text-base-content/60">Contraseña
+              Actual</span>
+          </label>
+          <div class="relative group">
+            <input [type]="showCurrentPassword() ? 'text' : 'password'" [ngModel]="currentPassword()"
+              (ngModelChange)="currentPassword.set($event)" name="currentPassword"
+              class="input input-bordered w-full bg-base-100 px-4 py-6 text-base transition-all focus:border-primary focus:ring-4 focus:ring-primary/10 group-hover:border-base-content/30"
+              placeholder="Ingresa tu clave actual" required />
+            <button type="button"
+              class="btn btn-circle btn-ghost btn-sm absolute right-2 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-primary"
+              (click)="toggleCurrentPasswordVisibility()">
+              @if (showCurrentPassword()) {
+              <lucide-icon [img]="eyeOffIcon" class="h-5 w-5"></lucide-icon>
+              } @else {
+              <lucide-icon [img]="eyeIcon" class="h-5 w-5"></lucide-icon>
+              }
+            </button>
+          </div>
+        </div>
+
+        <div class="form-control">
+          <label class="label px-1 pt-0 pb-2">
+            <span class="label-text text-xs font-semibold uppercase tracking-wider text-base-content/60">Nueva
+              Contraseña</span>
+          </label>
+          <div class="relative group">
+            <input [type]="showNewPassword() ? 'text' : 'password'" [ngModel]="newPassword()"
+              (ngModelChange)="newPassword.set($event)" name="newPassword"
+              class="input input-bordered w-full bg-base-100 px-4 py-6 text-base transition-all focus:border-primary focus:ring-4 focus:ring-primary/10 group-hover:border-base-content/30"
+              placeholder="Crea una nueva clave" required />
+            <button type="button"
+              class="btn btn-circle btn-ghost btn-sm absolute right-2 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-primary"
+              (click)="toggleNewPasswordVisibility()">
+              @if (showNewPassword()) {
+              <lucide-icon [img]="eyeOffIcon" class="h-5 w-5"></lucide-icon>
+              } @else {
+              <lucide-icon [img]="eyeIcon" class="h-5 w-5"></lucide-icon>
+              }
+            </button>
+          </div>
+
+          <div class="mt-4 rounded-xl bg-base-200/50 p-4 border border-base-content/5">
+            <p class="mb-3 text-xs font-medium text-base-content/50">Requisitos de seguridad:</p>
+            <ul class="grid grid-cols-2 gap-x-2 gap-y-2 text-xs">
+              <li class="flex items-center gap-2 transition-colors duration-300"
+                [class.text-success]="newPassword().length >= 8"
+                [class.text-base-content/40]="newPassword().length < 8">
+                <div class="h-1.5 w-1.5 rounded-full" [class.bg-success]="newPassword().length >= 8"
+                  [class.bg-base-content/20]="newPassword().length < 8"></div>
+                Mínimo 8 caracteres
+              </li>
+              <li class="flex items-center gap-2 transition-colors duration-300"
+                [class.text-success]="matchesRegex(newPassword(), '(?=.*[A-Z])')"
+                [class.text-base-content/40]="!matchesRegex(newPassword(), '(?=.*[A-Z])')">
+                <div class="h-1.5 w-1.5 rounded-full" [class.bg-success]="matchesRegex(newPassword(), '(?=.*[A-Z])')"
+                  [class.bg-base-content/20]="!matchesRegex(newPassword(), '(?=.*[A-Z])')"></div>
+                Una mayúscula
+              </li>
+              <li class="flex items-center gap-2 transition-colors duration-300"
+                [class.text-success]="matchesRegex(newPassword(), '(?=.*[a-z])')"
+                [class.text-base-content/40]="!matchesRegex(newPassword(), '(?=.*[a-z])')">
+                <div class="h-1.5 w-1.5 rounded-full" [class.bg-success]="matchesRegex(newPassword(), '(?=.*[a-z])')"
+                  [class.bg-base-content/20]="!matchesRegex(newPassword(), '(?=.*[a-z])')"></div>
+                Una minúscula
+              </li>
+              <li class="flex items-center gap-2 transition-colors duration-300"
+                [class.text-success]="matchesRegex(newPassword(), '(?=.*\\d)')"
+                [class.text-base-content/40]="!matchesRegex(newPassword(), '(?=.*\\d)')">
+                <div class="h-1.5 w-1.5 rounded-full" [class.bg-success]="matchesRegex(newPassword(), '(?=.*\\d)')"
+                  [class.bg-base-content/20]="!matchesRegex(newPassword(), '(?=.*\\d)')"></div>
+                Un número
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="modal-action mt-2 grid grid-cols-2 gap-4">
+          <button type="button" class="btn btn-ghost hover:bg-base-content/10" (click)="closePasswordModal()"
+            [disabled]="isPasswordSaving()">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary shadow-lg shadow-primary/20"
+            [disabled]="isPasswordSaving() || !currentPassword() || !isValidPassword()">
+            @if (isPasswordSaving()) {
+            <span class="loading loading-spinner loading-sm"></span>
+            } @else {
+            Actualizar
+            }
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
-  <div class="modal-backdrop bg-black/50" (click)="closePasswordModal()"></div>
 </div>
 }
