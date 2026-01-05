@@ -47,6 +47,15 @@ export class AuthService {
     },
   }));
 
+  private readonly requestPasswordRecoveryMutation = injectMutation(() => ({
+    mutationFn: (email: string) => this.requestPasswordRecoveryRequest(email),
+  }));
+
+  private readonly resetPasswordMutation = injectMutation(() => ({
+    mutationFn: (payload: { email: string; code: string; newPassword: string }) =>
+      this.resetPasswordRequest(payload),
+  }));
+
   private readonly refreshMutation = injectMutation(() => ({
     mutationFn: () => this.refreshRequest(),
     onSuccess: (data) => {
@@ -84,7 +93,8 @@ export class AuthService {
       this.refreshMutation.isPending() ||
       this.logoutMutation.isPending() ||
       this.meQuery.isLoading() ||
-      this.isRecoveryLoadingSignal()
+      this.requestPasswordRecoveryMutation.isPending() ||
+      this.resetPasswordMutation.isPending()
   );
   readonly isLoading$ = toObservable(this.isLoading);
   readonly sessionStatus = computed<SessionStatus>(() => {
@@ -115,15 +125,20 @@ export class AuthService {
   }
 
   async sendPasswordRecovery(email: string): Promise<boolean> {
-    this.isRecoveryLoadingSignal.set(true);
-
     try {
-      await new Promise<void>((resolve) => {
-        setTimeout(resolve, 2000);
-      });
+      await this.requestPasswordRecoveryMutation.mutateAsync(email);
       return true;
-    } finally {
-      this.isRecoveryLoadingSignal.set(false);
+    } catch (error) {
+      return false;
+    }
+  }
+
+  async resetPassword(payload: { email: string; code: string; newPassword: string }): Promise<boolean> {
+    try {
+      await this.resetPasswordMutation.mutateAsync(payload);
+      return true;
+    } catch (error) {
+      return false;
     }
   }
 
@@ -234,6 +249,22 @@ export class AuthService {
       this.http.post<LogoutResponse>(this.buildUrl('/auth/logout'), null, {
         withCredentials: true,
       })
+    );
+  }
+
+  private async requestPasswordRecoveryRequest(email: string): Promise<void> {
+    return firstValueFrom(
+      this.http.post<void>(this.buildUrl('/auth/password/forgot'), { email })
+    );
+  }
+
+  private async resetPasswordRequest(payload: {
+    email: string;
+    code: string;
+    newPassword: string;
+  }): Promise<void> {
+    return firstValueFrom(
+      this.http.post<void>(this.buildUrl('/auth/password/reset'), payload)
     );
   }
 

@@ -56,3 +56,13 @@ export interface RegisterPayload {
   password: string;
   customer?: CustomerRegistration;
 }
+
+export interface RequestPasswordRecoveryPayload {
+  email: string;
+}
+
+export interface ResetPasswordPayload {
+  email: string;
+  code: string;
+  newPassword: string;
+}

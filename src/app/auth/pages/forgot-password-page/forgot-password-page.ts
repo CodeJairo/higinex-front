@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
@@ -7,6 +7,7 @@ import {
   CircleCheck,
   Eye,
   EyeOff,
+  Lock,
   LucideAngularModule,
   Mail,
   Search,
@@ -39,27 +40,52 @@ export class ForgotPasswordPage {
   readonly closeIcon = X;
 
   // Form state
+  step = signal<'EMAIL' | 'OTP_NEW_PASSWORD' | 'SUCCESS'>('EMAIL');
   email = signal('');
-  isSuccess = signal(false);
+  code = signal('');
+  newPassword = signal('');
+
+  // Computed helpers for template
+  readonly isSuccess = computed(() => this.step() === 'SUCCESS');
 
   // Loading state from service
   readonly isLoading = this.authService.isLoading;
 
   async onSubmit(): Promise<void> {
+    if (this.step() === 'EMAIL') {
+      await this.handleEmailStep();
+    } else if (this.step() === 'OTP_NEW_PASSWORD') {
+      await this.handleResetStep();
+    }
+  }
+
+  private async handleEmailStep(): Promise<void> {
     const success = await this.authService.sendPasswordRecovery(this.email());
     if (success) {
-      this.isSuccess.set(true);
+      this.step.set('OTP_NEW_PASSWORD');
+    }
+  }
+
+  private async handleResetStep(): Promise<void> {
+    const success = await this.authService.resetPassword({
+      email: this.email(),
+      code: this.code(),
+      newPassword: this.newPassword(),
+    });
+    if (success) {
+      this.step.set('SUCCESS');
     }
   }
 
   goToLogin(): void {
-    this.isSuccess.set(false);
-    this.email.set('');
+    this.resetForm();
     this.router.navigate(['/auth/login']);
   }
 
   resetForm(): void {
-    this.isSuccess.set(false);
+    this.step.set('EMAIL');
     this.email.set('');
+    this.code.set('');
+    this.newPassword.set('');
   }
 }
