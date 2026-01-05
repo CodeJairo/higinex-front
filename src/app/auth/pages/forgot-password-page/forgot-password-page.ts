@@ -45,8 +45,17 @@ export class ForgotPasswordPage {
   code = signal('');
   newPassword = signal('');
 
+  // Password visibility
+  showPassword = signal(false);
+
   // Computed helpers for template
   readonly isSuccess = computed(() => this.step() === 'SUCCESS');
+
+  readonly isValidPassword = computed(() => {
+    const password = this.newPassword();
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/;
+    return password.length >= 8 && regex.test(password);
+  });
 
   // Loading state from service
   readonly isLoading = this.authService.isLoading;
@@ -55,6 +64,7 @@ export class ForgotPasswordPage {
     if (this.step() === 'EMAIL') {
       await this.handleEmailStep();
     } else if (this.step() === 'OTP_NEW_PASSWORD') {
+      if (!this.isValidPassword()) return;
       await this.handleResetStep();
     }
   }
@@ -87,5 +97,14 @@ export class ForgotPasswordPage {
     this.email.set('');
     this.code.set('');
     this.newPassword.set('');
+    this.showPassword.set(false);
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword.update(v => !v);
+  }
+
+  matchesRegex(value: string, pattern: string): boolean {
+    return new RegExp(pattern).test(value);
   }
 }
