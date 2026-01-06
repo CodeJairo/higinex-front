@@ -51,20 +51,16 @@ export class ProductCard {
     }));
   });
 
-  getSlideId(imageId: string): string {
-    return `slide-${this.variant().id}-${imageId}`;
+  readonly currentSlideIndex = signal(0);
+
+  nextSlide(): void {
+    const total = this.images().length;
+    this.currentSlideIndex.update((i) => (i === total - 1 ? 0 : i + 1));
   }
 
-  getPrevSlideId(currentIndex: number): string {
-    const images = this.images();
-    const prevIndex = currentIndex === 0 ? images.length - 1 : currentIndex - 1;
-    return this.getSlideId(images[prevIndex].id);
-  }
-
-  getNextSlideId(currentIndex: number): string {
-    const images = this.images();
-    const nextIndex = currentIndex === images.length - 1 ? 0 : currentIndex + 1;
-    return this.getSlideId(images[nextIndex].id);
+  prevSlide(): void {
+    const total = this.images().length;
+    this.currentSlideIndex.update((i) => (i === 0 ? total - 1 : i - 1));
   }
   readonly availability = computed(() => {
     const inventory = this.variant().inventory;
