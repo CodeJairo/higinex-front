@@ -26,7 +26,7 @@ export interface ProductVariant {
 export interface ProductVariantImage {
   id: string;
   altText?: string;
-  sortOrder: number;
+  isDefault: boolean;
   createdAt: string;
   mimeType: string;
   filename?: string;
@@ -52,12 +52,10 @@ export interface UpdateVariantPayload {
 export interface CreateVariantImagePayload {
   file: File;
   altText?: string;
-  sortOrder?: number;
 }
 
 export interface UpdateVariantImagePayload {
   altText?: string;
-  sortOrder?: number;
 }
 
 export interface Product {

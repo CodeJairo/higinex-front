@@ -102,6 +102,19 @@ export class VariantsService {
     },
   }));
 
+  readonly setDefaultImageMutation = injectMutation(() => ({
+    mutationFn: (args: { variantId: string; imageId: string }) =>
+      this.setDefaultImageRequest(args.variantId, args.imageId),
+    onSuccess: (_, variables) => {
+      this.queryClient.invalidateQueries({
+        queryKey: ['variant-images', variables.variantId],
+      });
+      this.queryClient.invalidateQueries({
+        queryKey: ['variants', 'detail', variables.variantId],
+      });
+    },
+  }));
+
   // --- Public Query Builders / Helpers ---
 
   getVariantDetailQuery(variantId: string) {
@@ -225,7 +238,6 @@ export class VariantsService {
     const formData = new FormData();
     formData.append('file', payload.file);
     if (payload.altText) formData.append('altText', payload.altText);
-    if (payload.sortOrder !== undefined) formData.append('sortOrder', String(payload.sortOrder));
 
     const image = await this.authService.requestWithAuthHeaders((headers) =>
       this.http.post<ProductVariantImage>(
@@ -258,6 +270,16 @@ export class VariantsService {
     return this.authService.requestWithAuthHeaders((headers) =>
       this.http.delete<MessageResponse>(
         this.buildUrl(`/products/variants/${variantId}/images/${imageId}`),
+        { headers }
+      )
+    );
+  }
+
+  async setDefaultImageRequest(variantId: string, imageId: string): Promise<MessageResponse> {
+    return this.authService.requestWithAuthHeaders((headers) =>
+      this.http.patch<MessageResponse>(
+        this.buildUrl(`/products/variants/${variantId}/images/${imageId}/default`),
+        {},
         { headers }
       )
     );

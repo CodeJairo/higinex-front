@@ -12,7 +12,8 @@ export interface Product {
 export interface VariantImage {
   id: string;
   altText: string;
-  sortOrder: number;
+  // sortOrder removed
+  isDefault: boolean;
   createdAt: string;
   mimeType: string;
   filename: string;

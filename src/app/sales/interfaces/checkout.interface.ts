@@ -15,7 +15,8 @@ export type OrderStatus =
 export interface CheckoutProductImage {
   id: string;
   altText?: string | null;
-  sortOrder: number;
+  // sortOrder removed
+  isDefault: boolean;
   createdAt: string;
   mimeType: string;
   filename?: string | null;

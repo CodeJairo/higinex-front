@@ -12,6 +12,7 @@ import {
   Plus,
   Save,
   SquarePen,
+  Star,
   Trash2,
   X,
 } from 'lucide-angular';
@@ -72,6 +73,7 @@ export class InventoryVariantsPage {
   readonly Trash2 = Trash2;
   readonly Edit = SquarePen;
   readonly Save = Save;
+  readonly Star = Star;
   readonly X = X;
   readonly ImageIcon = ImageIcon;
   readonly Archive = Archive;
@@ -172,7 +174,16 @@ export class InventoryVariantsPage {
     enabled: !!this.selectedVariantForImages(),
   }));
 
-  readonly variantImages = computed(() => this.variantImagesQuery.data() ?? []);
+  readonly variantImages = computed(() => {
+    const images = this.variantImagesQuery.data() ?? [];
+    return images.sort((a, b) => {
+      // Default first
+      if (a.isDefault && !b.isDefault) return -1;
+      if (!a.isDefault && b.isDefault) return 1;
+      // Then by date
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+  });
   readonly isImagesLoading = computed(() => this.variantImagesQuery.isLoading());
 
   openImageManager(variant: ProductVariant) {
@@ -192,7 +203,7 @@ export class InventoryVariantsPage {
     const file = input.files[0];
     await this.variantsService.uploadImageMutation.mutateAsync({
       variantId: this.selectedVariantForImages()!.id,
-      payload: { file, sortOrder: 0 },
+      payload: { file },
     });
     input.value = ''; // Reset input
   }
@@ -207,12 +218,11 @@ export class InventoryVariantsPage {
     }
   }
 
-  updateImageOrder(imageId: string, order: number) {
+  setAsDefault(imageId: string) {
     if (!this.selectedVariantForImages()) return;
-    this.variantsService.updateImageMutation.mutate({
+    this.variantsService.setDefaultImageMutation.mutate({
       variantId: this.selectedVariantForImages()!.id,
       imageId,
-      payload: { sortOrder: order },
     });
   }
 }
