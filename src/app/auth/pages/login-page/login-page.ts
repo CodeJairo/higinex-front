@@ -13,7 +13,7 @@ import {
   Send,
   ShoppingCart,
   X,
-Lock
+  Lock
 } from 'lucide-angular';
 import { AuthService } from '../../services/auth.service';
 
@@ -45,11 +45,11 @@ export class LoginPage {
   readonly showPassword = signal(false);
   readonly submitted = signal(false);
   readonly form = this.formBuilder.nonNullable.group({
-    email: this.formBuilder.nonNullable.control('admin@mail.com', [
+    email: this.formBuilder.nonNullable.control('', [
       Validators.required,
       Validators.email,
     ]),
-    password: this.formBuilder.nonNullable.control('c+1>=pI99M>m', [Validators.required]),
+    password: this.formBuilder.nonNullable.control('', [Validators.required]),
   });
 
   // Loading state from service
