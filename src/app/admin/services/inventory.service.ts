@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { injectMutation } from '@tanstack/angular-query-experimental';
+import { injectMutation, QueryClient } from '@tanstack/angular-query-experimental';
 import { defer, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../auth/services/auth.service';
@@ -12,10 +12,14 @@ export class InventoryManagementService {
   private readonly http = inject(HttpClient);
   private readonly authService = inject(AuthService);
   private readonly apiBaseUrl = environment.apiUrl.replace(/\/$/, '');
+  private readonly queryClient = inject(QueryClient);
   private readonly createProductErrorSignal = signal<string | null>(null);
 
   private readonly createProductMutation = injectMutation(() => ({
     mutationFn: (payload: CreateProductPayload) => this.createProductRequest(payload),
+    onSuccess: () => {
+      this.queryClient.invalidateQueries({ queryKey: ['inventory'] });
+    },
   }));
 
   readonly createProductError = this.createProductErrorSignal.asReadonly();

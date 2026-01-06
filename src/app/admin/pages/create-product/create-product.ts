@@ -12,6 +12,7 @@ import {
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { QueryClient } from '@tanstack/angular-query-experimental';
 import { CreateProductPayload } from '../../interfaces/products.interface';
 import { InventoryManagementService } from '../../services/inventory.service';
 
@@ -25,6 +26,7 @@ export class CreateProduct {
   private readonly inventoryService = inject(InventoryManagementService);
   private readonly formBuilder = inject(FormBuilder);
   private readonly router = inject(Router);
+  private readonly queryClient = inject(QueryClient);
 
   readonly submitted = signal(false);
   readonly saveSuccess = signal(false);
@@ -65,8 +67,10 @@ export class CreateProduct {
     const product = await this.inventoryService.createProduct(payload);
     if (product) {
       this.saveSuccess.set(true);
-      // Short delay to show success message or just immediate redirect
-      this.router.navigateByUrl(`/admin/inventory/variants/${product.id}`);
+      // Invalidate products query to trigger refetch
+      await this.queryClient.invalidateQueries({ queryKey: ['inventory', 'products'] });
+      // Redirect to products list instead of variants
+      this.router.navigateByUrl('/admin/inventory/products');
     }
   }
 

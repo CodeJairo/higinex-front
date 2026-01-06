@@ -30,6 +30,10 @@ export class VariantsService {
       this.queryClient.invalidateQueries({
         queryKey: ['variants', 'list', variables.productId],
       });
+      // Invalidate general list
+      this.queryClient.invalidateQueries({ queryKey: ['variants'] });
+      // Invalidate inventory summary/balances
+      this.queryClient.invalidateQueries({ queryKey: ['inventory'] });
     },
   }));
 

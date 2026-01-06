@@ -153,7 +153,17 @@
                                     </div>
                                 </td>
                                 <td>
-                                    @if (balance.variant.isActive) {
+                                    @if (balance.variant.product.status === 'ARCHIVED') {
+                                    <div class="badge badge-xs badge-error badge-outline gap-1">
+                                        <span class="w-1 h-1 rounded-full bg-current"></span>
+                                        Prod. Archivado
+                                    </div>
+                                    } @else if (balance.variant.product.status === 'DRAFT') {
+                                    <div class="badge badge-xs badge-ghost gap-1">
+                                        <span class="w-1 h-1 rounded-full bg-current"></span>
+                                        Borrador
+                                    </div>
+                                    } @else if (balance.variant.isActive) {
                                     <div class="badge badge-xs badge-success gap-1">
                                         <span class="w-1 h-1 rounded-full bg-current"></span>
                                         Activo
@@ -225,7 +235,11 @@
                                 </div>
                             </div>
                             <div class="flex flex-col items-end gap-2">
-                                @if (balance.variant.isActive) {
+                                @if (balance.variant.product.status === 'ARCHIVED') {
+                                <span class="badge badge-xs badge-error badge-outline">Archivado</span>
+                                } @else if (balance.variant.product.status === 'DRAFT') {
+                                <span class="badge badge-xs badge-ghost">Borrador</span>
+                                } @else if (balance.variant.isActive) {
                                 <span class="badge badge-xs badge-success">Activo</span>
                                 } @else {
                                 <span class="badge badge-xs badge-neutral">Inactivo</span>

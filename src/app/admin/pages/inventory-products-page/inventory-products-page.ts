@@ -84,9 +84,8 @@ export class InventoryProductsPage implements OnInit {
       this.actionMessage.set(null);
       this.publishingProductId.set(productId);
     },
-    onSuccess: (updated) => {
-      this.updateProductCache(updated);
-      this.actionMessage.set({ type: 'success', text: 'Producto publicado.' });
+    onSuccess: () => {
+      this.queryClient.invalidateQueries({ queryKey: ['inventory'] });
     },
     onError: () => {
       this.actionMessage.set({ type: 'error', text: 'No se pudo publicar el producto.' });
@@ -103,9 +102,8 @@ export class InventoryProductsPage implements OnInit {
       this.actionMessage.set(null);
       this.archivingProductId.set(productId);
     },
-    onSuccess: (updated) => {
-      this.updateProductCache(updated);
-      this.actionMessage.set({ type: 'success', text: 'Producto archivado.' });
+    onSuccess: () => {
+      this.queryClient.invalidateQueries({ queryKey: ['inventory'] });
     },
     onError: () => {
       this.actionMessage.set({ type: 'error', text: 'No se pudo archivar el producto.' });
@@ -121,7 +119,19 @@ export class InventoryProductsPage implements OnInit {
   ngOnInit(): void { }
 
   get products(): Product[] {
-    return this.productsQuery.data() ?? [];
+    const list = this.productsQuery.data() ?? [];
+    return [...list].sort((a, b) => {
+      // 1. Published first
+      if (a.status === 'PUBLISHED' && b.status !== 'PUBLISHED') return -1;
+      if (a.status !== 'PUBLISHED' && b.status === 'PUBLISHED') return 1;
+
+      // 2. Drafts second (optional personal preference, but logical flow: Published -> Draft -> Archived)
+      if (a.status === 'DRAFT' && b.status === 'ARCHIVED') return -1;
+      if (a.status === 'ARCHIVED' && b.status === 'DRAFT') return 1;
+
+      // 3. Fallback: Alphabetical by name
+      return a.name.localeCompare(b.name);
+    });
   }
 
   onManageVariants(product: Product): void {
@@ -160,18 +170,5 @@ export class InventoryProductsPage implements OnInit {
 
   isArchiving(productId: string): boolean {
     return this.archiveProductMutation.isPending() && this.archivingProductId() === productId;
-  }
-
-  private updateProductCache(updated: Product): void {
-    this.queryClient.setQueryData(PRODUCTS_QUERY_KEY, (current?: Product[]) => {
-      if (!current?.length) {
-        return [updated];
-      }
-      return current.map((product) => (product.id === updated.id ? updated : product));
-    });
-
-    if (this.selectedProduct()?.id === updated.id) {
-      this.selectedProduct.set(updated);
-    }
   }
 }
