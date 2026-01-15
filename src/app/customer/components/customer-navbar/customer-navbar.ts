@@ -147,7 +147,6 @@ export class CustomerNavbar implements OnInit, OnDestroy {
   logout(): void {
     this.showUserMenu.set(false);
     this.authService.logout();
-    window.location.reload();
   }
 
   private capitalizeWords(value: string): string {

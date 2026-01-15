@@ -155,7 +155,6 @@ export class Navbar implements OnInit, OnDestroy {
   logout(): void {
     this.showUserMenu.set(false);
     this.authService.logout();
-    window.location.reload();
   }
 
   updateQuantity(variantId: string, quantity: number): void {
