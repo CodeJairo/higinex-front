@@ -21,34 +21,37 @@ export const demoInterceptor: HttpInterceptorFn = (
 
   const url = req.url;
 
+  // Helper function to match exact API path segments
+  const matchesPath = (pattern: RegExp): boolean => pattern.test(url);
+
   // Handle GET requests that should return data from sessionStorage
   if (req.method === 'GET') {
-    // GET /orders - return demo orders
-    if (url.includes('/orders') && !url.includes('/demo/')) {
+    // GET /orders or /orders?... - return demo orders (but not /orders/:id or other subpaths)
+    if (matchesPath(/\/orders(\?|$)/) && !url.includes('/demo/')) {
       const orders = demoService.getDemoOrders();
       return of(new HttpResponse({ status: 200, body: orders }));
     }
 
     // GET /customers/me/addresses - return demo addresses
-    if (url.includes('/customers/me/addresses')) {
+    if (matchesPath(/\/customers\/me\/addresses(\?|$)/)) {
       const addresses = demoService.getDemoAddresses();
       return of(new HttpResponse({ status: 200, body: addresses }));
     }
 
     // GET /inventory/balances - return demo inventory
-    if (url.includes('/inventory/balances')) {
+    if (matchesPath(/\/inventory\/balances(\?|$)/)) {
       const inventory = demoService.getDemoInventory();
       return of(new HttpResponse({ status: 200, body: inventory }));
     }
 
-    // GET /products - return demo products
-    if (url.includes('/products') && !url.includes('/demo/')) {
+    // GET /products - return demo products (but not /products/:id)
+    if (matchesPath(/\/products(\?|$)/) && !url.includes('/demo/')) {
       const products = demoService.getDemoProducts();
       return of(new HttpResponse({ status: 200, body: products }));
     }
 
     // GET /contracts - return demo contracts
-    if (url.includes('/contracts') && !url.includes('/demo/')) {
+    if (matchesPath(/\/contracts(\?|$)/) && !url.includes('/demo/')) {
       const contracts = demoService.getDemoContracts();
       return of(new HttpResponse({ status: 200, body: contracts }));
     }
@@ -56,16 +59,16 @@ export const demoInterceptor: HttpInterceptorFn = (
 
   // Handle POST requests - redirect to demo endpoints
   if (req.method === 'POST') {
-    // POST /orders - redirect to /demo/orders
-    if (url.includes('/orders') && !url.includes('/demo/')) {
-      const newUrl = url.replace('/orders', '/demo/orders');
+    // POST /orders - redirect to /demo/orders (but not already demo paths)
+    if (matchesPath(/\/orders$/) && !url.includes('/demo/')) {
+      const newUrl = url.replace(/\/orders$/, '/demo/orders');
       const clonedReq = req.clone({ url: newUrl });
       return next(clonedReq);
     }
 
     // POST /customers/me/addresses - handle in demo mode
-    if (url.includes('/customers/me/addresses')) {
-      const newUrl = url.replace('/customers/me/addresses', '/demo/addresses');
+    if (matchesPath(/\/customers\/me\/addresses$/)) {
+      const newUrl = url.replace(/\/customers\/me\/addresses$/, '/demo/addresses');
       const clonedReq = req.clone({ url: newUrl });
       return next(clonedReq);
     }
@@ -74,15 +77,15 @@ export const demoInterceptor: HttpInterceptorFn = (
   // Handle PATCH requests - redirect to demo endpoints for order status changes
   if (req.method === 'PATCH') {
     // PATCH /orders/:id/status - redirect to /demo/orders/:id/status
-    if (url.includes('/orders/') && url.includes('/status') && !url.includes('/demo/')) {
-      const newUrl = url.replace('/orders/', '/demo/orders/');
+    if (matchesPath(/\/orders\/[^/]+\/status$/) && !url.includes('/demo/')) {
+      const newUrl = url.replace(/\/orders\//, '/demo/orders/');
       const clonedReq = req.clone({ url: newUrl });
       return next(clonedReq);
     }
 
     // PATCH /customers/me/addresses/:id - handle in demo mode
-    if (url.includes('/customers/me/addresses/')) {
-      const newUrl = url.replace('/customers/me/addresses/', '/demo/addresses/');
+    if (matchesPath(/\/customers\/me\/addresses\/[^/]+$/)) {
+      const newUrl = url.replace(/\/customers\/me\/addresses\//, '/demo/addresses/');
       const clonedReq = req.clone({ url: newUrl });
       return next(clonedReq);
     }
@@ -91,8 +94,8 @@ export const demoInterceptor: HttpInterceptorFn = (
   // Handle DELETE requests
   if (req.method === 'DELETE') {
     // DELETE /customers/me/addresses/:id - handle in demo mode
-    if (url.includes('/customers/me/addresses/')) {
-      const newUrl = url.replace('/customers/me/addresses/', '/demo/addresses/');
+    if (matchesPath(/\/customers\/me\/addresses\/[^/]+$/)) {
+      const newUrl = url.replace(/\/customers\/me\/addresses\//, '/demo/addresses/');
       const clonedReq = req.clone({ url: newUrl });
       return next(clonedReq);
     }
