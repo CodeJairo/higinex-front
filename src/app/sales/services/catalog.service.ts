@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../auth/services/auth.service';
+import { DemoService } from '../../shared/services/demo.service';
 import { Product, ProductVariant, VariantImage } from '../interfaces';
 
 const DEFAULT_LIMIT = 100;
@@ -11,6 +12,7 @@ const DEFAULT_OFFSET = 0;
 export class CatalogService {
   private readonly http = inject(HttpClient);
   private readonly authService = inject(AuthService);
+  private readonly demoService = inject(DemoService);
   private readonly apiBaseUrl = environment.apiUrl.replace(/\/$/, '');
 
   listProducts(limit: number = DEFAULT_LIMIT, offset: number = DEFAULT_OFFSET): Promise<Product[]> {
@@ -40,6 +42,7 @@ export class CatalogService {
       },
     });
 
+    // In demo mode, the interceptor will redirect to /demo/products
     return this.authService.requestWithAuthHeaders((headers) =>
       this.http.get<ProductVariant[]>(this.buildUrl('/products/variants'), { headers, params })
     );
