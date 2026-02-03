@@ -127,6 +127,14 @@
           @if (isLoginLoading()) { <span class="loading loading-spinner"></span> } @else {
           <span>Entrar al Portal</span> }
         </button>
+
+        <div class="text-center pt-4 border-t border-base-200 mt-6">
+          <p class="text-sm text-base-content/50 mb-2">¿Quieres explorar sin compromisos?</p>
+          <button type="button" (click)="goToDemo()"
+            class="text-sm font-bold text-primary hover:underline cursor-pointer">
+            Probar Demo
+          </button>
+        </div>
       </form>
     </div>
   </div>

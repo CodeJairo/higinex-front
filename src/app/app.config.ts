@@ -1,5 +1,5 @@
 import { registerLocaleData } from '@angular/common';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import localeEs from '@angular/common/locales/es';
 import {
   ApplicationConfig,
@@ -16,6 +16,7 @@ import { withDevtools } from '@tanstack/angular-query-experimental/devtools';
 import { routes } from './app.routes';
 import { AuthService } from './auth/services/auth.service';
 import { AppearanceService } from './customer/services/appearance.service';
+import { demoInterceptor } from './shared/interceptors/demo.interceptor';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -33,7 +34,7 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withViewTransitions()),
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([demoInterceptor])),
     provideTanStackQuery(queryClient, ...(isDevMode() ? [withDevtools()] : [])),
     provideAppInitializer(() => {
       inject(AuthService).initialize();

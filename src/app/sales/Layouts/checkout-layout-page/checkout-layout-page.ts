@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { Check, LucideAngularModule } from 'lucide-angular';
+import { DemoBanner } from '../../../shared/components/demo-banner/demo-banner';
 
 @Component({
   selector: 'app-checkout-layout-page',
-  imports: [RouterOutlet, LucideAngularModule],
+  imports: [RouterOutlet, LucideAngularModule, DemoBanner],
   templateUrl: './checkout-layout-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

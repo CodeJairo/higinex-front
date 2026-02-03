@@ -1,9 +1,10 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { injectMutation, QueryClient } from '@tanstack/angular-query-experimental';
-import { defer, map, Observable } from 'rxjs';
+import { defer, map, Observable, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../auth/services/auth.service';
+import { DemoService } from '../../shared/services/demo.service';
 import {
     CancelOrderPayload,
     ConfirmPaymentPayload,
@@ -32,6 +33,7 @@ import {
 export class OrdersService {
     private readonly http = inject(HttpClient);
     private readonly authService = inject(AuthService);
+    private readonly demoService = inject(DemoService);
     private readonly queryClient = inject(QueryClient)
     private readonly baseUrl = environment.apiUrl;
 
@@ -46,6 +48,15 @@ export class OrdersService {
 
     // 1) Listado de pedidos
     getOrders(filters: OrderFilters = {}): Observable<OrderListResponse | Order[]> {
+        // In demo mode, return orders from sessionStorage
+        if (this.demoService.isDemoMode()) {
+            const orders = this.demoService.getDemoOrders() as unknown as Order[];
+            const limit = filters.limit ?? 20;
+            const offset = filters.offset ?? 0;
+            const paginatedOrders = orders.slice(offset, offset + limit);
+            return of(paginatedOrders);
+        }
+
         let params = new HttpParams();
 
         if (filters.limit) params = params.set('limit', String(filters.limit));
@@ -69,6 +80,15 @@ export class OrdersService {
 
     // 2) Detalle de pedido
     getOrder(orderId: string): Observable<Order> {
+        // In demo mode, first check sessionStorage
+        if (this.demoService.isDemoMode()) {
+            const orders = this.demoService.getDemoOrders();
+            const order = orders.find((o) => o.id === orderId);
+            if (order) {
+                return of(order as unknown as Order);
+            }
+        }
+
         return defer(() =>
             this.authService.requestWithAuthHeaders((headers) =>
                 this.http.get<any>(this.buildUrl(`/orders/${orderId}`), { headers }).pipe(
@@ -106,6 +126,14 @@ export class OrdersService {
     }
 
     private async updateStatusRequest(orderId: string, payload: UpdateOrderStatusPayload): Promise<Order> {
+        // In demo mode, update status locally and optionally call demo endpoint
+        if (this.demoService.isDemoMode()) {
+            this.demoService.updateDemoOrderStatus(orderId, payload.status);
+            const orders = this.demoService.getDemoOrders();
+            const order = orders.find((o) => o.id === orderId);
+            return order as unknown as Order;
+        }
+
         return this.authService.requestWithAuthHeaders((headers) =>
             this.http.patch<any>(this.buildUrl(`/orders/${orderId}/status`), payload, { headers }).pipe(
                 map(res => this.unwrapResponse<Order>(res))

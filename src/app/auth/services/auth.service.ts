@@ -5,12 +5,14 @@ import { Router } from '@angular/router';
 import { injectMutation, injectQuery, QueryClient } from '@tanstack/angular-query-experimental';
 import { firstValueFrom, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { DemoService, DemoUserType } from '../../shared/services/demo.service';
 import {
   ChangePasswordPayload,
   LoginCredentials,
   LoginResponse,
   LogoutResponse,
   RefreshResponse,
+  Role,
   User,
 } from '../interfaces';
 
@@ -23,6 +25,7 @@ export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly queryClient = inject(QueryClient);
   private readonly router = inject(Router);
+  private readonly demoService = inject(DemoService);
   private readonly apiBaseUrl = environment.apiUrl.replace(/\/$/, '');
 
   private readonly accessTokenSignal = signal<string | null>(null);
@@ -79,9 +82,24 @@ export class AuthService {
     },
   }));
 
-  readonly user = computed(() => this.meQuery.data() ?? null);
+  readonly user = computed(() => {
+    // In demo mode, create a mock user from demo data
+    if (this.demoService.isDemoMode()) {
+      const demoCustomer = this.demoService.getDemoCustomer();
+      const demoType = this.demoService.demoType();
+      return {
+        id: 'demo-user-id',
+        email: this.demoService.demoEmail() ?? 'demo@example.com',
+        role: demoType === 'admin' ? Role.ADMIN : Role.USER,
+        isActive: true,
+        customer: demoCustomer,
+      } as User;
+    }
+    return this.meQuery.data() ?? null;
+  });
   readonly user$ = toObservable(this.user);
-  readonly isAuthenticated = computed(() => this.user() !== null);
+  readonly isDemoMode = this.demoService.isDemoMode;
+  readonly isAuthenticated = computed(() => this.user() !== null || this.demoService.isDemoMode());
   readonly userName = computed(() => {
     const name = this.user()?.customer?.name;
     if (name) {
@@ -171,7 +189,53 @@ export class AuthService {
   }
 
   logout(): void {
+    // Clear demo mode if active
+    if (this.demoService.isDemoMode()) {
+      this.demoService.exitDemoMode();
+      this.router.navigateByUrl('/auth/login');
+      return;
+    }
     this.logoutMutation.mutate();
+  }
+
+  /**
+   * Login as a demo user.
+   * @param type 'admin' or 'user' demo type
+   * @param email Email address for demo notifications
+   * @returns Promise<boolean> indicating success
+   */
+  async loginAsDemo(type: DemoUserType, email: string): Promise<boolean> {
+    this.loginErrorSignal.set(null);
+    try {
+      // Call the demo login endpoint
+      await firstValueFrom(
+        this.http.post(this.buildUrl('/demo/login'), { type, email })
+      );
+
+      // Initialize demo service with data
+      const success = await this.demoService.initializeDemoMode(email, type);
+      if (!success) {
+        this.loginErrorSignal.set('No se pudo inicializar el modo demo. Intenta de nuevo.');
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      this.loginErrorSignal.set(this.mapDemoLoginError(error));
+      return false;
+    }
+  }
+
+  private mapDemoLoginError(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      if (error.status === 400) {
+        return 'Datos inválidos. Verifica tu correo e intenta de nuevo.';
+      }
+      if (error.status === 0) {
+        return 'No se pudo conectar con el servidor. Intenta de nuevo.';
+      }
+    }
+    return 'No se pudo iniciar el modo demo. Intenta de nuevo.';
   }
 
   clearLoginError(): void {
