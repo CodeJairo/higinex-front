@@ -7,6 +7,7 @@ import {
   LucideAngularModule,
   Mail,
   Play,
+  ShieldCheck,
   UserCog,
   X,
 } from 'lucide-angular';
@@ -30,6 +31,7 @@ export class DemoLoginPage {
   readonly backIcon = ArrowLeft;
   readonly errorIcon = CircleAlert;
   readonly closeIcon = X;
+  readonly shieldIcon = ShieldCheck;
 
   // Form state
   readonly submitted = signal(false);
@@ -37,13 +39,8 @@ export class DemoLoginPage {
   readonly errorMessage = signal<string | null>(null);
 
   readonly form = this.formBuilder.nonNullable.group({
-    email: this.formBuilder.nonNullable.control('', [
-      Validators.required,
-      Validators.email,
-    ]),
-    type: this.formBuilder.nonNullable.control<DemoUserType>('user', [
-      Validators.required,
-    ]),
+    email: this.formBuilder.nonNullable.control('', [Validators.required, Validators.email]),
+    type: this.formBuilder.nonNullable.control<DemoUserType>('user', [Validators.required]),
   });
 
   async onSubmit(): Promise<void> {
@@ -68,12 +65,13 @@ export class DemoLoginPage {
       this.router.navigateByUrl(target);
     } else {
       this.errorMessage.set(
-        this.authService.loginError() ?? 'No se pudo iniciar el modo demo. Intenta de nuevo.'
+        this.authService.loginError() ?? 'No se pudo iniciar el modo demo. Intenta de nuevo.',
       );
     }
   }
 
   goToLogin(): void {
+    this.authService.clearLoginError();
     this.router.navigate(['/auth/login']);
   }
 

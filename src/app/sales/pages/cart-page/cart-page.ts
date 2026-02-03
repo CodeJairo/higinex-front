@@ -33,7 +33,7 @@ export class CartPage {
   getItemImageUrl(item: CheckoutCartItem): string {
     const image = item.images?.[0];
     if (image?.id) {
-      return this.catalogService.buildVariantImageUrl(item.variantId, image.id);
+      return image.url ?? this.catalogService.buildVariantImageUrl(item.variantId, image.id);
     }
     return PLACEHOLDER_IMAGE;
   }

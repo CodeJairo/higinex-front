@@ -118,7 +118,7 @@ export class AuthService {
       this.meQuery.isLoading() ||
       this.requestPasswordRecoveryMutation.isPending() ||
       this.resetPasswordMutation.isPending() ||
-      this.changePasswordMutation.isPending()
+      this.changePasswordMutation.isPending(),
   );
   readonly isLoading$ = toObservable(this.isLoading);
   readonly sessionStatus = computed<SessionStatus>(() => {
@@ -157,7 +157,11 @@ export class AuthService {
     }
   }
 
-  async resetPassword(payload: { email: string; code: string; newPassword: string }): Promise<boolean> {
+  async resetPassword(payload: {
+    email: string;
+    code: string;
+    newPassword: string;
+  }): Promise<boolean> {
     try {
       await this.resetPasswordMutation.mutateAsync(payload);
       return true;
@@ -180,7 +184,7 @@ export class AuthService {
       await firstValueFrom(
         this.http.get(this.buildUrl('/auth/email/verify'), {
           params: { token },
-        })
+        }),
       );
       return true;
     } catch (error) {
@@ -192,9 +196,8 @@ export class AuthService {
     // Clear demo mode if active
     if (this.demoService.isDemoMode()) {
       this.demoService.exitDemoMode();
-      this.router.navigateByUrl('/auth/login');
-      return;
     }
+    // Always clear session and redirect
     this.logoutMutation.mutate();
   }
 
@@ -208,9 +211,17 @@ export class AuthService {
     this.loginErrorSignal.set(null);
     try {
       // Call the demo login endpoint
-      await firstValueFrom(
-        this.http.post(this.buildUrl('/demo/login'), { type, email })
+      const response = await firstValueFrom(
+        this.http.post<LoginResponse>(
+          this.buildUrl('/demo/login'),
+          { type, email },
+          {
+            withCredentials: true,
+          },
+        ),
       );
+
+      this.setAccessToken(response.accessToken);
 
       // Initialize demo service with data
       const success = await this.demoService.initializeDemoMode(email, type);
@@ -229,7 +240,8 @@ export class AuthService {
   private mapDemoLoginError(error: unknown): string {
     if (error instanceof HttpErrorResponse) {
       if (error.status === 400) {
-        return 'Datos inválidos. Verifica tu correo e intenta de nuevo.';
+        // Use the backend error message if available
+        return error.error?.message || 'Datos inválidos. Verifica tu correo e intenta de nuevo.';
       }
       if (error.status === 0) {
         return 'No se pudo conectar con el servidor. Intenta de nuevo.';
@@ -248,7 +260,7 @@ export class AuthService {
 
   private async fetchCurrentUser(): Promise<User> {
     return this.requestWithAuth(() =>
-      this.http.get<User>(this.buildUrl('/auth/me'), { headers: this.authHeaders() })
+      this.http.get<User>(this.buildUrl('/auth/me'), { headers: this.authHeaders() }),
     );
   }
 
@@ -311,7 +323,7 @@ export class AuthService {
     return firstValueFrom(
       this.http.post<LoginResponse>(this.buildUrl('/auth/login'), credentials, {
         withCredentials: true,
-      })
+      }),
     );
   }
 
@@ -319,7 +331,7 @@ export class AuthService {
     return firstValueFrom(
       this.http.post<RefreshResponse>(this.buildUrl('/auth/refresh'), null, {
         withCredentials: true,
-      })
+      }),
     );
   }
 
@@ -327,14 +339,12 @@ export class AuthService {
     return firstValueFrom(
       this.http.post<LogoutResponse>(this.buildUrl('/auth/logout'), null, {
         withCredentials: true,
-      })
+      }),
     );
   }
 
   private async requestPasswordRecoveryRequest(email: string): Promise<void> {
-    return firstValueFrom(
-      this.http.post<void>(this.buildUrl('/auth/password/forgot'), { email })
-    );
+    return firstValueFrom(this.http.post<void>(this.buildUrl('/auth/password/forgot'), { email }));
   }
 
   private async resetPasswordRequest(payload: {
@@ -342,16 +352,14 @@ export class AuthService {
     code: string;
     newPassword: string;
   }): Promise<void> {
-    return firstValueFrom(
-      this.http.post<void>(this.buildUrl('/auth/password/reset'), payload)
-    );
+    return firstValueFrom(this.http.post<void>(this.buildUrl('/auth/password/reset'), payload));
   }
 
   private async changePasswordRequest(payload: ChangePasswordPayload): Promise<void> {
     return firstValueFrom(
       this.http.patch<void>(this.buildUrl('/auth/password/change'), payload, {
         headers: this.authHeaders(),
-      })
+      }),
     );
   }
 

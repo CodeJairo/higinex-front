@@ -1,8 +1,9 @@
 import { Injectable, signal } from '@angular/core';
-import { FilterState, ProductVariant } from '../interfaces';
+import { FilterState, ProductVariant, SortOption } from '../interfaces';
 
 const DEFAULT_FILTERS: FilterState = {
   productIds: [],
+  sortBy: 'relevance',
 };
 
 @Injectable({ providedIn: 'root' })
@@ -19,6 +20,10 @@ export class FilterService {
 
   updateSearchQuery(query: string): void {
     this.searchQuerySignal.set(query);
+  }
+
+  updateSortOption(sortBy: SortOption): void {
+    this.filtersSignal.update((filters) => ({ ...filters, sortBy }));
   }
 
   resetFilters(): void {
@@ -39,7 +44,7 @@ export class FilterService {
     const filters = this.filtersSignal();
     const searchQuery = this.searchQuerySignal().toLowerCase();
 
-    return variants.filter((variant) => {
+    let result = variants.filter((variant) => {
       if (filters.productIds.length > 0 && !filters.productIds.includes(variant.productId)) {
         return false;
       }
@@ -66,5 +71,30 @@ export class FilterService {
 
       return true;
     });
+
+    // Apply sorting
+    result = this.sortVariants(result, filters.sortBy);
+
+    return result;
+  }
+
+  private sortVariants(variants: ProductVariant[], sortBy: SortOption): ProductVariant[] {
+    const sorted = [...variants];
+
+    switch (sortBy) {
+      case 'price_asc':
+        return sorted.sort((a, b) => (a.unitPriceCop ?? Infinity) - (b.unitPriceCop ?? Infinity));
+      case 'price_desc':
+        return sorted.sort((a, b) => (b.unitPriceCop ?? 0) - (a.unitPriceCop ?? 0));
+      case 'name_asc':
+        return sorted.sort((a, b) => {
+          const nameA = (a.product?.name ?? a.name).toLowerCase();
+          const nameB = (b.product?.name ?? b.name).toLowerCase();
+          return nameA.localeCompare(nameB, 'es');
+        });
+      case 'relevance':
+      default:
+        return sorted;
+    }
   }
 }

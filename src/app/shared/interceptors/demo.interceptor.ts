@@ -3,26 +3,9 @@ import { inject } from '@angular/core';
 import { of } from 'rxjs';
 import { DemoService } from '../services/demo.service';
 
-/**
- * HTTP Interceptor for demo mode.
- * Intercepts requests when demo mode is active and returns data from sessionStorage
- * or redirects to /demo/* endpoints as per backend documentation.
- * 
- * Backend Demo Endpoints:
- * - GET /demo/products - List demo products
- * - GET /demo/orders - Returns [] (frontend manages orders in sessionStorage)
- * - GET /demo/addresses - List demo addresses
- * - GET /demo/inventory - List demo inventory
- * - POST /demo/orders - Create demo order (sends invoice email)
- * - POST /demo/orders/:id/status - Update order status (sends notification email)
- * - POST /demo/addresses - Create demo address
- * - PATCH /demo/addresses/:id - Update demo address
- * - DELETE /demo/addresses/:id - Delete demo address
- * - POST /demo/inventory/adjust - Adjust demo inventory
- */
 export const demoInterceptor: HttpInterceptorFn = (
   req: HttpRequest<unknown>,
-  next: HttpHandlerFn
+  next: HttpHandlerFn,
 ) => {
   const demoService = inject(DemoService);
 
@@ -53,7 +36,7 @@ export const demoInterceptor: HttpInterceptorFn = (
     if (matchesPath(/\/orders\/[^/]+$/)) {
       const orderId = url.match(/\/orders\/([^/?]+)/)?.[1];
       const orders = demoService.getDemoOrders();
-      const order = orders.find(o => o.id === orderId);
+      const order = orders.find((o) => o.id === orderId);
       if (order) {
         return of(new HttpResponse({ status: 200, body: order }));
       }
@@ -76,14 +59,16 @@ export const demoInterceptor: HttpInterceptorFn = (
       const inventory = demoService.getDemoInventory();
       const totalOnHand = inventory.reduce((sum, i) => sum + i.onHand, 0);
       const totalReserved = inventory.reduce((sum, i) => sum + i.reserved, 0);
-      return of(new HttpResponse({ 
-        status: 200, 
-        body: {
-          totalOnHand,
-          totalReserved,
-          totalAvailable: totalOnHand - totalReserved,
-        }
-      }));
+      return of(
+        new HttpResponse({
+          status: 200,
+          body: {
+            totalOnHand,
+            totalReserved,
+            totalAvailable: totalOnHand - totalReserved,
+          },
+        }),
+      );
     }
 
     // GET /products or /products?... - redirect to /demo/products
@@ -93,9 +78,9 @@ export const demoInterceptor: HttpInterceptorFn = (
       return next(clonedReq);
     }
 
-    // GET /products/variants - redirect to /demo/products (backend returns variants with products)
+    // GET /products/variants - redirect to /demo/products/variants
     if (matchesPath(/\/products\/variants(\?|$)/)) {
-      const newUrl = url.replace(/\/products\/variants/, '/demo/products');
+      const newUrl = url.replace(/\/products\/variants/, '/demo/products/variants');
       const clonedReq = req.clone({ url: newUrl });
       return next(clonedReq);
     }

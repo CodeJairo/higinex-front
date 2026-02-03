@@ -7,6 +7,7 @@ import {
   Output,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { DemoService } from '../../../shared/services/demo.service';
 import {
   CircleUser,
   FileText,
@@ -26,6 +27,9 @@ import {
 })
 export class AdminUserMenu {
   private router = inject(Router);
+  private readonly demoService = inject(DemoService);
+
+  readonly isDemoMode = this.demoService.isDemoMode;
 
   // Icons
   readonly userIcon = User;

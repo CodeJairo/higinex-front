@@ -1,16 +1,19 @@
 <div class="min-h-screen bg-base-200 flex items-center justify-center p-4 sm:p-6 lg:p-8">
   <div
-    class="card lg:card-side w-full max-w-6xl bg-base-100 shadow-[0_32px_64px_-15px_rgba(0,0,0,0.1)] rounded-[2rem] overflow-hidden border border-base-200">
+    class="card lg:card-side w-full max-w-6xl bg-base-100 shadow-[0_32px_64px_-15px_rgba(0,0,0,0.1)] rounded-[2rem] overflow-hidden border border-base-200"
+  >
     <div
-      class="hidden lg:flex flex-col justify-between p-16 bg-primary text-primary-content relative overflow-hidden lg:w-5/12">
+      class="hidden lg:flex flex-col justify-between p-16 bg-primary text-primary-content relative overflow-hidden lg:w-5/12"
+    >
       <div
-        class="absolute top-0 right-0 w-125 h-125 bg-neutral/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2">
-      </div>
+        class="absolute top-0 right-0 w-125 h-125 bg-neutral/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2"
+      ></div>
 
       <div class="relative z-10">
         <div class="flex items-center gap-4 mb-10">
           <div
-            class="w-14 h-14 bg-base-100 text-base-content rounded-2xl flex items-center justify-center shadow-xl p-2">
+            class="w-14 h-14 bg-base-100 text-base-content rounded-2xl flex items-center justify-center shadow-xl p-2"
+          >
             <img src="/logo.svg" alt="Logo" class="w-full h-full object-cover" />
           </div>
           <div>
@@ -34,7 +37,8 @@
       <div class="relative z-10 space-y-6">
         <div class="flex items-start gap-4">
           <div
-            class="w-10 h-10 rounded-xl bg-base-100/10 border border-base-100/20 flex items-center justify-center shrink-0">
+            class="w-10 h-10 rounded-xl bg-base-100/10 border border-base-100/20 flex items-center justify-center shrink-0"
+          >
             <lucide-icon [img]="userIcon" class="w-5 h-5"></lucide-icon>
           </div>
           <div>
@@ -46,14 +50,13 @@
         </div>
         <div class="flex items-start gap-4">
           <div
-            class="w-10 h-10 rounded-xl bg-base-100/10 border border-base-100/20 flex items-center justify-center shrink-0">
+            class="w-10 h-10 rounded-xl bg-base-100/10 border border-base-100/20 flex items-center justify-center shrink-0"
+          >
             <lucide-icon [img]="playIcon" class="w-5 h-5"></lucide-icon>
           </div>
           <div>
             <h3 class="font-semibold">Admin Demo</h3>
-            <p class="text-sm opacity-80">
-              Panel completo: inventario, pedidos, contratos y más.
-            </p>
+            <p class="text-sm opacity-80">Panel completo: inventario, pedidos, contratos y más.</p>
           </div>
         </div>
       </div>
@@ -75,19 +78,25 @@
 
       <div class="mb-10">
         <h2 class="text-3xl font-bold text-base-content tracking-tight mb-2">Iniciar Demo</h2>
-        <p class="text-base-content/60">
-          Ingresa tu correo para recibir notificaciones de prueba.
-        </p>
+        <p class="text-base-content/60">Ingresa tu correo para recibir notificaciones de prueba.</p>
       </div>
 
       @if (errorMessage()) {
-      <div class="bg-error/10 border border-error/20 text-error p-4 rounded-2xl flex items-center gap-3 mb-8">
-        <lucide-icon [img]="errorIcon" class="w-5 h-5"></lucide-icon>
-        <span class="text-sm font-medium">{{ errorMessage() }}</span>
-        <button (click)="dismissError()" class="ml-auto hover:bg-error/20 p-1 rounded-lg">
-          <lucide-icon [img]="closeIcon" class="w-4 h-4"></lucide-icon>
-        </button>
-      </div>
+        <div
+          class="bg-error/10 border border-error/20 text-error p-4 rounded-2xl flex items-center gap-3 mb-8"
+        >
+          <lucide-icon [img]="errorIcon" class="w-5 h-5"></lucide-icon>
+          <span class="text-sm font-medium">{{ errorMessage() }}</span>
+          <button
+            type="button"
+            (click)="dismissError()"
+            class="ml-auto hover:bg-error/20 p-1 rounded-lg"
+            title="Cerrar mensaje de error"
+            aria-label="Cerrar mensaje de error"
+          >
+            <lucide-icon [img]="closeIcon" class="w-4 h-4"></lucide-icon>
+          </button>
+        </div>
       }
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6">
@@ -95,45 +104,74 @@
           <label class="text-sm font-bold text-base-content/80 ml-1">Correo Electrónico</label>
           <div class="relative group">
             <div
-              class="absolute inset-y-0 left-4 flex items-center pointer-events-none text-base-content/40 group-focus-within:text-primary transition-colors">
+              class="absolute inset-y-0 left-4 flex items-center pointer-events-none text-base-content/40 group-focus-within:text-primary transition-colors"
+            >
               <lucide-icon [img]="emailIcon" class="w-5 h-5"></lucide-icon>
             </div>
-            <input type="email" formControlName="email" placeholder="tu-correo@empresa.com"
-              class="w-full h-14 bg-base-200/50 border-2 border-base-200 rounded-2xl pl-12 pr-4 outline-none focus:bg-base-100 focus:border-primary/20 transition-all text-base-content" />
+            <input
+              type="email"
+              formControlName="email"
+              placeholder="tu-correo@empresa.com"
+              class="w-full h-14 bg-base-200/50 border-2 border-base-200 rounded-2xl pl-12 pr-4 outline-none focus:bg-base-100 focus:border-primary/20 transition-all text-base-content"
+            />
           </div>
           @if (showError('email')) {
-          <p class="text-error text-xs ml-1">
-            @if (hasError('email', 'required')) { El correo es requerido. }
-            @else if (hasError('email', 'email')) { Ingresa un correo válido. }
-          </p>
+            <p class="text-error text-xs ml-1">
+              @if (hasError('email', 'required')) {
+                El correo es requerido.
+              } @else if (hasError('email', 'email')) {
+                Ingresa un correo válido.
+              }
+            </p>
           }
+          <p class="text-xs text-base-content/50 ml-1 mt-2 flex items-start gap-1.5">
+            <lucide-icon [img]="shieldIcon" class="w-3.5 h-3.5 shrink-0 mt-0.5"></lucide-icon>
+            <span
+              >Tu correo no será guardado. Solo se usa para enviarte notificaciones durante esta
+              sesión demo.</span
+            >
+          </p>
         </div>
 
         <div class="space-y-2">
           <label class="text-sm font-bold text-base-content/80 ml-1">Tipo de Demo</label>
           <div class="relative group">
             <div
-              class="absolute inset-y-0 left-4 flex items-center pointer-events-none text-base-content/40 group-focus-within:text-primary transition-colors">
+              class="absolute inset-y-0 left-4 flex items-center pointer-events-none text-base-content/40 group-focus-within:text-primary transition-colors"
+            >
               <lucide-icon [img]="userIcon" class="w-5 h-5"></lucide-icon>
             </div>
-            <select formControlName="type"
-              class="w-full h-14 bg-base-200/50 border-2 border-base-200 rounded-2xl pl-12 pr-4 outline-none focus:bg-base-100 focus:border-primary/20 transition-all text-base-content appearance-none cursor-pointer">
+            <select
+              formControlName="type"
+              title="Seleccionar tipo de demo"
+              aria-label="Seleccionar tipo de demo"
+              class="w-full h-14 bg-base-200/50 border-2 border-base-200 rounded-2xl pl-12 pr-4 outline-none focus:bg-base-100 focus:border-primary/20 transition-all text-base-content appearance-none cursor-pointer"
+            >
               <option value="user">Usuario - Catálogo y Compras</option>
               <option value="admin">Administrador - Panel Completo</option>
             </select>
           </div>
         </div>
 
-        <button type="submit" [disabled]="isLoading()"
-          class="w-full h-14 btn btn-primary text-primary-content rounded-2xl font-bold text-lg shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-3 cursor-pointer">
-          @if (isLoading()) { <span class="loading loading-spinner"></span> } @else {
-          <lucide-icon [img]="playIcon" class="w-5 h-5"></lucide-icon>
-          <span>Iniciar Demostración</span> }
+        <button
+          type="submit"
+          [disabled]="isLoading()"
+          class="w-full h-14 btn btn-primary text-primary-content rounded-2xl font-bold text-lg shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-3 cursor-pointer"
+        >
+          @if (isLoading()) {
+            <span class="loading loading-spinner"></span>
+          } @else {
+            <lucide-icon [img]="playIcon" class="w-5 h-5"></lucide-icon>
+            <span>Iniciar Demostración</span>
+          }
         </button>
 
         <div class="text-center pt-4">
-          <button type="button" (click)="goToLogin()"
-            class="text-sm font-medium text-base-content/60 hover:text-primary transition-colors inline-flex items-center gap-2">
+          <button
+            type="button"
+            (click)="goToLogin()"
+            class="text-sm font-medium text-base-content/60 hover:text-primary transition-colors inline-flex items-center gap-2"
+          >
             <lucide-icon [img]="backIcon" class="w-4 h-4"></lucide-icon>
             Ir a Login Normal
           </button>
