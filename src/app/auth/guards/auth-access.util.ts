@@ -2,6 +2,7 @@ import { inject } from '@angular/core';
 import { Router, UrlTree } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
+import { DemoService } from '../../shared/services/demo.service';
 import { AuthService } from '../services/auth.service';
 import { Role } from '../interfaces';
 
@@ -25,6 +26,20 @@ export const ensureAccess = async (
 ): Promise<boolean | UrlTree> => {
   const auth = inject(AuthService);
   const router = inject(Router);
+  const demoService = inject(DemoService);
+
+  // Allow immediate access if in demo mode
+  if (demoService.isDemoMode()) {
+    // If specific roles are required, check demo type
+    if (roles?.length) {
+      const demoType = demoService.demoType();
+      const hasAdminRole = roles.includes(Role.ADMIN);
+      if (hasAdminRole && demoType !== 'admin') {
+        return router.createUrlTree(FORBIDDEN_URL);
+      }
+    }
+    return true;
+  }
 
   await waitForSession(auth);
 

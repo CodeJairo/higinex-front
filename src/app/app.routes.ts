@@ -3,6 +3,7 @@ import { adminGuard } from './auth/guards/admin.guard';
 import { guestGuard } from './auth/guards/guest.guard';
 import { authGuard } from './auth/guards/auth.guard';
 import { VerifyEmailPage } from './auth/pages/verify-email-page/verify-email-page';
+import { DemoLoginPage } from './auth/pages/demo-login-page/demo-login-page';
 
 export const routes: Routes = [
   {
@@ -13,6 +14,10 @@ export const routes: Routes = [
   {
     path: 'auth/verify',
     component: VerifyEmailPage,
+  },
+  {
+    path: 'demo',
+    component: DemoLoginPage,
   },
   {
     path: 'customer',

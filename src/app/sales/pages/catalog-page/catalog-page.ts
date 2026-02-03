@@ -46,7 +46,7 @@ export class CatalogPage {
   readonly variants = computed(() => this.variantsQuery.data() ?? []);
   readonly filteredVariants = computed(() => this.filterService.filterVariants(this.variants()));
   readonly isLoading = computed(
-    () => this.productsQuery.isLoading() || this.variantsQuery.isLoading()
+    () => this.productsQuery.isLoading() || this.variantsQuery.isLoading(),
   );
   readonly hasError = computed(() => this.productsQuery.isError() || this.variantsQuery.isError());
 
@@ -65,5 +65,11 @@ export class CatalogPage {
   retryLoad(): void {
     this.productsQuery.refetch();
     this.variantsQuery.refetch();
+  }
+
+  onSortChange(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    const value = select.value as 'relevance' | 'price_asc' | 'price_desc' | 'name_asc';
+    this.filterService.updateSortOption(value);
   }
 }

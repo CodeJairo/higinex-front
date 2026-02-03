@@ -154,6 +154,10 @@ export class ContractsService {
     );
   }
 
+  /**
+   * List product variants.
+   * In demo mode, the interceptor will redirect this to /demo/products.
+   */
   listVariants({
     limit = 100,
     offset = 0,

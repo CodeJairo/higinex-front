@@ -41,7 +41,7 @@ export class CartDropdown {
   readonly arrowRightIcon = ArrowRight;
 
   readonly totalValue = computed(() =>
-    this.items().reduce((sum, item) => sum + (item.unitPriceCop ?? 0) * item.quantity, 0)
+    this.items().reduce((sum, item) => sum + (item.unitPriceCop ?? 0) * item.quantity, 0),
   );
 
   readonly tax = computed(() => Math.round(this.totalValue() - this.totalValue() / 1.19));
@@ -50,9 +50,7 @@ export class CartDropdown {
 
   readonly total = computed(() => this.totalValue());
 
-  readonly totalItems = computed(() =>
-    this.items().reduce((sum, item) => sum + item.quantity, 0)
-  );
+  readonly totalItems = computed(() => this.items().reduce((sum, item) => sum + item.quantity, 0));
 
   formatPrice(price: number): string {
     return new Intl.NumberFormat('es-CO', {
@@ -65,7 +63,7 @@ export class CartDropdown {
   getItemImageUrl(item: CheckoutCartItem): string {
     const image = item.images?.[0];
     if (image?.id) {
-      return this.catalogService.buildVariantImageUrl(item.variantId, image.id);
+      return image.url ?? this.catalogService.buildVariantImageUrl(item.variantId, image.id);
     }
     return PLACEHOLDER_IMAGE;
   }

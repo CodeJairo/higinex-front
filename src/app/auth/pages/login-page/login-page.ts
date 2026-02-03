@@ -80,6 +80,10 @@ export class LoginPage {
     this.router.navigate(['/auth/forgot-password']);
   }
 
+  goToDemo(): void {
+    this.router.navigate(['/demo']);
+  }
+
   dismissError(): void {
     this.authService.clearLoginError();
   }

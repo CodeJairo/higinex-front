@@ -17,6 +17,7 @@ export interface VariantImage {
   createdAt: string;
   mimeType: string;
   filename: string;
+  url?: string;
 }
 
 export interface VariantInventory {

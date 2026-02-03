@@ -1,9 +1,10 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { injectMutation, QueryClient } from '@tanstack/angular-query-experimental';
-import { defer, Observable } from 'rxjs';
+import { defer, Observable, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../auth/services/auth.service';
+import { DemoService } from '../../shared/services/demo.service';
 import { InventoryAdjustmentPayload, InventoryBalance, InventoryMovement, InventorySummary } from '../interfaces/inventory.interface';
 import { CreateProductPayload, CreateVariantPayload, Product } from '../interfaces/products.interface';
 
@@ -11,6 +12,7 @@ import { CreateProductPayload, CreateVariantPayload, Product } from '../interfac
 export class InventoryManagementService {
   private readonly http = inject(HttpClient);
   private readonly authService = inject(AuthService);
+  private readonly demoService = inject(DemoService);
   private readonly apiBaseUrl = environment.apiUrl.replace(/\/$/, '');
   private readonly queryClient = inject(QueryClient);
   private readonly createProductErrorSignal = signal<string | null>(null);
@@ -28,6 +30,19 @@ export class InventoryManagementService {
   // --- Inventory Summary & Balances ---
 
   getInventorySummary(): Observable<InventorySummary> {
+    // In demo mode, calculate summary from demo data
+    if (this.demoService.isDemoMode()) {
+      const inventory = this.demoService.getDemoInventory();
+      const totalOnHand = inventory.reduce((sum, i) => sum + i.onHand, 0);
+      const totalReserved = inventory.reduce((sum, i) => sum + i.reserved, 0);
+      const summary: InventorySummary = {
+        totalOnHand,
+        totalReserved,
+        totalAvailable: totalOnHand - totalReserved,
+      };
+      return of(summary);
+    }
+
     return defer(() =>
       this.authService.requestWithAuthHeaders((headers) =>
         this.http.get<InventorySummary>(this.buildUrl('/inventory/summary'), { headers })
@@ -40,6 +55,12 @@ export class InventoryManagementService {
     offset: number = 0,
     q: string = ''
   ): Observable<InventoryBalance[]> {
+    // In demo mode, return inventory from sessionStorage
+    if (this.demoService.isDemoMode()) {
+      const inventory = this.demoService.getDemoInventory() as unknown as InventoryBalance[];
+      return of(inventory.slice(offset, offset + limit));
+    }
+
     const params = new HttpParams({
       fromObject: {
         limit: String(limit),
@@ -59,6 +80,14 @@ export class InventoryManagementService {
   }
 
   adjustInventory(payload: InventoryAdjustmentPayload): Observable<unknown> {
+    // In demo mode, adjust inventory locally
+    if (this.demoService.isDemoMode()) {
+      this.demoService.updateDemoInventory(payload.variantId, {
+        onHand: payload.quantity,
+      });
+      return of({ success: true });
+    }
+
     return defer(() =>
       this.authService.requestWithAuthHeaders((headers) =>
         this.http.post(this.buildUrl('/inventory/adjust'), payload, { headers })
@@ -107,6 +136,12 @@ export class InventoryManagementService {
     offset: number = 0,
     status: string = 'ALL'
   ): Observable<Product[]> {
+    // In demo mode, return products from sessionStorage
+    if (this.demoService.isDemoMode()) {
+      const products = this.demoService.getDemoProducts() as unknown as Product[];
+      return of(products.slice(offset, offset + limit));
+    }
+
     const params = new HttpParams({
       fromObject: {
         limit: String(limit),

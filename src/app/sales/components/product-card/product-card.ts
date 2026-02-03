@@ -30,7 +30,7 @@ export class ProductCard {
   readonly priceUnavailable = computed(() => this.variant().unitPriceCop == null);
   readonly productName = computed(() => this.variant().product?.name ?? this.variant().name);
   readonly variantName = computed(() =>
-    this.variant().product?.name ? this.variant().name : this.variant().sku
+    this.variant().product?.name ? this.variant().name : this.variant().sku,
   );
   readonly attributesLabel = computed(() => this.formatAttributes(this.variant().attributesJson));
   readonly images = computed(() => {
@@ -46,7 +46,7 @@ export class ProductCard {
     }
     return variant.images.map((img) => ({
       id: img.id,
-      url: this.catalogService.buildVariantImageUrl(variant.id, img.id),
+      url: img.url ?? this.catalogService.buildVariantImageUrl(variant.id, img.id),
       alt: img.altText ?? this.productName(),
     }));
   });
@@ -140,7 +140,7 @@ export class ProductCard {
     }
 
     const entries = Object.entries(attributes).filter(
-      ([, value]) => value !== null && value !== undefined && value !== ''
+      ([, value]) => value !== null && value !== undefined && value !== '',
     );
     if (!entries.length) {
       return '';

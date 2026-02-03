@@ -20,6 +20,7 @@ export interface CheckoutProductImage {
   createdAt: string;
   mimeType: string;
   filename?: string | null;
+  url?: string;
 }
 
 export interface CheckoutInventoryBalance {

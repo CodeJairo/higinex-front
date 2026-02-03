@@ -4,6 +4,7 @@ import { injectMutation, QueryClient } from '@tanstack/angular-query-experimenta
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../auth/services/auth.service';
+import { DemoService } from '../../shared/services/demo.service';
 import {
     CreateCustomerAddressPayload,
     CustomerAddress,
@@ -16,6 +17,7 @@ import {
 export class CustomerAddressService {
     private readonly http = inject(HttpClient);
     private readonly authService = inject(AuthService);
+    private readonly demoService = inject(DemoService);
     private readonly queryClient = inject(QueryClient);
     private readonly apiBaseUrl = environment.apiUrl.replace(/\/$/, '');
 
@@ -86,6 +88,11 @@ export class CustomerAddressService {
      * Ordenado por backend: isDefault DESC, createdAt DESC.
      */
     listAddresses(params: ListCustomerAddressesQuery = {}): Promise<CustomerAddress[]> {
+        // In demo mode, return addresses from sessionStorage
+        if (this.demoService.isDemoMode()) {
+            return Promise.resolve(this.demoService.getDemoAddresses());
+        }
+
         const httpParams = new HttpParams({
             fromObject: {
                 limit: String(params.limit ?? 10),
@@ -103,6 +110,21 @@ export class CustomerAddressService {
 
     async createAddress(payload: CreateCustomerAddressPayload): Promise<boolean> {
         this.createErrorSignal.set(null);
+
+        // In demo mode, create address locally
+        if (this.demoService.isDemoMode()) {
+            const newAddress: CustomerAddress = {
+                id: crypto.randomUUID(),
+                ...payload,
+                isDefault: payload.isDefault ?? false,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+            };
+            this.demoService.addDemoAddress(newAddress);
+            this.queryClient.invalidateQueries({ queryKey: ['customer-addresses'] });
+            return true;
+        }
+
         try {
             await this.createMutation.mutateAsync(payload);
             return true;
@@ -113,6 +135,17 @@ export class CustomerAddressService {
 
     async updateAddress(id: string, payload: UpdateCustomerAddressPayload): Promise<boolean> {
         this.updateErrorSignal.set(null);
+
+        // In demo mode, update address locally
+        if (this.demoService.isDemoMode()) {
+            this.demoService.updateDemoAddress(id, {
+                ...payload,
+                updatedAt: new Date().toISOString(),
+            });
+            this.queryClient.invalidateQueries({ queryKey: ['customer-addresses'] });
+            return true;
+        }
+
         try {
             await this.updateMutation.mutateAsync({ id, payload });
             return true;
@@ -123,6 +156,14 @@ export class CustomerAddressService {
 
     async deleteAddress(id: string): Promise<boolean> {
         this.deleteErrorSignal.set(null);
+
+        // In demo mode, delete address locally
+        if (this.demoService.isDemoMode()) {
+            this.demoService.deleteDemoAddress(id);
+            this.queryClient.invalidateQueries({ queryKey: ['customer-addresses'] });
+            return true;
+        }
+
         try {
             await this.deleteMutation.mutateAsync(id);
             return true;
@@ -133,6 +174,14 @@ export class CustomerAddressService {
 
     async setDefaultAddress(id: string): Promise<boolean> {
         this.setDefaultErrorSignal.set(null);
+
+        // In demo mode, set default locally
+        if (this.demoService.isDemoMode()) {
+            this.demoService.setDemoDefaultAddress(id);
+            this.queryClient.invalidateQueries({ queryKey: ['customer-addresses'] });
+            return true;
+        }
+
         try {
             await this.setDefaultMutation.mutateAsync(id);
             return true;

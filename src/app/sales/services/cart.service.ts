@@ -1,13 +1,16 @@
-import { computed, effect, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
+import { DemoService } from '../../shared/services/demo.service';
 import { CheckoutCartItem, CheckoutCartSummary } from '../interfaces';
 
 const CART_STORAGE_KEY = 'higinex_cart';
+const DEMO_CART_STORAGE_KEY = 'higinex.demo.cart';
 const DEFAULT_CURRENCY = 'COP';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CartService {
+  private readonly demoService = inject(DemoService);
   private readonly itemsSignal = signal<CheckoutCartItem[]>(this.loadFromStorage());
 
   readonly items = this.itemsSignal.asReadonly();
@@ -104,30 +107,44 @@ export class CartService {
     this.itemsSignal.set([]);
   }
 
+  private getStorageKey(): string {
+    return this.demoService.isDemoMode() ? DEMO_CART_STORAGE_KEY : CART_STORAGE_KEY;
+  }
+
+  private getStorage(): Storage | null {
+    if (typeof window === 'undefined') {
+      return null;
+    }
+    return this.demoService.isDemoMode() ? sessionStorage : localStorage;
+  }
+
   private loadFromStorage(): CheckoutCartItem[] {
-    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-      const savedCart = localStorage.getItem(CART_STORAGE_KEY);
-      if (savedCart) {
-        try {
-          const parsed = JSON.parse(savedCart);
-          if (!Array.isArray(parsed)) {
-            return [];
-          }
-          return parsed
-            .map((item) => this.normalizeItem(item))
-            .filter((item): item is CheckoutCartItem => !!item);
-        } catch (error) {
-          console.error('Error loading cart from localStorage:', error);
+    const storage = this.getStorage();
+    if (!storage) {
+      return [];
+    }
+    const savedCart = storage.getItem(this.getStorageKey());
+    if (savedCart) {
+      try {
+        const parsed = JSON.parse(savedCart);
+        if (!Array.isArray(parsed)) {
           return [];
         }
+        return parsed
+          .map((item) => this.normalizeItem(item))
+          .filter((item): item is CheckoutCartItem => !!item);
+      } catch (error) {
+        console.error('Error loading cart from storage:', error);
+        return [];
       }
     }
     return [];
   }
 
   private saveToStorage(items: CheckoutCartItem[]): void {
-    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+    const storage = this.getStorage();
+    if (storage) {
+      storage.setItem(this.getStorageKey(), JSON.stringify(items));
     }
   }
 
