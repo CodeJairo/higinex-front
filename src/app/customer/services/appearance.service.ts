@@ -4,16 +4,15 @@ import { Injectable, PLATFORM_ID, effect, inject, signal } from '@angular/core';
 const STORAGE_KEY = 'higinex.appearance';
 
 const ACCENT_COLORS: Record<string, string> = {
+  brand: '#0d6b46',
+  technical: '#059669',
   emerald: '#10b981',
-  sky: '#0ea5e9',
-  violet: '#8b5cf6',
-  amber: '#fbbf24',
-  rose: '#f43f5e',
+  sky: '#1282ab',
 };
 
 const DEFAULT_APPEARANCE = {
   theme: 'corporate',
-  accent: 'sky',
+  accent: 'brand',
   rounded: true,
   compact: false,
 };
@@ -38,7 +37,8 @@ export class AppearanceService {
     const saved = this.readStorage();
     if (saved) {
       if (typeof saved.theme === 'string') {
-        this.theme.set(saved.theme);
+        const normalizedTheme = saved.theme === 'retro' ? 'corporate' : saved.theme;
+        this.theme.set(normalizedTheme);
       }
       if (typeof saved.accent === 'string') {
         this.accent.set(this.normalizeAccent(saved.accent));
@@ -88,6 +88,7 @@ export class AppearanceService {
 
     html.setAttribute('data-theme', state.theme);
     html.style.setProperty('--color-primary', this.resolveAccent(state.accent));
+    html.style.setProperty('--color-primary-content', '#ffffff');
     body.classList.toggle('layout-compact', state.compact);
     body.classList.toggle('no-rounded', !state.rounded);
   }
@@ -102,6 +103,12 @@ export class AppearanceService {
     if (!trimmed) return DEFAULT_APPEARANCE.accent;
 
     const lower = trimmed.toLowerCase();
+
+    // Mapeo seguro de acentos legacy que ya no son soportados o migración a verde institucional
+    if (lower === 'amber' || lower === 'violet' || lower === 'rose' || lower === '#0f3e70') {
+      return 'brand';
+    }
+
     if (ACCENT_COLORS[lower]) {
       return lower;
     }

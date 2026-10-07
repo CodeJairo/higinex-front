@@ -24,13 +24,23 @@ import {
   User,
 } from 'lucide-angular';
 import { AuthService } from '../../../auth/services/auth.service';
+import { UiEmptyStateComponent } from '../../../shared/components/ui/empty-state/empty-state.component';
+import { UiLoadingStateComponent } from '../../../shared/components/ui/loading-state/loading-state.component';
+import { UiPageHeaderComponent } from '../../../shared/components/ui/page-header/page-header.component';
 import { CheckoutAddress, CheckoutCustomer, CreateOrderPayload } from '../../interfaces';
 import { CartService } from '../../services/cart.service';
 import { CheckoutService } from '../../services/checkout.service';
 
 @Component({
   selector: 'app-checkout-page',
-  imports: [CurrencyPipe, ReactiveFormsModule, LucideAngularModule],
+  imports: [
+    CurrencyPipe,
+    ReactiveFormsModule,
+    LucideAngularModule,
+    UiPageHeaderComponent,
+    UiEmptyStateComponent,
+    UiLoadingStateComponent,
+  ],
   templateUrl: './checkout-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

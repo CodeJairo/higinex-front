@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
-import { Check, LucideAngularModule } from 'lucide-angular';
+import { ArrowLeft, Check, LucideAngularModule } from 'lucide-angular';
 import { DemoBanner } from '../../../shared/components/demo-banner/demo-banner';
 
 @Component({
@@ -13,6 +13,7 @@ export class CheckoutLayoutPage {
   currentStep = 1;
 
   readonly checkIcon = Check;
+  readonly arrowLeftIcon = ArrowLeft;
 
   constructor(private router: Router) {
     this.router.events.subscribe(() => {
@@ -24,9 +25,10 @@ export class CheckoutLayoutPage {
 
   getStepClass(step: number) {
     if (this.currentStep === step)
-      return 'bg-primary text-primary-content shadow-lg shadow-primary/30 scale-110';
-    if (this.currentStep > step) return 'bg-success text-success-content';
-    return 'bg-base-200 text-base-content/40';
+      return 'bg-linear-to-tr from-primary to-emerald-500 text-white shadow-xs shadow-primary/30 font-bold';
+    if (this.currentStep > step)
+      return 'bg-emerald-500/15 text-emerald-700 border border-emerald-500/30 font-bold';
+    return 'bg-base-200/70 text-base-content/40 font-semibold';
   }
 
   goToCatalog() {

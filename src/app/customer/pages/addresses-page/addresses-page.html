@@ -1,294 +1,366 @@
-<section class="space-y-6 pb-24 sm:pb-0">
+<section class="space-y-6">
+  <!-- Header -->
   <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
     <div>
-      <h1 class="text-2xl font-semibold text-base-content">Mis direcciones</h1>
-      <p class="text-sm text-base-content/60 mt-1">
-        Gestiona tus ubicaciones de entrega para agilizar tus pedidos en el futuro.
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-base-content tracking-tight">Mis Direcciones</h1>
+      <p class="text-sm text-base-content/60 mt-0.5">
+        Gestiona tus sedes institucionales y puntos de entrega para agilizar tus pedidos B2B.
       </p>
     </div>
-    <button class="btn btn-primary btn-sm hidden sm:inline-flex gap-2" (click)="openCreateForm()">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
-        <path
-          d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
-      </svg>
-      Nueva dirección
+    <button
+      type="button"
+      class="h-10 px-5 rounded-full bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white shadow-md shadow-emerald-900/15 hover:shadow-lg hover:scale-[1.02] text-xs font-bold transition-all inline-flex items-center gap-2 cursor-pointer self-start sm:self-auto"
+      (click)="openCreateForm()"
+    >
+      <lucide-icon [img]="plusIcon" class="w-4 h-4"></lucide-icon>
+      Nueva Dirección
     </button>
   </header>
 
   @if (errorMessage()) {
-  <div role="alert" class="alert alert-error shadow-sm bg-error/10 text-error border-error/20">
-    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-        d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-    <div>
-      <h3 class="font-bold text-sm">Error al cargar</h3>
-      <div class="text-xs">{{ errorMessage() }}</div>
+    <div class="ios-glass-card rounded-3xl p-6 border border-error/30 bg-error/5 text-error flex items-start gap-4">
+      <lucide-icon [img]="alertCircleIcon" class="h-6 w-6 shrink-0 mt-0.5"></lucide-icon>
+      <div class="flex-1">
+        <h3 class="font-bold text-base">Error al cargar direcciones</h3>
+        <div class="text-xs opacity-90 mt-0.5">{{ errorMessage() }}</div>
+      </div>
+      <button
+        type="button"
+        class="h-8 px-3.5 rounded-full bg-error text-white font-bold text-xs hover:opacity-90 transition-all cursor-pointer shrink-0"
+        (click)="retry()"
+      >
+        Reintentar
+      </button>
     </div>
-    <button class="btn btn-sm btn-ghost text-error" (click)="retry()">Reintentar</button>
-  </div>
   }
 
   @if (isLoading()) {
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-    @for (skeleton of [1, 2, 3]; track skeleton) {
-    <div class="card bg-base-100 border border-base-200 h-52">
-      <div class="card-body animate-pulse">
-        <div class="flex items-center gap-4 mb-4">
-          <div class="bg-base-300 w-10 h-10 rounded-full"></div>
-          <div class="flex-1 space-y-2">
-            <div class="bg-base-300 h-4 w-24 rounded"></div>
-            <div class="bg-base-300 h-3 w-16 rounded"></div>
-          </div>
-        </div>
-        <div class="space-y-2 mt-2">
-          <div class="bg-base-300 h-3 w-full rounded"></div>
-          <div class="bg-base-300 h-3 w-2/3 rounded"></div>
-        </div>
-      </div>
-    </div>
-    }
-  </div>
-  } @else {
-  @if (!addresses().length) {
-  <div class="card bg-base-100 border border-dashed border-base-300 py-12 text-center">
-    <div class="card-body items-center justify-center">
-      <div class="w-16 h-16 bg-base-200/50 rounded-full flex items-center justify-center mb-4 text-3xl">
-        📍
-      </div>
-      <h2 class="text-lg font-bold text-base-content">No tienes direcciones</h2>
-      <p class="text-sm text-base-content/60 max-w-xs">
-        Agrega tu casa u oficina para hacer el checkout más rápido.
-      </p>
-      <button class="btn btn-primary btn-sm mt-4" (click)="openCreateForm()">
-        Agregar primera dirección
-      </button>
-    </div>
-  </div>
-  } @else {
-  @if (!hasDefault()) {
-  <div
-    class="alert alert-warning shadow-sm bg-warning/10 border-warning/20 text-warning-content flex items-start text-sm">
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-      class="w-5 h-5 mt-0.5">
-      <path stroke-linecap="round" stroke-linejoin="round"
-        d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-    </svg>
-    <span>Selecciona una dirección predeterminada para agilizar tus compras.</span>
-  </div>
-  }
-
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-    @for (address of addresses(); track address.id) {
-    <div class="card bg-base-100 border border-base-200 shadow-sm hover:shadow-md transition-all duration-200 group">
-      <div class="card-body p-5">
-        <div class="flex items-start justify-between mb-2">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 2xl:gap-5">
+      @for (skeleton of [1, 2, 3, 4]; track skeleton) {
+        <div class="ios-glass-card rounded-3xl p-6 border border-white/80 h-52 animate-pulse space-y-4">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                stroke="currentColor" class="w-5 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-              </svg>
-            </div>
-            <div>
-              <h3 class="font-bold text-base-content text-sm sm:text-base leading-tight">
-                {{ address.label || 'Ubicación' }}
-              </h3>
-              <p class="text-xs text-base-content/60">{{ address.city }}</p>
+            <div class="w-10 h-10 rounded-2xl bg-black/[0.06]"></div>
+            <div class="space-y-1.5 flex-1">
+              <div class="h-4 bg-black/[0.06] rounded-full w-28"></div>
+              <div class="h-3 bg-black/[0.04] rounded-full w-16"></div>
             </div>
           </div>
-          @if (address.isDefault) {
-          <div class="badge badge-primary badge-xs py-2 px-2 gap-1 font-medium">
-            Default
-          </div>
-          }
-        </div>
-
-        <div class="py-3 text-sm text-base-content/70 border-t border-dashed border-base-200 mt-2 grow space-y-1">
-          <p class="font-medium text-base-content">{{ address.line1 }}</p>
-          @if (address.line2) { <p>{{ address.line2 }}</p> }
-          <p class="text-xs opacity-80">
-            @if (address.neighborhood) { {{ address.neighborhood }}, } {{ address.state }}
-          </p>
-          @if (address.notes) {
-          <div
-            class="flex items-start gap-1.5 mt-2 text-xs bg-base-200/50 p-2 rounded text-base-content/60 italic border border-base-200">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-              class="w-3 h-3 mt-0.5 shrink-0">
-              <path fill-rule="evenodd"
-                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z"
-                clip-rule="evenodd" />
-            </svg>
-            {{ address.notes }}
-          </div>
-          }
-        </div>
-
-        <div class="card-actions justify-end mt-2 pt-2 gap-2">
-          @if (!address.isDefault) {
-          <button class="btn btn-xs btn-ghost text-base-content/60 hover:bg-base-200" (click)="makeDefault(address)">
-            Hacer default
-          </button>
-          }
-          <div class="flex gap-1">
-            <button
-              class="btn btn-square btn-xs btn-outline border-base-300 text-base-content/70 hover:border-primary hover:bg-primary hover:text-primary-content"
-              (click)="openEditForm(address)" title="Editar">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-3 h-3">
-                <path
-                  d="M13.488 2.513a1.75 1.75 0 0 0-2.475 0L6.75 6.774a2.75 2.75 0 0 0-.596.892l-.848 2.047a.75.75 0 0 0 .98.98l2.047-.848a2.75 2.75 0 0 0 .892-.596l4.261-4.262a1.75 1.75 0 0 0 0-2.474Z" />
-                <path
-                  d="M4.75 3.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h6.5c.69 0 1.25-.56 1.25-1.25V9A.75.75 0 0 1 14 9v2.25A2.75 2.75 0 0 1 11.25 14h-6.5A2.75 2.75 0 0 1 2 11.25v-6.5A2.75 2.75 0 0 1 4.75 2H7a.75.75 0 0 1 0 1.5H4.75Z" />
-              </svg>
-            </button>
-            <button
-              class="btn btn-square btn-xs btn-outline border-base-300 text-base-content/70 hover:border-error hover:bg-error hover:text-error-content"
-              (click)="confirmDelete(address)" title="Eliminar">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-3 h-3">
-                <path fill-rule="evenodd"
-                  d="M5 3.25V4H2.75a.75.75 0 0 0 0 1.5h.3l.815 8.15A1.5 1.5 0 0 0 5.357 15h5.285a1.5 1.5 0 0 0 1.493-1.35l.815-8.15h.3a.75.75 0 0 0 0-1.5H11v-.75A2.25 2.25 0 0 0 8.75 1h-1.5A2.25 2.25 0 0 0 5 3.25Zm2.25-.75a.75.75 0 0 0-.75.75V4h3v-.75a.75.75 0 0 0-.75-.75h-1.5Z"
-                  clip-rule="evenodd" />
-              </svg>
-            </button>
+          <div class="space-y-2 pt-2">
+            <div class="h-3 bg-black/[0.04] rounded-full w-full"></div>
+            <div class="h-3 bg-black/[0.04] rounded-full w-2/3"></div>
           </div>
         </div>
-      </div>
+      }
     </div>
+  } @else {
+    @if (!addresses().length) {
+      <div class="ios-glass-card rounded-3xl p-12 sm:p-16 border border-white/80 shadow-xs text-center flex flex-col items-center justify-center">
+        <div class="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-4 shadow-xs">
+          <lucide-icon [img]="mapPinIcon" class="h-8 w-8"></lucide-icon>
+        </div>
+        <h3 class="text-lg font-bold text-base-content">No tienes direcciones registradas</h3>
+        <p class="text-sm text-base-content/60 max-w-sm mx-auto mt-1 leading-relaxed">
+          Agrega tu bodega, sede corporativa o punto de despacho para hacer pedidos en 1 clic.
+        </p>
+        <button
+          type="button"
+          class="mt-6 h-10 px-6 rounded-full bg-primary hover:bg-primary/90 text-white font-bold text-xs shadow-md shadow-primary/20 inline-flex items-center gap-2 cursor-pointer transition-all hover:scale-[1.02]"
+          (click)="openCreateForm()"
+        >
+          <lucide-icon [img]="plusIcon" class="w-4 h-4"></lucide-icon>
+          Agregar Primera Dirección
+        </button>
+      </div>
+    } @else {
+      @if (!hasDefault()) {
+        <div class="ios-glass-card rounded-2xl p-4 border border-amber-500/20 bg-amber-500/5 text-amber-800 text-xs flex items-center gap-3">
+          <lucide-icon [img]="alertCircleIcon" class="w-4 h-4 text-amber-600 shrink-0"></lucide-icon>
+          <span>Selecciona una dirección predeterminada para agilizar el proceso de compra.</span>
+        </div>
+      }
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 2xl:gap-5">
+        @for (address of addresses(); track address.id) {
+          <div
+            class="ios-card rounded-3xl p-5 sm:p-6 border border-white/80 shadow-xs flex flex-col justify-between transition-all duration-200 group hover:border-primary/40 hover:shadow-lg"
+          >
+            <div>
+              <!-- Top Row: Icon + Label + Badge -->
+              <div class="flex items-start justify-between gap-3 mb-3">
+                <div class="flex items-center gap-3">
+                  <div
+                    class="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 shadow-xs"
+                    [class.bg-primary]="address.isDefault"
+                    [class.text-white]="address.isDefault"
+                    [class.bg-black/[0.04]]="!address.isDefault"
+                    [class.text-base-content/70]="!address.isDefault"
+                  >
+                    <lucide-icon [img]="mapPinIcon" class="w-5 h-5"></lucide-icon>
+                  </div>
+                  <div>
+                    <h3 class="font-extrabold text-sm sm:text-base text-base-content leading-tight">
+                      {{ address.label || 'Sede B2B' }}
+                    </h3>
+                    <p class="text-xs text-base-content/60 font-medium">{{ address.city }}</p>
+                  </div>
+                </div>
+
+                @if (address.isDefault) {
+                  <span class="bg-primary/10 text-primary border border-primary/20 text-[9px] font-extrabold px-2.5 py-0.5 rounded-full tracking-wider uppercase">
+                    Principal
+                  </span>
+                }
+              </div>
+
+              <!-- Address Content -->
+              <div class="pt-3 border-t border-black/[0.05] text-xs space-y-1 text-base-content/70">
+                <p class="font-bold text-base-content text-sm">{{ address.line1 }}</p>
+                @if (address.line2) {
+                  <p class="text-base-content/80">{{ address.line2 }}</p>
+                }
+                <p class="text-base-content/60">
+                  @if (address.neighborhood) {
+                    {{ address.neighborhood }},
+                  }
+                  {{ address.state }}
+                  @if (address.postalCode) {
+                    &bull; {{ address.postalCode }}
+                  }
+                </p>
+
+                @if (address.notes) {
+                  <div class="mt-2.5 p-2.5 rounded-xl bg-black/[0.02] border border-black/[0.04] text-[11px] text-base-content/60 italic leading-snug">
+                    {{ address.notes }}
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Card Actions -->
+            <div class="border-t border-black/[0.05] pt-3 mt-4 flex items-center justify-between gap-2">
+              <div>
+                @if (!address.isDefault) {
+                  <button
+                    type="button"
+                    class="text-[11px] font-bold text-primary hover:underline cursor-pointer"
+                    (click)="makeDefault(address)"
+                  >
+                    Hacer principal
+                  </button>
+                }
+              </div>
+
+              <div class="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  class="w-7 h-7 rounded-xl bg-black/[0.04] hover:bg-primary/10 hover:text-primary text-base-content/60 flex items-center justify-center transition-all cursor-pointer"
+                  (click)="openEditForm(address)"
+                  title="Editar dirección"
+                >
+                  <lucide-icon [img]="editIcon" class="w-3.5 h-3.5"></lucide-icon>
+                </button>
+                <button
+                  type="button"
+                  class="w-7 h-7 rounded-xl bg-black/[0.04] hover:bg-error/10 hover:text-error text-base-content/60 flex items-center justify-center transition-all cursor-pointer"
+                  (click)="confirmDelete(address)"
+                  title="Eliminar dirección"
+                >
+                  <lucide-icon [img]="trashIcon" class="w-3.5 h-3.5"></lucide-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
     }
-  </div>
-  }
   }
 
-  <div
-    class="sm:hidden fixed bottom-0 left-0 right-0 z-20 bg-base-100/90 backdrop-blur-md border-t border-base-200 p-4 pb-6">
-    <button class="btn btn-primary btn-block shadow-lg" (click)="openCreateForm()">
-      Agregar dirección
+  <!-- Mobile Floating Add Button -->
+  <div class="sm:hidden fixed bottom-4 left-4 right-4 z-30">
+    <button
+      type="button"
+      class="w-full h-12 rounded-full bg-gradient-to-r from-emerald-600 to-teal-700 text-white shadow-xl shadow-emerald-900/25 font-bold text-sm flex items-center justify-center gap-2 cursor-pointer"
+      (click)="openCreateForm()"
+    >
+      <lucide-icon [img]="plusIcon" class="w-4 h-4"></lucide-icon>
+      Agregar Dirección
     </button>
   </div>
 
+  <!-- Create / Edit Modal -->
   <dialog class="modal modal-bottom sm:modal-middle" [class.modal-open]="isFormOpen">
-    <div class="modal-box p-0 bg-base-100 overflow-hidden max-w-lg">
-      <div class="bg-base-100 px-6 py-4 border-b border-base-200 flex justify-between items-center sticky top-0 z-10">
+    <div class="modal-box p-0 rounded-3xl ios-glass-card border border-white/80 shadow-2xl max-w-lg overflow-hidden">
+      <!-- Modal Header -->
+      <div class="p-6 pb-4 bg-black/[0.02] border-b border-black/[0.05] flex items-center justify-between">
         <div>
-          <h3 class="font-bold text-lg text-base-content">
-            {{ editingAddress ? 'Editar dirección' : 'Nueva dirección' }}
+          <h3 class="text-base font-extrabold text-base-content">
+            {{ editingAddress ? 'Editar Dirección' : 'Nueva Dirección' }}
           </h3>
-          <p class="text-xs text-base-content/60">Ingresa los detalles de la ubicación</p>
+          <p class="text-[11px] text-base-content/60">Datos de ubicación para despacho institucional</p>
         </div>
-        <button class="btn btn-sm btn-circle btn-ghost" (click)="closeForm()">✕</button>
+        <button
+          type="button"
+          class="w-7 h-7 rounded-full bg-black/[0.05] hover:bg-black/10 flex items-center justify-center text-xs text-base-content/60 cursor-pointer"
+          (click)="closeForm()"
+        >
+          ✕
+        </button>
       </div>
 
-      <div class="p-6 space-y-5 max-h-[70vh] overflow-y-auto">
-        <div class="form-control w-full">
-          <label class="label pt-0 pb-1">
-            <span class="label-text font-medium">Nombre de la ubicación</span>
-          </label>
-          <label class="input input-bordered flex items-center gap-2 focus-within:outline-primary">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70">
-              <path
-                d="M8.543 2.232a.75.75 0 0 0-1.085 0l-5.25 5.5A.75.75 0 0 0 2.75 9H4v4a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1a1 1 0 1 1 2 0v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V9h1.25a.75.75 0 0 0 .543-1.268l-5.25-5.5Z" />
-            </svg>
-            <input type="text" class="grow" placeholder="Ej: Casa, Oficina" [(ngModel)]="addressForm.label" />
-          </label>
+      <!-- Modal Body -->
+      <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+        <!-- Label -->
+        <div class="space-y-1">
+          <label class="text-xs font-semibold text-base-content/70">Nombre identificador</label>
+          <input
+            type="text"
+            class="w-full h-10 px-4 rounded-2xl bg-white/90 border border-black/[0.08] focus:border-primary focus:ring-3 focus:ring-primary/10 text-xs sm:text-sm text-base-content outline-none transition-all"
+            placeholder="Ej: Sede Principal, Bodega Centro, Planta Norte"
+            [(ngModel)]="addressForm.label"
+          />
         </div>
 
-        <div class="divider text-xs text-base-content/40 my-1">Detalles de envío</div>
-
-        <div class="form-control w-full">
-          <label class="label pt-0 pb-1">
-            <span class="label-text font-medium">Dirección exacta <span class="text-error">*</span></span>
+        <!-- Line 1 -->
+        <div class="space-y-1">
+          <label class="text-xs font-semibold text-base-content/70">
+            Dirección exacta <span class="text-error">*</span>
           </label>
-          <label class="input input-bordered flex items-center gap-2 focus-within:outline-primary">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70">
-              <path fill-rule="evenodd"
-                d="M9.69 14.204A25.298 25.298 0 0 1 8 15a25.306 25.306 0 0 1-1.69-.796c-2.654-1.345-4.81-3.235-4.81-6.104 0-3.415 2.91-6.1 6.5-6.1s6.5 2.685 6.5 6.1c0 2.869-2.156 4.759-4.81 6.104ZM8 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"
-                clip-rule="evenodd" />
-            </svg>
-            <input type="text" class="grow" placeholder="Calle 123 # 45 - 67" [(ngModel)]="addressForm.line1" />
-          </label>
+          <input
+            type="text"
+            class="w-full h-10 px-4 rounded-2xl bg-white/90 border border-black/[0.08] focus:border-primary focus:ring-3 focus:ring-primary/10 text-xs sm:text-sm text-base-content outline-none transition-all"
+            placeholder="Calle 123 # 45 - 67"
+            [(ngModel)]="addressForm.line1"
+          />
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
-          <div class="form-control">
-            <label class="label pt-0 pb-1"><span class="label-text font-medium text-xs">Interior/Apto</span></label>
-            <input type="text" class="input input-bordered w-full focus:outline-primary" placeholder="Ej: 201"
-              [(ngModel)]="addressForm.line2" />
+        <!-- Line 2 & Neighborhood -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="space-y-1">
+            <label class="text-[11px] font-semibold text-base-content/70">Interior / Bodega / Apto</label>
+            <input
+              type="text"
+              class="w-full h-10 px-4 rounded-2xl bg-white/90 border border-black/[0.08] focus:border-primary focus:ring-3 focus:ring-primary/10 text-xs text-base-content outline-none transition-all"
+              placeholder="Ej: Bodega 4"
+              [(ngModel)]="addressForm.line2"
+            />
           </div>
-          <div class="form-control">
-            <label class="label pt-0 pb-1"><span class="label-text font-medium text-xs">Barrio</span></label>
-            <input type="text" class="input input-bordered w-full focus:outline-primary" placeholder="Ej: El Poblado"
-              [(ngModel)]="addressForm.neighborhood" />
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4">
-          <div class="form-control">
-            <label class="label pt-0 pb-1"><span class="label-text font-medium text-xs">Ciudad *</span></label>
-            <input type="text" class="input input-bordered w-full focus:outline-primary" placeholder="Medellín"
-              [(ngModel)]="addressForm.city" />
-          </div>
-          <div class="form-control">
-            <label class="label pt-0 pb-1"><span class="label-text font-medium text-xs">Departamento *</span></label>
-            <input type="text" class="input input-bordered w-full focus:outline-primary" placeholder="Antioquia"
-              [(ngModel)]="addressForm.state" />
+          <div class="space-y-1">
+            <label class="text-[11px] font-semibold text-base-content/70">Barrio / Zona industrial</label>
+            <input
+              type="text"
+              class="w-full h-10 px-4 rounded-2xl bg-white/90 border border-black/[0.08] focus:border-primary focus:ring-3 focus:ring-primary/10 text-xs text-base-content outline-none transition-all"
+              placeholder="Ej: Zona Industrial"
+              [(ngModel)]="addressForm.neighborhood"
+            />
           </div>
         </div>
 
-        <div class="form-control">
-          <label class="label pt-0 pb-1"><span class="label-text font-medium">Indicaciones adicionales</span></label>
-          <textarea class="textarea textarea-bordered h-24 focus:outline-primary leading-normal"
-            placeholder="Dejar en portería, timbre dañado, indicaciones de llegada..."
-            [(ngModel)]="addressForm.notes"></textarea>
+        <!-- City & State -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="space-y-1">
+            <label class="text-[11px] font-semibold text-base-content/70">Ciudad <span class="text-error">*</span></label>
+            <input
+              type="text"
+              class="w-full h-10 px-4 rounded-2xl bg-white/90 border border-black/[0.08] focus:border-primary focus:ring-3 focus:ring-primary/10 text-xs text-base-content outline-none transition-all"
+              placeholder="Medellín"
+              [(ngModel)]="addressForm.city"
+            />
+          </div>
+          <div class="space-y-1">
+            <label class="text-[11px] font-semibold text-base-content/70">Departamento <span class="text-error">*</span></label>
+            <input
+              type="text"
+              class="w-full h-10 px-4 rounded-2xl bg-white/90 border border-black/[0.08] focus:border-primary focus:ring-3 focus:ring-primary/10 text-xs text-base-content outline-none transition-all"
+              placeholder="Antioquia"
+              [(ngModel)]="addressForm.state"
+            />
+          </div>
         </div>
 
-        <div class="form-control">
-          <label
-            class="label cursor-pointer justify-start gap-3 p-3 bg-base-200/50 border border-base-200 rounded-lg hover:bg-base-200 transition-colors">
-            <input type="checkbox" class="checkbox checkbox-primary checkbox-sm" [(ngModel)]="addressForm.isDefault" />
-            <div class="flex flex-col">
-              <span class="label-text font-medium">Usar como dirección principal</span>
-              <span class="text-xs text-base-content/60">Será la seleccionada automáticamente en nuevos pedidos.</span>
-            </div>
-          </label>
+        <!-- Notes -->
+        <div class="space-y-1">
+          <label class="text-xs font-semibold text-base-content/70">Indicaciones para el transportador</label>
+          <textarea
+            class="w-full h-20 p-3 rounded-2xl bg-white/90 border border-black/[0.08] focus:border-primary focus:ring-3 focus:ring-primary/10 text-xs text-base-content outline-none transition-all resize-none leading-relaxed"
+            placeholder="Horario de recepción, muelle de carga, portería..."
+            [(ngModel)]="addressForm.notes"
+          ></textarea>
         </div>
+
+        <!-- Default Checkbox -->
+        <label
+          class="flex items-center gap-3 p-3.5 rounded-2xl bg-black/[0.02] border border-black/[0.05] cursor-pointer hover:bg-black/[0.04] transition-colors"
+        >
+          <input
+            type="checkbox"
+            class="checkbox checkbox-primary checkbox-sm rounded-lg"
+            [(ngModel)]="addressForm.isDefault"
+          />
+          <div class="flex flex-col">
+            <span class="text-xs font-bold text-base-content">Usar como dirección principal</span>
+            <span class="text-[10px] text-base-content/50">Seleccionada por defecto en tus nuevos pedidos.</span>
+          </div>
+        </label>
       </div>
 
-      <div class="modal-action bg-base-100 p-6 pt-4 border-t border-base-200 mt-0 flex justify-end gap-3">
-        <button class="btn btn-ghost" (click)="closeForm()" [disabled]="isSaving()">Cancelar</button>
-        <button class="btn btn-primary px-6" (click)="saveAddress()" [disabled]="isSaving()">
-          @if (isSaving()) { <span class="loading loading-spinner loading-xs"></span> }
-          {{ editingAddress ? 'Actualizar' : 'Guardar dirección' }}
+      <!-- Modal Footer -->
+      <div class="p-6 pt-3 border-t border-black/[0.05] flex justify-end gap-3">
+        <button
+          type="button"
+          class="h-9 px-4 rounded-full text-xs font-semibold text-base-content/60 hover:text-base-content hover:bg-black/[0.04] transition-all cursor-pointer"
+          (click)="closeForm()"
+          [disabled]="isSaving()"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="h-10 px-6 rounded-full bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white shadow-md shadow-emerald-900/15 hover:shadow-lg text-xs font-bold transition-all disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
+          (click)="saveAddress()"
+          [disabled]="isSaving()"
+        >
+          @if (isSaving()) {
+            <span class="loading loading-spinner loading-xs mr-2"></span>
+          }
+          {{ editingAddress ? 'Actualizar Dirección' : 'Guardar Dirección' }}
         </button>
       </div>
     </div>
-    <form method="dialog" class="modal-backdrop">
+    <form method="dialog" class="modal-backdrop bg-black/40 backdrop-blur-md">
       <button (click)="closeForm()">close</button>
     </form>
   </dialog>
 
+  <!-- Delete Confirm Dialog -->
   <dialog class="modal" [class.modal-open]="isDeleteConfirmOpen">
-    <div class="modal-box bg-base-100">
-      <h3 class="font-bold text-lg text-error flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-          class="w-6 h-6">
-          <path stroke-linecap="round" stroke-linejoin="round"
-            d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-        </svg>
-        ¿Eliminar dirección?
-      </h3>
-      <p class="py-4 text-base-content/70">
-        Estás a punto de eliminar <span class="font-bold text-base-content">{{ addressToDelete?.label || 'esta
-          dirección' }}</span>.
-        Esta acción no se puede deshacer.
+    <div class="modal-box rounded-3xl ios-glass-card border border-white/80 p-6 shadow-2xl max-w-sm">
+      <div class="flex items-center gap-3 text-error mb-2">
+        <div class="w-10 h-10 rounded-2xl bg-error/10 text-error flex items-center justify-center shrink-0">
+          <lucide-icon [img]="trashIcon" class="w-5 h-5"></lucide-icon>
+        </div>
+        <h3 class="font-extrabold text-base text-base-content">¿Eliminar dirección?</h3>
+      </div>
+      <p class="py-2 text-xs text-base-content/70 leading-relaxed">
+        Estás a punto de eliminar <span class="font-bold text-base-content">{{ addressToDelete?.label || 'esta dirección' }}</span>. Esta acción no se puede deshacer.
       </p>
-      <div class="modal-action">
-        <button class="btn btn-ghost" (click)="cancelDelete()">Cancelar</button>
-        <button class="btn btn-error text-error-content" (click)="deleteAddress()">Sí, eliminar</button>
+      <div class="modal-action pt-2 flex items-center justify-end gap-2">
+        <button
+          type="button"
+          class="h-9 px-4 rounded-full text-xs font-semibold text-base-content/60 hover:text-base-content cursor-pointer"
+          (click)="cancelDelete()"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="h-9 px-5 rounded-full bg-error text-white text-xs font-bold shadow-xs hover:opacity-90 transition-all cursor-pointer"
+          (click)="deleteAddress()"
+        >
+          Sí, eliminar
+        </button>
       </div>
     </div>
-    <form method="dialog" class="modal-backdrop">
+    <form method="dialog" class="modal-backdrop bg-black/40 backdrop-blur-md">
       <button (click)="cancelDelete()">close</button>
     </form>
   </dialog>

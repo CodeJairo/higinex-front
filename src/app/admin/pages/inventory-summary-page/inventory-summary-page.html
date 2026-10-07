@@ -146,8 +146,7 @@
                                             {{ balance.variant.product.name }}
                                         </div>
                                         <div class="flex items-center gap-2 text-xs text-base-content/60">
-                                            <span class="badge badge-sm badge-ghost font-mono">{{ balance.variant.sku
-                                                }}</span>
+                                            <span class="badge badge-sm badge-ghost font-mono">{{ balance.variant.sku || balance.variantId }}</span>
                                             <span class="truncate max-w-[200px]">{{ balance.variant.name }}</span>
                                         </div>
                                     </div>
@@ -230,7 +229,7 @@
                                 <div class="font-bold text-base-content text-sm">{{ balance.variant.product.name }}
                                 </div>
                                 <div class="flex items-center gap-2 mt-1">
-                                    <span class="badge badge-xs badge-ghost font-mono">{{ balance.variant.sku }}</span>
+                                    <span class="badge badge-xs badge-ghost font-mono">{{ balance.variant.sku || balance.variantId }}</span>
                                     <span class="text-xs text-base-content/60">{{ balance.variant.name }}</span>
                                 </div>
                             </div>

@@ -2,14 +2,23 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { injectQuery } from '@tanstack/angular-query-experimental';
-import { Bookmark, CircleCheckBig, Clock, LucideAngularModule, Map, Phone, X } from 'lucide-angular';
+import { ArrowLeft, ArrowRight, Bookmark, CircleCheckBig, Clock, LucideAngularModule, Map, Phone, X } from 'lucide-angular';
 import { CheckoutOrder, OrderStatus } from '../../interfaces';
 import { CheckoutService } from '../../services/checkout.service';
 import { OrderStatusLabelPipe } from '../../../shared/pipes/order-status-label.pipe';
+import { UiEmptyStateComponent } from '../../../shared/components/ui/empty-state/empty-state.component';
+import { UiLoadingStateComponent } from '../../../shared/components/ui/loading-state/loading-state.component';
 
 @Component({
   selector: 'app-order-confirmation-page',
-  imports: [CurrencyPipe, LucideAngularModule, DatePipe, OrderStatusLabelPipe],
+  imports: [
+    CurrencyPipe,
+    LucideAngularModule,
+    DatePipe,
+    OrderStatusLabelPipe,
+    UiEmptyStateComponent,
+    UiLoadingStateComponent,
+  ],
   templateUrl: './order-confirmation-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -24,6 +33,8 @@ export class OrderConfirmationPage {
   readonly phoneIcon = Phone;
   readonly mapIcon = Map;
   readonly bookmarkIcon = Bookmark;
+  readonly arrowRightIcon = ArrowRight;
+  readonly arrowLeftIcon = ArrowLeft;
 
   readonly orderId = signal(this.route.snapshot.paramMap.get('orderId') ?? '');
 
@@ -48,18 +59,18 @@ export class OrderConfirmationPage {
 
   getStatusBadgeClass(status: OrderStatus): string {
     if (status === 'CREATED' || status === 'PENDING_PAYMENT') {
-      return 'badge badge-warning badge-lg text-warning-content';
+      return 'badge-warning text-warning-content';
     }
     if (status === 'PAID' || status === 'PREPARING') {
-      return 'badge badge-info badge-lg text-info-content';
+      return 'badge-info text-info-content';
     }
     if (status === 'DELIVERED') {
-      return 'badge badge-success badge-lg text-success-content';
+      return 'badge-success text-success-content';
     }
     if (status === 'CANCELED') {
-      return 'badge badge-error badge-lg text-error-content';
+      return 'badge-error text-error-content';
     }
-    return 'badge badge-ghost badge-lg text-base-content/70';
+    return 'badge-ghost text-base-content/70';
   }
 
 

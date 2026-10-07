@@ -1,5 +1,14 @@
-import { DOCUMENT } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  Check,
+  LucideAngularModule,
+  Moon,
+  Palette,
+  RotateCcw,
+  Sparkles,
+  Sun,
+} from 'lucide-angular';
 import { AppearanceService } from '../../services/appearance.service';
 
 interface ThemeOption {
@@ -14,15 +23,14 @@ interface AccentOption {
 }
 
 const ACCENT_SWATCHES: Record<string, string> = {
+  brand: '#0d6b46',
+  technical: '#059669',
   emerald: '#10b981',
-  sky: '#0ea5e9',
-  violet: '#8b5cf6',
-  amber: '#fbbf24',
-  rose: '#f43f5e',
 };
 
 @Component({
   selector: 'customer-appearance-page',
+  imports: [CommonModule, LucideAngularModule],
   templateUrl: './appearance-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -30,30 +38,30 @@ export class AppearancePage {
   readonly appearanceService = inject(AppearanceService);
   private readonly document = inject(DOCUMENT);
 
+  readonly sunIcon = Sun;
+  readonly moonIcon = Moon;
+  readonly paletteIcon = Palette;
+  readonly checkIcon = Check;
+  readonly rotateCcwIcon = RotateCcw;
+  readonly sparklesIcon = Sparkles;
+
   readonly themeOptions: ThemeOption[] = [
     {
       id: 'corporate',
-      label: 'Corporativo',
-      description: 'Equilibrio limpio y profesional para el dia a dia.',
+      label: 'Corporativo (Claro)',
+      description: 'Equilibrio aséptico y profesional para operaciones de compras.',
     },
     {
       id: 'business',
-      label: 'Negocios',
-      description: 'Estilo oscuro y elegante perfecto para entornos profesionales.',
-    },
-    {
-      id: 'retro',
-      label: 'Retro',
-      description: 'Toques clásicos y cálidos con personalidad única.',
+      label: 'Negocios (Oscuro)',
+      description: 'Estilo oscuro sobrio de alto contraste para entornos de baja luz.',
     },
   ];
 
   readonly accentOptions: AccentOption[] = [
-    { id: 'emerald', label: 'Emerald' },
-    { id: 'sky', label: 'Sky' },
-    { id: 'violet', label: 'Violet' },
-    { id: 'amber', label: 'Amber' },
-    { id: 'rose', label: 'Rose' },
+    { id: 'brand', label: 'Azul Institucional' },
+    { id: 'technical', label: 'Azul Técnico' },
+    { id: 'emerald', label: 'Verde Ecológico' },
   ];
 
   readonly selectedTheme = computed(() => this.appearanceService.theme());
@@ -65,7 +73,7 @@ export class AppearancePage {
 
   readonly previewCardClasses = computed(() => {
     const accent = this.appearanceService.accent();
-    const radius = this.appearanceService.rounded() ? 'rounded-2xl' : 'rounded-none';
+    const radius = this.appearanceService.rounded() ? 'rounded-xl' : 'rounded-none';
     const border = accent ? 'border-primary/30' : 'border-base-300';
     return `border bg-base-200/70 ${radius} ${border}`;
   });
@@ -83,13 +91,13 @@ export class AppearancePage {
   });
 
   readonly previewButtonClasses = computed(() => {
-    const radius = this.appearanceService.rounded() ? 'rounded-xl' : 'rounded-none';
+    const radius = this.appearanceService.rounded() ? 'rounded-lg' : 'rounded-none';
     const motion = this.subtleAnimations() ? 'transition-all duration-200' : 'transition-none';
     return `btn btn-primary ${radius} ${motion}`;
   });
 
   readonly previewGhostButtonClasses = computed(() => {
-    const radius = this.appearanceService.rounded() ? 'rounded-xl' : 'rounded-none';
+    const radius = this.appearanceService.rounded() ? 'rounded-lg' : 'rounded-none';
     const motion = this.subtleAnimations() ? 'transition-all duration-200' : 'transition-none';
     return `btn btn-ghost btn-xs ${radius} ${motion}`;
   });
@@ -126,7 +134,7 @@ export class AppearancePage {
 
   accentButtonClasses(id: string): string {
     const base =
-      'flex items-center gap-2 px-3 py-2 rounded-xl border text-xs hover:bg-base-200/70 transition-all';
+      'flex items-center gap-2 px-3 py-2 rounded-lg border text-xs hover:bg-base-200/70 transition-all';
     return this.selectedAccent() === id
       ? `${base} border-primary ring-1 ring-primary/50 bg-base-200/80`
       : `${base} border-base-300`;
@@ -137,7 +145,7 @@ export class AppearancePage {
   }
 
   accentSwatchStyle(id: string): Record<string, string> {
-    const color = ACCENT_SWATCHES[id] ?? '#cbd5e1';
+    const color = ACCENT_SWATCHES[id] ?? '#0f3e70';
     return { 'background-color': color };
   }
 

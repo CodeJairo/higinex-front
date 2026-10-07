@@ -3,15 +3,28 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { ChevronDown, Funnel, LucideAngularModule, Search, TriangleAlert, X } from 'lucide-angular';
 import { AuthService } from '../../../auth/services/auth.service';
+import { UiEmptyStateComponent } from '../../../shared/components/ui/empty-state/empty-state.component';
+import { UiLoadingStateComponent } from '../../../shared/components/ui/loading-state/loading-state.component';
+import { UiPageHeaderComponent } from '../../../shared/components/ui/page-header/page-header.component';
 import { MobileFilters } from '../../components/mobile-filters/mobile-filters';
 import { ProductCard } from '../../components/product-card/product-card';
 import { Sidebar } from '../../components/sidebar/sidebar';
+import { Product } from '../../interfaces';
 import { CatalogService } from '../../services/catalog.service';
 import { FilterService } from '../../services/filter.service';
 
 @Component({
   selector: 'sales-catalog-page',
-  imports: [CommonModule, LucideAngularModule, ProductCard, Sidebar, MobileFilters],
+  imports: [
+    CommonModule,
+    LucideAngularModule,
+    ProductCard,
+    Sidebar,
+    MobileFilters,
+    UiPageHeaderComponent,
+    UiEmptyStateComponent,
+    UiLoadingStateComponent,
+  ],
   templateUrl: './catalog-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -45,6 +58,21 @@ export class CatalogPage {
   readonly products = computed(() => this.productsQuery.data() ?? []);
   readonly variants = computed(() => this.variantsQuery.data() ?? []);
   readonly filteredVariants = computed(() => this.filterService.filterVariants(this.variants()));
+  readonly currentSort = computed(() => this.filterService.filters().sortBy);
+  readonly activeSearchQuery = computed(() => this.filterService.searchQuery());
+
+  readonly activeProductFilters = computed(() => {
+    const selectedIds = this.filterService.filters().productIds;
+    const allProducts = this.products();
+    return selectedIds
+      .map((id) => allProducts.find((p) => p.id === id))
+      .filter((p): p is Product => !!p);
+  });
+
+  readonly hasActiveFilters = computed(
+    () => this.activeProductFilters().length > 0 || !!this.activeSearchQuery().trim(),
+  );
+
   readonly isLoading = computed(
     () => this.productsQuery.isLoading() || this.variantsQuery.isLoading(),
   );
@@ -56,6 +84,14 @@ export class CatalogPage {
 
   closeMobileFilters(): void {
     this.showMobileFilters.set(false);
+  }
+
+  removeProductFilter(productId: string): void {
+    this.filterService.toggleProduct(productId);
+  }
+
+  clearSearch(): void {
+    this.filterService.updateSearchQuery('');
   }
 
   resetFilters(): void {
@@ -73,3 +109,4 @@ export class CatalogPage {
     this.filterService.updateSortOption(value);
   }
 }
+

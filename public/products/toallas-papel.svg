@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#e2e8f0"/>
+    </linearGradient>
+    <linearGradient id="kraft" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#d97706"/>
+      <stop offset="50%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#b45309"/>
+    </linearGradient>
+    <linearGradient id="box" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="paper" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f1f5f9"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="25" stdDeviation="30" flood-color="#0f172a" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <!-- Studio Background -->
+  <rect width="800" height="800" fill="url(#bg)"/>
+
+  <!-- Pedestal Shadow -->
+  <ellipse cx="400" cy="670" rx="280" ry="35" fill="#0f172a" opacity="0.1"/>
+  <ellipse cx="400" cy="665" rx="220" ry="20" fill="#0f172a" opacity="0.15"/>
+
+  <!-- Commercial Box / Packaging (Back) -->
+  <g filter="url(#shadow)">
+    <!-- Main Box -->
+    <rect x="220" y="240" width="360" height="400" rx="16" fill="url(#box)"/>
+
+    <!-- Top Kraft Band -->
+    <rect x="220" y="240" width="360" height="70" rx="16" fill="url(#kraft)"/>
+    <rect x="220" y="290" width="360" height="20" fill="url(#kraft)"/>
+
+    <!-- Paper Stack Visible Slot -->
+    <rect x="250" y="340" width="300" height="230" rx="12" fill="#020617" opacity="0.6"/>
+
+    <!-- Interfolded Paper Towels Sheets (Stack) -->
+    <g transform="translate(260, 350)">
+      <!-- Sheet 1 -->
+      <path d="M 0 190 Q 140 180 280 190 L 280 205 Q 140 195 0 205 Z" fill="url(#paper)" stroke="#e2e8f0" stroke-width="1"/>
+      <!-- Sheet 2 -->
+      <path d="M 5 160 Q 140 150 275 160 L 275 175 Q 140 165 5 175 Z" fill="url(#paper)" stroke="#e2e8f0" stroke-width="1"/>
+      <!-- Sheet 3 -->
+      <path d="M 0 130 Q 140 120 280 130 L 280 145 Q 140 135 0 145 Z" fill="url(#paper)" stroke="#e2e8f0" stroke-width="1"/>
+      <!-- Sheet 4 -->
+      <path d="M 5 100 Q 140 90 275 100 L 275 115 Q 140 105 5 115 Z" fill="url(#paper)" stroke="#e2e8f0" stroke-width="1"/>
+      <!-- Sheet 5 -->
+      <path d="M 0 70 Q 140 60 280 70 L 280 85 Q 140 75 0 85 Z" fill="url(#paper)" stroke="#e2e8f0" stroke-width="1"/>
+      <!-- Sheet 6 Top folded -->
+      <path d="M 5 35 Q 140 15 275 35 L 275 55 Q 140 35 5 55 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+      <!-- Pulled out towel sheet (peeking out) -->
+      <path d="M 40 40 C 90 -20 190 -20 240 40 L 225 45 C 180 -5 100 -5 55 45 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+    </g>
+
+    <!-- Branding Text on Box -->
+    <text x="400" y="285" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="24" fill="#ffffff" text-anchor="middle" letter-spacing="3">HIGINEX</text>
+    <text x="400" y="605" font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="14" fill="#10b981" text-anchor="middle" letter-spacing="1">TOALLAS INTERDOBLADAS DOBLE HOJA</text>
+    <text x="400" y="625" font-family="system-ui, -apple-system, sans-serif" font-weight="500" font-size="11" fill="#94a3b8" text-anchor="middle">Máxima Absorción · Dispensador Universal · 150 Hojas</text>
+  </g>
+</svg>

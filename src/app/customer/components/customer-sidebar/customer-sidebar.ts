@@ -1,7 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { Bell, Heart, LucideAngularModule, MapPin, Package, Settings, User } from 'lucide-angular';
+import {
+  ArrowRight,
+  Bell,
+  Heart,
+  LucideAngularModule,
+  MapPin,
+  Package,
+  Settings,
+  ShoppingBag,
+  User,
+} from 'lucide-angular';
 
 interface customerNavItem {
   label: string;
@@ -24,6 +34,8 @@ export class CustomerSidebar {
   readonly packageIcon = Package;
   readonly bellIcon = Bell;
   readonly heartIcon = Heart;
+  readonly shoppingBagIcon = ShoppingBag;
+  readonly arrowRightIcon = ArrowRight;
 
   navItems: customerNavItem[] = [
     {

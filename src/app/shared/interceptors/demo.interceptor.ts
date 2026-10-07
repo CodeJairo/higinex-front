@@ -1,7 +1,7 @@
 import { HttpHandlerFn, HttpInterceptorFn, HttpRequest, HttpResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { of } from 'rxjs';
-import { DemoService } from '../services/demo.service';
+import { DemoOrder, DemoService } from '../services/demo.service';
 
 export const demoInterceptor: HttpInterceptorFn = (
   req: HttpRequest<unknown>,
@@ -16,15 +16,15 @@ export const demoInterceptor: HttpInterceptorFn = (
 
   const url = req.url;
 
-  // Skip if already a demo endpoint
-  if (url.includes('/demo/')) {
+  // Skip if already a demo backend endpoint (like /demo/login or /demo/initial-data)
+  if (url.includes('/demo/login') || url.includes('/demo/initial-data') || url.includes('/demo/send-invoice') || url.includes('/demo/notify-status')) {
     return next(req);
   }
 
   // Helper function to match exact API path segments
   const matchesPath = (pattern: RegExp): boolean => pattern.test(url);
 
-  // Handle GET requests - return cached data from sessionStorage
+  // Handle GET requests - return cached/mocked data from DemoService
   if (req.method === 'GET') {
     // GET /orders - return demo orders from sessionStorage
     if (matchesPath(/\/orders(\?|$)/)) {
@@ -48,10 +48,10 @@ export const demoInterceptor: HttpInterceptorFn = (
       return of(new HttpResponse({ status: 200, body: addresses }));
     }
 
-    // GET /inventory/balances - return demo inventory from sessionStorage
+    // GET /inventory/balances - return hydrated demo inventory
     if (matchesPath(/\/inventory\/balances(\?|$)/)) {
-      const inventory = demoService.getDemoInventory();
-      return of(new HttpResponse({ status: 200, body: inventory }));
+      const balances = demoService.getDemoInventoryBalances();
+      return of(new HttpResponse({ status: 200, body: balances }));
     }
 
     // GET /inventory/summary - return demo inventory summary
@@ -71,18 +71,16 @@ export const demoInterceptor: HttpInterceptorFn = (
       );
     }
 
-    // GET /products or /products?... - redirect to /demo/products
-    if (matchesPath(/\/products(\?|$)/)) {
-      const newUrl = url.replace(/\/products/, '/demo/products');
-      const clonedReq = req.clone({ url: newUrl });
-      return next(clonedReq);
+    // GET /products/variants - return demo variants with pricing & inventory
+    if (matchesPath(/\/products\/variants(\?|$)/)) {
+      const variants = demoService.getDemoProductVariants();
+      return of(new HttpResponse({ status: 200, body: variants }));
     }
 
-    // GET /products/variants - redirect to /demo/products/variants
-    if (matchesPath(/\/products\/variants(\?|$)/)) {
-      const newUrl = url.replace(/\/products\/variants/, '/demo/products/variants');
-      const clonedReq = req.clone({ url: newUrl });
-      return next(clonedReq);
+    // GET /products or /products?... - return demo product list
+    if (matchesPath(/\/products(\?|$)/)) {
+      const products = demoService.getDemoProductList();
+      return of(new HttpResponse({ status: 200, body: products }));
     }
 
     // GET /contracts - return demo contracts from sessionStorage
@@ -92,71 +90,95 @@ export const demoInterceptor: HttpInterceptorFn = (
     }
   }
 
-  // Handle POST requests - redirect to demo endpoints
+  // Handle POST requests in demo mode (simulate success locally)
   if (req.method === 'POST') {
-    // POST /orders - redirect to /demo/orders
+    // POST /orders or /demo/orders - create demo order locally
     if (matchesPath(/\/orders$/)) {
-      const newUrl = url.replace(/\/orders$/, '/demo/orders');
-      const clonedReq = req.clone({ url: newUrl });
-      return next(clonedReq);
+      const body = (req.body ?? {}) as Record<string, unknown>;
+      const newOrder: DemoOrder = {
+        id: `demo-order-${Date.now()}`,
+        orderNumber: `ORD-DEMO-${Math.floor(1000 + Math.random() * 9000)}`,
+        status: 'PAID',
+        currency: 'COP',
+        customerId: 'demo-customer-001',
+        buyerFullName: 'Empresa Demo S.A.S',
+        buyerEmail: demoService.demoEmail() ?? 'cliente-demo@higinex.com',
+        buyerPhone: '+57 300 123 4567',
+        buyerDocumentType: 'NIT',
+        buyerDocumentNumber: '900123456-1',
+        subtotalAmount: String(body['subtotalAmount'] ?? '0'),
+        shippingAmount: '0',
+        taxesAmount: String(Math.round(Number(body['subtotalAmount'] ?? 0) * 0.19)),
+        discountAmount: '0',
+        totalAmount: String(body['totalAmount'] ?? body['subtotalAmount'] ?? '0'),
+        items: (body['items'] as any) ?? [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      demoService.addDemoOrder(newOrder);
+      return of(new HttpResponse({ status: 201, body: newOrder }));
     }
 
-    // POST /orders/:id/status - redirect to /demo/orders/:id/status
-    if (matchesPath(/\/orders\/[^/]+\/status$/)) {
-      const newUrl = url.replace(/\/orders\//, '/demo/orders/');
-      const clonedReq = req.clone({ url: newUrl });
-      return next(clonedReq);
-    }
-
-    // POST /customers/me/addresses - redirect to /demo/addresses
-    if (matchesPath(/\/customers\/me\/addresses$/)) {
-      const newUrl = url.replace(/\/customers\/me\/addresses$/, '/demo/addresses');
-      const clonedReq = req.clone({ url: newUrl });
-      return next(clonedReq);
-    }
-
-    // POST /inventory/adjust - redirect to /demo/inventory/adjust
+    // POST /inventory/adjust
     if (matchesPath(/\/inventory\/adjust$/)) {
-      const newUrl = url.replace(/\/inventory\/adjust$/, '/demo/inventory/adjust');
-      const clonedReq = req.clone({ url: newUrl });
-      return next(clonedReq);
+      const body = req.body as { variantId: string; quantity: number };
+      if (body?.variantId) {
+        demoService.updateDemoInventory(body.variantId, { onHand: body.quantity });
+      }
+      return of(new HttpResponse({ status: 200, body: { success: true } }));
     }
 
-    // POST /products - redirect to /demo/products (admin only)
-    if (matchesPath(/\/products$/)) {
-      const newUrl = url.replace(/\/products$/, '/demo/products');
-      const clonedReq = req.clone({ url: newUrl });
-      return next(clonedReq);
+    // POST /customers/me/addresses
+    if (matchesPath(/\/customers\/me\/addresses$/)) {
+      const body = (req.body ?? {}) as any;
+      const newAddr = {
+        id: `demo-addr-${Date.now()}`,
+        ...body,
+        isDefault: body.isDefault ?? false,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      demoService.addDemoAddress(newAddr);
+      return of(new HttpResponse({ status: 201, body: newAddr }));
     }
   }
 
-  // Handle PATCH requests - redirect to demo endpoints
+  // Handle PATCH requests in demo mode
   if (req.method === 'PATCH') {
-    // PATCH /orders/:id/status - redirect to /demo/orders/:id/status
+    // PATCH /orders/:id/status
     if (matchesPath(/\/orders\/[^/]+\/status$/)) {
-      const newUrl = url.replace(/\/orders\//, '/demo/orders/');
-      const clonedReq = req.clone({ url: newUrl });
-      return next(clonedReq);
+      const orderId = url.match(/\/orders\/([^/]+)\/status/)?.[1];
+      const body = req.body as { status: string };
+      if (orderId && body?.status) {
+        demoService.updateDemoOrderStatus(orderId, body.status);
+        const order = demoService.getDemoOrders().find((o) => o.id === orderId);
+        return of(new HttpResponse({ status: 200, body: order }));
+      }
     }
 
-    // PATCH /customers/me/addresses/:id - redirect to /demo/addresses/:id
+    // PATCH /customers/me/addresses/:id
     if (matchesPath(/\/customers\/me\/addresses\/[^/]+$/)) {
-      const newUrl = url.replace(/\/customers\/me\/addresses\//, '/demo/addresses/');
-      const clonedReq = req.clone({ url: newUrl });
-      return next(clonedReq);
+      const addressId = url.match(/\/customers\/me\/addresses\/([^/?]+)/)?.[1];
+      const body = (req.body ?? {}) as any;
+      if (addressId) {
+        demoService.updateDemoAddress(addressId, body);
+        return of(new HttpResponse({ status: 200, body: { success: true } }));
+      }
     }
   }
 
-  // Handle DELETE requests
+  // Handle DELETE requests in demo mode
   if (req.method === 'DELETE') {
-    // DELETE /customers/me/addresses/:id - redirect to /demo/addresses/:id
+    // DELETE /customers/me/addresses/:id
     if (matchesPath(/\/customers\/me\/addresses\/[^/]+$/)) {
-      const newUrl = url.replace(/\/customers\/me\/addresses\//, '/demo/addresses/');
-      const clonedReq = req.clone({ url: newUrl });
-      return next(clonedReq);
+      const addressId = url.match(/\/customers\/me\/addresses\/([^/?]+)/)?.[1];
+      if (addressId) {
+        demoService.deleteDemoAddress(addressId);
+        return of(new HttpResponse({ status: 200, body: { success: true } }));
+      }
     }
   }
 
-  // For all other requests, let them pass through
+  // For all other requests, pass through
   return next(req);
 };

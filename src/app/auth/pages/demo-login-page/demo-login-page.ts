@@ -1,69 +1,118 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import {
   ArrowLeft,
+  ArrowRight,
+  Building2,
+  ChevronLeft,
+  ChevronRight,
   CircleAlert,
   LucideAngularModule,
-  Mail,
-  Play,
   ShieldCheck,
-  UserCog,
   X,
 } from 'lucide-angular';
 import { DemoUserType } from '../../../shared/services/demo.service';
+import { AUTH_SHOWCASE_PRODUCTS, ShowcaseProduct } from '../../interfaces';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'auth-demo-login-page',
-  imports: [ReactiveFormsModule, LucideAngularModule],
+  imports: [LucideAngularModule],
   templateUrl: './demo-login-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DemoLoginPage {
+export class DemoLoginPage implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
-  private readonly formBuilder = inject(FormBuilder);
 
-  readonly emailIcon = Mail;
-  readonly userIcon = UserCog;
-  readonly playIcon = Play;
   readonly backIcon = ArrowLeft;
+  readonly arrowRightIcon = ArrowRight;
+  readonly buildingIcon = Building2;
+  readonly shieldIcon = ShieldCheck;
   readonly errorIcon = CircleAlert;
   readonly closeIcon = X;
-  readonly shieldIcon = ShieldCheck;
+  readonly chevronLeftIcon = ChevronLeft;
+  readonly chevronRightIcon = ChevronRight;
 
-  // Form state
-  readonly submitted = signal(false);
-  readonly isLoading = signal(false);
+  // Showcase de productos reales
+  readonly showcaseProducts: readonly ShowcaseProduct[] = AUTH_SHOWCASE_PRODUCTS;
+  readonly currentProductIndex = signal(0);
+  readonly currentProduct = computed(
+    () => this.showcaseProducts[this.currentProductIndex()],
+  );
+  private carouselTimer?: ReturnType<typeof setInterval>;
+
+  // Año actual para pie institucional
+  readonly currentYear = new Date().getFullYear();
+
+  // Estado del flujo
+  readonly loadingType = signal<DemoUserType | null>(null);
   readonly errorMessage = signal<string | null>(null);
 
-  readonly form = this.formBuilder.nonNullable.group({
-    email: this.formBuilder.nonNullable.control('', [Validators.required, Validators.email]),
-    type: this.formBuilder.nonNullable.control<DemoUserType>('user', [Validators.required]),
-  });
+  ngOnInit(): void {
+    this.startCarousel();
+  }
 
-  async onSubmit(): Promise<void> {
-    this.submitted.set(true);
-    this.errorMessage.set(null);
+  ngOnDestroy(): void {
+    this.stopCarousel();
+  }
 
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
+  startCarousel(): void {
+    this.stopCarousel();
+    this.carouselTimer = setInterval(() => {
+      this.currentProductIndex.update(
+        (idx) => (idx + 1) % this.showcaseProducts.length,
+      );
+    }, 4500);
+  }
+
+  stopCarousel(): void {
+    if (this.carouselTimer) {
+      clearInterval(this.carouselTimer);
+      this.carouselTimer = undefined;
     }
+  }
 
-    this.isLoading.set(true);
+  setProduct(index: number): void {
+    this.currentProductIndex.set(index);
+    this.startCarousel();
+  }
 
-    const { email, type } = this.form.getRawValue();
-    const success = await this.authService.loginAsDemo(type, email.trim());
+  prevProduct(): void {
+    this.currentProductIndex.update(
+      (idx) =>
+        (idx - 1 + this.showcaseProducts.length) % this.showcaseProducts.length,
+    );
+    this.startCarousel();
+  }
 
-    this.isLoading.set(false);
+  nextProduct(): void {
+    this.currentProductIndex.update(
+      (idx) => (idx + 1) % this.showcaseProducts.length,
+    );
+    this.startCarousel();
+  }
+
+  async selectDemo(type: DemoUserType): Promise<void> {
+    this.errorMessage.set(null);
+    this.loadingType.set(type);
+
+    const email = type === 'admin' ? 'admin-demo@higinex.com' : 'cliente-demo@higinex.com';
+    const success = await this.authService.loginAsDemo(type, email);
 
     if (success) {
-      // Redirect based on demo type
       const target = type === 'admin' ? '/admin/dashboard' : '/sales';
       this.router.navigateByUrl(target);
     } else {
+      this.loadingType.set(null);
       this.errorMessage.set(
         this.authService.loginError() ?? 'No se pudo iniciar el modo demo. Intenta de nuevo.',
       );
@@ -77,15 +126,5 @@ export class DemoLoginPage {
 
   dismissError(): void {
     this.errorMessage.set(null);
-  }
-
-  showError(path: string): boolean {
-    const control = this.form.get(path);
-    return !!control && control.invalid && (control.touched || this.submitted());
-  }
-
-  hasError(path: string, error: string): boolean {
-    const control = this.form.get(path);
-    return !!control && control.hasError(error);
   }
 }

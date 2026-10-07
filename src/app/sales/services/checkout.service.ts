@@ -76,23 +76,53 @@ export class CheckoutService {
         };
       });
 
-      const demoPayload: CreateDemoOrderPayload = {
-        ...payload,
-        items,
-        subtotalAmount,
-        totalAmount: subtotalAmount, // Simplified: assuming no extra fees for demo
-        demoEmail: this.demoService.demoEmail() ?? undefined,
-        sendInvoice: true,
+      const orderId = `demo-order-${Date.now()}`;
+      const orderNumber = `ORD-DEMO-${Math.floor(1000 + Math.random() * 9000)}`;
+
+      const order: DemoOrder = {
+        id: orderId,
+        orderNumber,
+        status: 'PAID',
+        currency: 'COP',
+        customerId: 'demo-customer-001',
+        buyerFullName: 'Empresa Demo S.A.S',
+        buyerEmail: this.demoService.demoEmail() ?? 'cliente-demo@higinex.com',
+        buyerPhone: '+57 300 123 4567',
+        buyerDocumentType: 'NIT',
+        buyerDocumentNumber: '900123456-1',
+        subtotalAmount: String(subtotalAmount),
+        shippingAmount: '0',
+        taxesAmount: String(Math.round(subtotalAmount * 0.19)),
+        discountAmount: '0',
+        totalAmount: String(Math.round(subtotalAmount * 1.19)),
+        items: items.map((it, idx) => ({
+          id: `item-${Date.now()}-${idx}`,
+          orderId,
+          variantId: it.variantId,
+          productNameSnapshot: it.name,
+          variantNameSnapshot: it.name,
+          unitPriceAmount: String(it.unitPrice),
+          quantity: it.quantity,
+          lineTotalAmount: String(it.total),
+        })),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       };
 
-      const order = await this.authService.requestWithAuthHeaders((headers) =>
-        this.http.post<CheckoutOrder>(this.buildUrl('/demo/orders'), demoPayload, { headers }),
-      );
-
       // Save order to sessionStorage
-      this.demoService.addDemoOrder(order as unknown as DemoOrder);
+      this.demoService.addDemoOrder(order);
 
-      return order;
+      // Decrement inventory in demo mode
+      for (const item of payload.items) {
+        const currentInv = this.demoService.getDemoInventory().find((i) => i.variantId === item.variantId);
+        if (currentInv) {
+          this.demoService.updateDemoInventory(item.variantId, {
+            onHand: Math.max(0, currentInv.onHand - item.quantity),
+          });
+        }
+      }
+
+      return order as unknown as CheckoutOrder;
     }
 
     return this.authService.requestWithAuthHeaders((headers) =>

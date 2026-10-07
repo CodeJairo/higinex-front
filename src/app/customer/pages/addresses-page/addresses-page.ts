@@ -1,6 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import {
+  AlertCircle,
+  Check,
+  Edit3,
+  Home,
+  LucideAngularModule,
+  MapPin,
+  Plus,
+  Trash2,
+} from 'lucide-angular';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import {
   CreateCustomerAddressPayload,
@@ -11,11 +21,19 @@ import { CustomerAddressService } from '../../services/customer-address.service'
 
 @Component({
   selector: 'app-customer-addresses',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, LucideAngularModule],
   templateUrl: './addresses-page.html',
 })
 export class AddressesPage {
   private readonly addressService = inject(CustomerAddressService);
+
+  readonly mapPinIcon = MapPin;
+  readonly plusIcon = Plus;
+  readonly editIcon = Edit3;
+  readonly trashIcon = Trash2;
+  readonly checkIcon = Check;
+  readonly alertCircleIcon = AlertCircle;
+  readonly homeIcon = Home;
 
   // Consultar direcciones
   private readonly addressesQuery = injectQuery(() => ({

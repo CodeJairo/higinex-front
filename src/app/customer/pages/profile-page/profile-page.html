@@ -1,342 +1,406 @@
-<div class="min-h-screen py-8 px-4 sm:px-6">
-  <div class="container mx-auto max-w-4xl space-y-8">
-
-    <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-      <div>
-        <h1 class="text-3xl font-extrabold tracking-tight text-base-content">Mi Cuenta</h1>
-        <p class="text-base-content/60 text-sm mt-1">
-          Administra tu información personal, seguridad y preferencias.
-        </p>
-      </div>
-      <div class="badge badge-lg gap-2 py-4 px-4 border-base-200 shadow-sm" [class.badge-success]="form().emailVerified"
-        [class.bg-success-content]="false" [class.text-success-content]="form().emailVerified"
-        [class.badge-ghost]="!form().emailVerified">
-        @if (form().emailVerified) {
-        <lucide-icon [img]="checkCircleIcon" class="h-4 w-4"></lucide-icon>
+<div class="space-y-6">
+  <!-- Header -->
+  <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-base-content">Mi Cuenta</h1>
+      <p class="text-sm text-base-content/60 mt-0.5">
+        Administra tu información personal, credenciales de acceso y preferencias.
+      </p>
+    </div>
+    <div
+      class="h-8.5 px-4 rounded-full border shadow-xs inline-flex items-center gap-2 text-xs font-bold"
+      [class.bg-emerald-500/10]="form().emailVerified"
+      [class.text-emerald-700]="form().emailVerified"
+      [class.border-emerald-500/20]="form().emailVerified"
+      [class.bg-black/[0.04]]="!form().emailVerified"
+      [class.text-base-content/60]="!form().emailVerified"
+      [class.border-black/[0.08]]="!form().emailVerified"
+    >
+      @if (form().emailVerified) {
+        <lucide-icon [img]="checkCircleIcon" class="h-4 w-4 text-emerald-600"></lucide-icon>
         <span>Perfil Verificado</span>
-        } @else {
+      } @else {
         <lucide-icon [img]="alertCircleIcon" class="h-4 w-4"></lucide-icon>
         <span>Verificación Pendiente</span>
+      }
+    </div>
+  </header>
+
+  <!-- Main Personal Info Card -->
+  <div class="ios-glass-card rounded-3xl p-6 sm:p-8 border border-white/80 shadow-xs">
+    <div class="border-b border-black/[0.06] pb-5 mb-6">
+      <h2 class="text-lg font-extrabold text-base-content flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+          <lucide-icon [img]="userIcon" class="h-4.5 w-4.5"></lucide-icon>
+        </div>
+        Información Corporativa y de Contacto
+      </h2>
+      <p class="text-xs text-base-content/60 mt-1">
+        Datos básicos asociados a tu cuenta de compras corporativa y facturación.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Contact Fields -->
+      <div class="space-y-4">
+        <h3 class="text-[11px] font-bold uppercase text-base-content/40 tracking-widest">
+          Datos de Contacto
+        </h3>
+
+        <!-- Full Name (read-only) -->
+        <div class="space-y-1.5">
+          <label class="text-xs font-semibold text-base-content/70">Nombre / Razón Social</label>
+          <div class="relative flex items-center">
+            <span class="absolute left-3.5 text-base-content/40">
+              <lucide-icon [img]="userIcon" class="h-4 w-4"></lucide-icon>
+            </span>
+            <input
+              type="text"
+              class="w-full h-11 pl-10 pr-4 rounded-2xl bg-black/[0.03] border border-black/[0.06] text-xs sm:text-sm text-base-content font-medium cursor-not-allowed outline-none"
+              [value]="form().name"
+              readonly
+            />
+          </div>
+          <span class="text-[10px] text-base-content/40 ml-1">Visible en comprobantes y remisiones B2B.</span>
+        </div>
+
+        <!-- Email (editable) -->
+        <div class="space-y-1.5">
+          <label class="text-xs font-semibold text-base-content/70">Correo electrónico</label>
+          <div class="relative flex items-center">
+            <span class="absolute left-3.5 text-base-content/40">
+              <lucide-icon [img]="mailIcon" class="h-4 w-4"></lucide-icon>
+            </span>
+            <input
+              type="email"
+              class="w-full h-11 pl-10 pr-10 rounded-2xl bg-white/80 border border-black/[0.08] focus:border-primary focus:ring-3 focus:ring-primary/10 text-xs sm:text-sm text-base-content outline-none transition-all"
+              placeholder="email@ejemplo.com"
+              [ngModel]="form().email"
+              (ngModelChange)="onEmailChange($event)"
+            />
+            @if (form().emailVerified) {
+              <span class="absolute right-3.5 text-emerald-600" title="Verificado">
+                <lucide-icon [img]="checkCircleIcon" class="h-4 w-4"></lucide-icon>
+              </span>
+            }
+          </div>
+          <span class="text-[10px] text-base-content/40 ml-1">Destinado a notificaciones de despacho y facturas.</span>
+        </div>
+
+        <!-- Phone (editable) -->
+        <div class="space-y-1.5">
+          <label class="text-xs font-semibold text-base-content/70">Teléfono de contacto</label>
+          <div class="relative flex items-center">
+            <span class="absolute left-3.5 text-base-content/40">
+              <lucide-icon [img]="smartphoneIcon" class="h-4 w-4"></lucide-icon>
+            </span>
+            <input
+              type="tel"
+              class="w-full h-11 pl-10 pr-4 rounded-2xl bg-white/80 border border-black/[0.08] focus:border-primary focus:ring-3 focus:ring-primary/10 text-xs sm:text-sm text-base-content outline-none transition-all"
+              placeholder="+57 300 000 0000"
+              [ngModel]="form().phone"
+              (ngModelChange)="onPhoneChange($event)"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Legal Info Protected -->
+      <div class="space-y-4">
+        <h3 class="text-[11px] font-bold uppercase text-base-content/40 tracking-widest">
+          Identificación Fiscal Protegida
+        </h3>
+
+        <div class="bg-black/[0.02] border border-black/[0.05] rounded-3xl p-5 space-y-4">
+          <div class="flex items-start gap-3">
+            <div class="w-9 h-9 rounded-2xl bg-white/90 shadow-xs flex items-center justify-center text-primary shrink-0">
+              <lucide-icon [img]="shieldLockIcon" class="h-4.5 w-4.5"></lucide-icon>
+            </div>
+            <div>
+              <h4 class="text-xs font-bold text-base-content">Datos Tributarios Certificados</h4>
+              <p class="text-[11px] text-base-content/60 mt-0.5 leading-relaxed">
+                Por políticas de facturación electrónica DIAN, estos valores requieren verificación previa por soporte para modificarse.
+              </p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+            <div class="space-y-1">
+              <label class="text-[10px] font-bold uppercase tracking-wider text-base-content/50">Tipo de Documento</label>
+              <input
+                type="text"
+                class="w-full h-9 px-3 rounded-xl bg-white/80 border border-black/[0.06] text-xs font-bold text-base-content/70 cursor-not-allowed outline-none"
+                [value]="form().documentType || 'NIT'"
+                readonly
+              />
+            </div>
+
+            <div class="space-y-1">
+              <label class="text-[10px] font-bold uppercase tracking-wider text-base-content/50">Número de Identificación</label>
+              <div class="relative flex items-center">
+                <input
+                  type="text"
+                  class="w-full h-9 pl-3 pr-8 rounded-xl bg-white/80 border border-black/[0.06] text-xs font-bold text-base-content/70 cursor-not-allowed outline-none"
+                  [value]="form().documentNumber"
+                  readonly
+                />
+                <lucide-icon [img]="lockIcon" class="h-3.5 w-3.5 text-base-content/30 absolute right-3"></lucide-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-1.5 text-[11px] text-base-content/40 px-1">
+          <lucide-icon [img]="calendarIcon" class="h-3.5 w-3.5"></lucide-icon>
+          Cliente registrado desde: {{ form().createdAt | date: 'longDate' }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions Bar -->
+    <div class="border-t border-black/[0.06] pt-5 mt-6 flex justify-end items-center gap-3">
+      <button
+        type="button"
+        class="h-9 px-4 rounded-full text-xs font-semibold text-base-content/60 hover:text-base-content hover:bg-black/[0.04] transition-all cursor-pointer"
+        [disabled]="!isDirty()"
+        (click)="resetChanges()"
+      >
+        Descartar
+      </button>
+      <button
+        type="button"
+        class="h-10 px-6 rounded-full bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white shadow-md shadow-emerald-900/15 hover:shadow-lg text-xs font-bold transition-all disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
+        [disabled]="!isDirty() || isSaving()"
+        (click)="saveProfile()"
+      >
+        @if (isSaving()) {
+          <span class="loading loading-spinner loading-xs mr-2"></span>
+          Guardando...
+        } @else {
+          Guardar Cambios
         }
-      </div>
-    </header>
+      </button>
+    </div>
+  </div>
 
-    <div class="card bg-base-100 border border-base-200 shadow-sm rounded-2xl overflow-hidden">
-      <div class="card-body p-6 md:p-8">
+  <!-- Security & Shortcuts Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Security Box -->
+    <div class="ios-glass-card rounded-3xl p-6 border border-white/80 shadow-xs flex flex-col justify-between">
+      <div>
+        <h2 class="text-sm font-extrabold text-base-content flex items-center gap-2 mb-3">
+          <lucide-icon [img]="shieldIcon" class="h-4.5 w-4.5 text-amber-500"></lucide-icon>
+          Seguridad y Credenciales
+        </h2>
+        <p class="text-xs text-base-content/60 mb-4">
+          Controla los accesos a tu cuenta y renueva tu contraseña institucional.
+        </p>
 
-        <div class="border-b border-base-200 pb-6 mb-6">
-          <h2 class="text-xl font-bold text-base-content flex items-center gap-2">
-            <lucide-icon [img]="userIcon" class="h-5 w-5 text-primary"></lucide-icon>
-            Información Personal
-          </h2>
-          <p class="text-sm text-base-content/60 mt-1">
-            Datos básicos para tu identificación y facturación.
-          </p>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-8">
-          <div class="space-y-5">
-            <h3 class="text-xs font-bold uppercase text-base-content/40 tracking-wider">
-              Datos de Contacto
-            </h3>
-
-            <div class="form-control w-full">
-              <label class="label pt-0 pb-1">
-                <span class="label-text font-medium">Nombre</span>
-              </label>
-              <label
-                class="input input-bordered flex items-center gap-3 focus-within:outline-primary bg-base-100 cursor-not-allowed opacity-70">
-                <lucide-icon [img]="userIcon" class="h-4 w-4 opacity-50"></lucide-icon>
-                <input type="text" class="grow cursor-not-allowed" placeholder="Nombre" [value]="form().name"
-                  readonly />
-              </label>
-              <span class="label-text-alt text-xs text-base-content/40 mt-1 ml-1">Visible en facturas. (No
-                editable)</span>
+        <div class="divide-y divide-black/[0.05]">
+          <div class="py-3 flex items-center justify-between gap-4">
+            <div>
+              <p class="text-xs font-bold text-base-content">Contraseña de acceso</p>
+              <p class="text-[11px] text-base-content/60">Actualiza tu clave periódicamente.</p>
             </div>
-
-            <div class="form-control w-full">
-              <label class="label pt-0 pb-1 justify-between">
-                <span class="label-text font-medium">Correo electrónico</span>
-              </label>
-              <label class="input input-bordered flex items-center gap-3 focus-within:outline-primary bg-base-100">
-                <lucide-icon [img]="mailIcon" class="h-4 w-4 opacity-50"></lucide-icon>
-                <input type="email" class="grow" placeholder="email@ejemplo.com" [ngModel]="form().email"
-                  (ngModelChange)="onEmailChange($event)" />
-                @if (form().emailVerified) {
-                <lucide-icon [img]="checkCircleIcon" class="h-4 w-4 text-success tooltip"
-                  data-tip="Verificado"></lucide-icon>
-                }
-              </label>
-              <span class="label-text-alt text-xs text-base-content/40 mt-1 ml-1">Usado para notificaciones de tus
-                pedidos.</span>
-            </div>
-
-            <div class="form-control w-full">
-              <label class="label pt-0 pb-1">
-                <span class="label-text font-medium">Teléfono móvil</span>
-              </label>
-              <label class="input input-bordered flex items-center gap-3 focus-within:outline-primary bg-base-100">
-                <lucide-icon [img]="smartphoneIcon" class="h-4 w-4 opacity-50"></lucide-icon>
-                <input type="tel" class="grow" placeholder="+57 300 000 0000" [ngModel]="form().phone"
-                  (ngModelChange)="onPhoneChange($event)" />
-              </label>
-            </div>
-          </div>
-
-          <div class="space-y-5">
-            <h3 class="text-xs font-bold uppercase text-base-content/40 tracking-wider">
-              Identidad Legal
-            </h3>
-
-            <div class="bg-base-200/40 border border-base-200 rounded-xl p-5">
-              <div class="flex items-start gap-3 mb-4">
-                <div class="bg-base-100 p-2 rounded-lg text-base-content/60 shadow-sm">
-                  <lucide-icon [img]="shieldLockIcon" class="h-5 w-5"></lucide-icon>
-                </div>
-                <div>
-                  <h4 class="text-sm font-bold text-base-content">Información Protegida</h4>
-                  <p class="text-xs text-base-content/60 mt-1 leading-relaxed">
-                    Por seguridad fiscal, estos datos no son editables. Contacta a soporte si necesitas corregirlos.
-                  </p>
-                </div>
-              </div>
-
-              <div class="space-y-3">
-                <div class="form-control">
-                  <label class="label pt-0 pb-1">
-                    <span class="label-text text-xs text-base-content/60">Tipo de documento</span>
-                  </label>
-                  <input type="text"
-                    class="input input-bordered input-sm bg-base-100 text-base-content/80 border-base-300 cursor-not-allowed focus:outline-none"
-                    [value]="form().documentType" readonly />
-                </div>
-
-                <div class="form-control">
-                  <label class="label pt-0 pb-1">
-                    <span class="label-text text-xs text-base-content/60">Número de documento</span>
-                  </label>
-                  <div
-                    class="input input-bordered input-sm bg-base-100 text-base-content/80 border-base-300 flex items-center justify-between cursor-not-allowed">
-                    <span>{{ form().documentNumber }}</span>
-                    <lucide-icon [img]="lockIcon" class="h-3 w-3 text-base-content/30"></lucide-icon>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="flex items-center justify-end gap-2 text-xs text-base-content/40 px-1">
-              <lucide-icon [img]="calendarIcon" class="h-3 w-3"></lucide-icon>
-              Miembro desde: {{ form().createdAt | date : 'longDate' }}
-            </div>
-          </div>
-        </div>
-
-        <div class="card-actions justify-end mt-8 border-t border-base-200 pt-6">
-          <div class="flex items-center gap-3">
-            <button type="button" class="btn btn-ghost hover:bg-base-200 rounded-xl" [disabled]="!isDirty()"
-              (click)="resetChanges()">
-              Cancelar
+            <button
+              type="button"
+              class="h-8 px-3.5 rounded-full bg-white/90 border border-black/[0.08] hover:border-primary text-xs font-bold text-base-content hover:text-primary transition-all shadow-xs cursor-pointer inline-flex items-center gap-1.5"
+              (click)="openPasswordModal()"
+            >
+              <lucide-icon [img]="keyIcon" class="h-3.5 w-3.5"></lucide-icon>
+              Actualizar
             </button>
-            <button type="button" class="btn btn-primary px-8 rounded-xl shadow-sm"
-              [class.btn-disabled]="!isDirty() || isSaving()" [disabled]="!isDirty() || isSaving()"
-              (click)="saveProfile()">
-              @if (isSaving()) {
-              <span class="loading loading-spinner loading-xs"></span>
-              Guardando...
-              } @else {
-              Guardar Cambios
-              }
+          </div>
+
+          <div class="py-3 flex items-center justify-between gap-4">
+            <div>
+              <p class="text-xs font-bold text-base-content">Sesiones activas</p>
+              <p class="text-[11px] text-base-content/60">Cierra sesiones en otros navegadores.</p>
+            </div>
+            <button
+              type="button"
+              class="h-8 px-3 rounded-full text-xs font-semibold text-error/80 hover:text-error hover:bg-error/10 transition-all cursor-pointer inline-flex items-center gap-1"
+              (click)="logoutOtherSessions()"
+            >
+              <lucide-icon [img]="logOutIcon" class="h-3.5 w-3.5"></lucide-icon>
+              Cerrar
             </button>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Quick Shortcuts Box -->
+    <div class="ios-glass-card rounded-3xl p-6 border border-white/80 shadow-xs flex flex-col justify-between">
+      <div>
+        <h2 class="text-sm font-extrabold text-base-content flex items-center gap-2 mb-3">
+          <lucide-icon [img]="settingsIcon" class="h-4.5 w-4.5 text-primary"></lucide-icon>
+          Accesos Directos
+        </h2>
+        <p class="text-xs text-base-content/60 mb-4">
+          Navegación rápida a tus direcciones de despacho y temas.
+        </p>
 
-      <div class="card bg-base-100 border border-base-200 shadow-sm rounded-2xl h-full">
-        <div class="card-body p-6">
-          <h2 class="card-title text-base font-bold flex items-center gap-2 mb-2">
-            <lucide-icon [img]="shieldIcon" class="h-5 w-5 text-warning"></lucide-icon>
-            Seguridad
-          </h2>
-
-          <div class="divide-y divide-base-200">
-            <div class="py-4 flex items-center justify-between gap-4">
-              <div>
-                <p class="text-sm font-medium text-base-content">Contraseña</p>
-                <p class="text-xs text-base-content/60 mt-0.5">Cambia tu contraseña para mayor seguridad.</p>
-              </div>
-              <button type="button" class="btn btn-outline btn-sm rounded-lg" (click)="openPasswordModal()">
-                <lucide-icon [img]="keyIcon" class="h-4 w-4"></lucide-icon>
-                Actualizar
-              </button>
+        <div class="flex flex-col gap-2.5">
+          <button
+            type="button"
+            class="h-11 px-4 rounded-2xl bg-white/80 hover:bg-white border border-black/[0.06] hover:border-primary/40 text-xs font-bold text-base-content hover:text-primary transition-all flex items-center gap-3 cursor-pointer group shadow-xs text-left"
+            (click)="goToAddresses()"
+          >
+            <div class="w-7 h-7 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+              <lucide-icon [img]="mapPinIcon" class="h-4 w-4"></lucide-icon>
             </div>
+            <span class="flex-1">Gestionar direcciones de entrega</span>
+            <span class="text-base-content/30 group-hover:translate-x-1 transition-transform">→</span>
+          </button>
 
-            <div class="py-4 flex items-center justify-between gap-4">
-              <div>
-                <p class="text-sm font-medium text-base-content">Sesiones activas</p>
-                <p class="text-xs text-base-content/60 mt-0.5">Gestiona tus dispositivos</p>
-              </div>
-              <button type="button" class="btn btn-ghost btn-sm text-error hover:bg-error/10 rounded-lg"
-                (click)="logoutOtherSessions()">
-                <lucide-icon [img]="logOutIcon" class="h-4 w-4"></lucide-icon>
-                Cerrar otras
-              </button>
+          <button
+            type="button"
+            class="h-11 px-4 rounded-2xl bg-white/80 hover:bg-white border border-black/[0.06] hover:border-primary/40 text-xs font-bold text-base-content hover:text-primary transition-all flex items-center gap-3 cursor-pointer group shadow-xs text-left"
+            (click)="goToAppearance()"
+          >
+            <div class="w-7 h-7 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+              <lucide-icon [img]="paletteIcon" class="h-4 w-4"></lucide-icon>
             </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card bg-base-100 border border-base-200 shadow-sm rounded-2xl h-full">
-        <div class="card-body p-6">
-          <h2 class="card-title text-base font-bold flex items-center gap-2 mb-2">
-            <lucide-icon [img]="settingsIcon" class="h-5 w-5 text-secondary"></lucide-icon>
-            Configuraciones
-          </h2>
-          <p class="text-sm text-base-content/60 mb-4">Accesos directos a otras áreas de tu cuenta.</p>
-
-          <div class="flex flex-col gap-3">
-            <button type="button"
-              class="btn btn-outline border-base-300 justify-start hover:border-primary hover:text-primary rounded-xl group"
-              (click)="goToAddresses()">
-              <lucide-icon [img]="mapPinIcon" class="h-4 w-4 group-hover:scale-110 transition-transform"></lucide-icon>
-              Gestionar direcciones de entrega
-            </button>
-
-            <button type="button"
-              class="btn btn-outline border-base-300 justify-start hover:border-primary hover:text-primary rounded-xl group"
-              (click)="goToAppearance()">
-              <lucide-icon [img]="paletteIcon" class="h-4 w-4 group-hover:scale-110 transition-transform"></lucide-icon>
-              Personalizar apariencia y estilo
-            </button>
-          </div>
+            <span class="flex-1">Personalizar apariencia y estilo</span>
+            <span class="text-base-content/30 group-hover:translate-x-1 transition-transform">→</span>
+          </button>
         </div>
       </div>
     </div>
-
   </div>
 </div>
 
 <!-- Change Password Modal -->
 @if (showPasswordModal()) {
-<div class="modal modal-open z-200">
-  <div class="modal-backdrop bg-base-300/30 backdrop-blur-sm" (click)="closePasswordModal()"></div>
+  <div class="modal modal-open z-200">
+    <div class="modal-backdrop bg-black/40 backdrop-blur-md" (click)="closePasswordModal()"></div>
 
-  <div class="modal-box relative max-w-md overflow-hidden border border-base-content/5 bg-base-100 p-0 shadow-2xl">
-
-    <button
-      class="btn btn-circle btn-ghost btn-sm absolute right-4 top-4 text-base-content/40 hover:bg-base-content/10 hover:text-base-content"
-      (click)="closePasswordModal()">
-      ✕
-    </button>
-
-    <div class="flex flex-col items-center bg-base-200/30 px-8 pt-10 pb-6 text-center">
-      <div
-        class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary ring-4 ring-base-100">
-        <lucide-icon [img]="keyIcon" class="h-8 w-8"></lucide-icon>
+    <div class="modal-box relative max-w-md rounded-3xl ios-glass-card border border-white/80 p-0 shadow-2xl overflow-hidden">
+      <!-- Modal Header -->
+      <div class="p-6 pb-4 bg-black/[0.02] border-b border-black/[0.05] flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
+            <lucide-icon [img]="keyIcon" class="h-4.5 w-4.5"></lucide-icon>
+          </div>
+          <div>
+            <h3 class="text-base font-extrabold text-base-content">Cambiar Contraseña</h3>
+            <p class="text-[11px] text-base-content/60">Actualiza tus credenciales seguras</p>
+          </div>
+        </div>
+        <button
+          type="button"
+          class="w-7 h-7 rounded-full bg-black/[0.05] hover:bg-black/10 flex items-center justify-center text-xs text-base-content/60 cursor-pointer"
+          (click)="closePasswordModal()"
+        >
+          ✕
+        </button>
       </div>
-      <h3 class="text-xl font-bold text-base-content">Seguridad de la Cuenta</h3>
-      <p class="mt-1 text-sm text-base-content/60">Actualiza tus credenciales periódicamente</p>
-    </div>
 
-    <div class="px-8 py-8">
-      <form (ngSubmit)="savePassword()" class="flex flex-col gap-5">
+      <!-- Modal Body -->
+      <div class="p-6">
+        <form (ngSubmit)="savePassword()" class="space-y-4">
+          <!-- Current Password -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-semibold text-base-content/70">Contraseña actual</label>
+            <div class="relative flex items-center">
+              <input
+                [type]="showCurrentPassword() ? 'text' : 'password'"
+                [ngModel]="currentPassword()"
+                (ngModelChange)="currentPassword.set($event)"
+                name="currentPassword"
+                class="w-full h-11 px-4 pr-10 rounded-2xl bg-white/90 border border-black/[0.08] focus:border-primary focus:ring-3 focus:ring-primary/10 text-xs sm:text-sm text-base-content outline-none transition-all"
+                placeholder="Ingresa tu clave actual"
+                required
+              />
+              <button
+                type="button"
+                class="absolute right-3 text-base-content/40 hover:text-primary cursor-pointer"
+                (click)="toggleCurrentPasswordVisibility()"
+              >
+                @if (showCurrentPassword()) {
+                  <lucide-icon [img]="eyeOffIcon" class="h-4 w-4"></lucide-icon>
+                } @else {
+                  <lucide-icon [img]="eyeIcon" class="h-4 w-4"></lucide-icon>
+                }
+              </button>
+            </div>
+          </div>
 
-        <div class="form-control">
-          <label class="label px-1 pt-0 pb-2">
-            <span class="label-text text-xs font-semibold uppercase tracking-wider text-base-content/60">Contraseña
-              Actual</span>
-          </label>
-          <div class="relative group">
-            <input [type]="showCurrentPassword() ? 'text' : 'password'" [ngModel]="currentPassword()"
-              (ngModelChange)="currentPassword.set($event)" name="currentPassword"
-              class="input input-bordered w-full bg-base-100 px-4 py-6 text-base transition-all focus:border-primary focus:ring-4 focus:ring-primary/10 group-hover:border-base-content/30"
-              placeholder="Ingresa tu clave actual" required />
-            <button type="button"
-              class="btn btn-circle btn-ghost btn-sm absolute right-2 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-primary"
-              (click)="toggleCurrentPasswordVisibility()">
-              @if (showCurrentPassword()) {
-              <lucide-icon [img]="eyeOffIcon" class="h-5 w-5"></lucide-icon>
+          <!-- New Password -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-semibold text-base-content/70">Nueva contraseña</label>
+            <div class="relative flex items-center">
+              <input
+                [type]="showNewPassword() ? 'text' : 'password'"
+                [ngModel]="newPassword()"
+                (ngModelChange)="newPassword.set($event)"
+                name="newPassword"
+                class="w-full h-11 px-4 pr-10 rounded-2xl bg-white/90 border border-black/[0.08] focus:border-primary focus:ring-3 focus:ring-primary/10 text-xs sm:text-sm text-base-content outline-none transition-all"
+                placeholder="Mínimo 8 caracteres"
+                required
+              />
+              <button
+                type="button"
+                class="absolute right-3 text-base-content/40 hover:text-primary cursor-pointer"
+                (click)="toggleNewPasswordVisibility()"
+              >
+                @if (showNewPassword()) {
+                  <lucide-icon [img]="eyeOffIcon" class="h-4 w-4"></lucide-icon>
+                } @else {
+                  <lucide-icon [img]="eyeIcon" class="h-4 w-4"></lucide-icon>
+                }
+              </button>
+            </div>
+
+            <!-- Requirements Checklist -->
+            <div class="mt-3 p-3.5 rounded-2xl bg-black/[0.02] border border-black/[0.05] text-[11px] space-y-1.5">
+              <p class="font-bold text-base-content/50 uppercase tracking-wider text-[10px]">Requisitos de seguridad:</p>
+              <div class="grid grid-cols-2 gap-2">
+                <div class="flex items-center gap-1.5" [class.text-emerald-600]="newPassword().length >= 8" [class.text-base-content/40]="newPassword().length < 8">
+                  <span class="w-1.5 h-1.5 rounded-full" [class.bg-emerald-500]="newPassword().length >= 8" [class.bg-black/20]="newPassword().length < 8"></span>
+                  8+ caracteres
+                </div>
+                <div class="flex items-center gap-1.5" [class.text-emerald-600]="matchesRegex(newPassword(), '(?=.*[A-Z])')" [class.text-base-content/40]="!matchesRegex(newPassword(), '(?=.*[A-Z])')">
+                  <span class="w-1.5 h-1.5 rounded-full" [class.bg-emerald-500]="matchesRegex(newPassword(), '(?=.*[A-Z])')" [class.bg-black/20]="!matchesRegex(newPassword(), '(?=.*[A-Z])')"></span>
+                  Mayúscula
+                </div>
+                <div class="flex items-center gap-1.5" [class.text-emerald-600]="matchesRegex(newPassword(), '(?=.*[a-z])')" [class.text-base-content/40]="!matchesRegex(newPassword(), '(?=.*[a-z])')">
+                  <span class="w-1.5 h-1.5 rounded-full" [class.bg-emerald-500]="matchesRegex(newPassword(), '(?=.*[a-z])')" [class.bg-black/20]="!matchesRegex(newPassword(), '(?=.*[a-z])')"></span>
+                  Minúscula
+                </div>
+                <div class="flex items-center gap-1.5" [class.text-emerald-600]="matchesRegex(newPassword(), '(?=.*\\d)')" [class.text-base-content/40]="!matchesRegex(newPassword(), '(?=.*\\d)')">
+                  <span class="w-1.5 h-1.5 rounded-full" [class.bg-emerald-500]="matchesRegex(newPassword(), '(?=.*\\d)')" [class.bg-black/20]="!matchesRegex(newPassword(), '(?=.*\\d)')"></span>
+                  Número
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-action pt-2 flex items-center justify-end gap-3">
+            <button
+              type="button"
+              class="h-9 px-4 rounded-full text-xs font-semibold text-base-content/60 hover:text-base-content hover:bg-black/[0.04] transition-all cursor-pointer"
+              (click)="closePasswordModal()"
+              [disabled]="isPasswordSaving()"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              class="h-10 px-6 rounded-full bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white shadow-md shadow-emerald-900/15 hover:shadow-lg text-xs font-bold transition-all disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
+              [disabled]="isPasswordSaving() || !currentPassword() || !isValidPassword()"
+            >
+              @if (isPasswordSaving()) {
+                <span class="loading loading-spinner loading-xs mr-2"></span>
+                Actualizando...
               } @else {
-              <lucide-icon [img]="eyeIcon" class="h-5 w-5"></lucide-icon>
+                Actualizar Clave
               }
             </button>
           </div>
-        </div>
-
-        <div class="form-control">
-          <label class="label px-1 pt-0 pb-2">
-            <span class="label-text text-xs font-semibold uppercase tracking-wider text-base-content/60">Nueva
-              Contraseña</span>
-          </label>
-          <div class="relative group">
-            <input [type]="showNewPassword() ? 'text' : 'password'" [ngModel]="newPassword()"
-              (ngModelChange)="newPassword.set($event)" name="newPassword"
-              class="input input-bordered w-full bg-base-100 px-4 py-6 text-base transition-all focus:border-primary focus:ring-4 focus:ring-primary/10 group-hover:border-base-content/30"
-              placeholder="Crea una nueva clave" required />
-            <button type="button"
-              class="btn btn-circle btn-ghost btn-sm absolute right-2 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-primary"
-              (click)="toggleNewPasswordVisibility()">
-              @if (showNewPassword()) {
-              <lucide-icon [img]="eyeOffIcon" class="h-5 w-5"></lucide-icon>
-              } @else {
-              <lucide-icon [img]="eyeIcon" class="h-5 w-5"></lucide-icon>
-              }
-            </button>
-          </div>
-
-          <div class="mt-4 rounded-xl bg-base-200/50 p-4 border border-base-content/5">
-            <p class="mb-3 text-xs font-medium text-base-content/50">Requisitos de seguridad:</p>
-            <ul class="grid grid-cols-2 gap-x-2 gap-y-2 text-xs">
-              <li class="flex items-center gap-2 transition-colors duration-300"
-                [class.text-success]="newPassword().length >= 8"
-                [class.text-base-content/40]="newPassword().length < 8">
-                <div class="h-1.5 w-1.5 rounded-full" [class.bg-success]="newPassword().length >= 8"
-                  [class.bg-base-content/20]="newPassword().length < 8"></div>
-                Mínimo 8 caracteres
-              </li>
-              <li class="flex items-center gap-2 transition-colors duration-300"
-                [class.text-success]="matchesRegex(newPassword(), '(?=.*[A-Z])')"
-                [class.text-base-content/40]="!matchesRegex(newPassword(), '(?=.*[A-Z])')">
-                <div class="h-1.5 w-1.5 rounded-full" [class.bg-success]="matchesRegex(newPassword(), '(?=.*[A-Z])')"
-                  [class.bg-base-content/20]="!matchesRegex(newPassword(), '(?=.*[A-Z])')"></div>
-                Una mayúscula
-              </li>
-              <li class="flex items-center gap-2 transition-colors duration-300"
-                [class.text-success]="matchesRegex(newPassword(), '(?=.*[a-z])')"
-                [class.text-base-content/40]="!matchesRegex(newPassword(), '(?=.*[a-z])')">
-                <div class="h-1.5 w-1.5 rounded-full" [class.bg-success]="matchesRegex(newPassword(), '(?=.*[a-z])')"
-                  [class.bg-base-content/20]="!matchesRegex(newPassword(), '(?=.*[a-z])')"></div>
-                Una minúscula
-              </li>
-              <li class="flex items-center gap-2 transition-colors duration-300"
-                [class.text-success]="matchesRegex(newPassword(), '(?=.*\\d)')"
-                [class.text-base-content/40]="!matchesRegex(newPassword(), '(?=.*\\d)')">
-                <div class="h-1.5 w-1.5 rounded-full" [class.bg-success]="matchesRegex(newPassword(), '(?=.*\\d)')"
-                  [class.bg-base-content/20]="!matchesRegex(newPassword(), '(?=.*\\d)')"></div>
-                Un número
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="modal-action mt-2 grid grid-cols-2 gap-4">
-          <button type="button" class="btn btn-ghost hover:bg-base-content/10" (click)="closePasswordModal()"
-            [disabled]="isPasswordSaving()">
-            Cancelar
-          </button>
-          <button type="submit" class="btn btn-primary shadow-lg shadow-primary/20"
-            [disabled]="isPasswordSaving() || !currentPassword() || !isValidPassword()">
-            @if (isPasswordSaving()) {
-            <span class="loading loading-spinner loading-sm"></span>
-            } @else {
-            Actualizar
-            }
-          </button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   </div>
-</div>
 }

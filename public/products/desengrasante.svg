@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#e2e8f0"/>
+    </linearGradient>
+    <linearGradient id="jugBody" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ea580c"/>
+      <stop offset="35%" stop-color="#f97316"/>
+      <stop offset="70%" stop-color="#fb923c"/>
+      <stop offset="100%" stop-color="#c2410c"/>
+    </linearGradient>
+    <linearGradient id="jugCap" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="50%" stop-color="#334155"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="labelBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f1f5f9"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="30" stdDeviation="35" flood-color="#0f172a" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+
+  <!-- Studio Background -->
+  <rect width="800" height="800" fill="url(#bg)"/>
+
+  <!-- Pedestal Shadow -->
+  <ellipse cx="400" cy="690" rx="240" ry="35" fill="#0f172a" opacity="0.12"/>
+  <ellipse cx="400" cy="685" rx="180" ry="20" fill="#0f172a" opacity="0.2"/>
+
+  <!-- Industrial Heavy Duty Gallon Container -->
+  <g filter="url(#shadow)">
+    <!-- Main Jug Base & Body -->
+    <path d="M 280 270 
+             C 280 250, 310 230, 340 220 
+             L 340 180 
+             L 460 180 
+             L 460 220 
+             C 490 230, 520 250, 520 270 
+             L 535 600 
+             C 535 640, 500 660, 460 660 
+             L 340 660 
+             C 300 660, 265 640, 265 600 
+             Z" 
+          fill="url(#jugBody)"/>
+
+    <!-- Handle on Side -->
+    <path d="M 470 240 
+             C 525 250, 545 320, 540 400 
+             C 535 440, 510 460, 480 460 
+             L 480 410 
+             C 500 410, 505 380, 505 350 
+             C 505 310, 490 280, 470 270 
+             Z" 
+          fill="#c2410c" stroke="#9a3412" stroke-width="2"/>
+
+    <!-- Screw Cap -->
+    <rect x="365" y="145" width="70" height="40" rx="6" fill="url(#jugCap)"/>
+    <!-- Ribs on Cap -->
+    <line x1="380" y1="145" x2="380" y2="185" stroke="#64748b" stroke-width="2"/>
+    <line x1="395" y1="145" x2="395" y2="185" stroke="#64748b" stroke-width="2"/>
+    <line x1="410" y1="145" x2="410" y2="185" stroke="#64748b" stroke-width="2"/>
+    <line x1="420" y1="145" x2="420" y2="185" stroke="#64748b" stroke-width="2"/>
+
+    <!-- Industrial Front Label -->
+    <rect x="290" y="320" width="220" height="280" rx="10" fill="url(#labelBg)" stroke="#cbd5e1" stroke-width="1.5"/>
+
+    <!-- Label Content -->
+    <!-- Top Green Bar -->
+    <rect x="290" y="320" width="220" height="50" rx="10" fill="#0d6b46"/>
+    <rect x="290" y="355" width="220" height="15" fill="#0d6b46"/>
+    <text x="400" y="350" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="18" fill="#ffffff" text-anchor="middle" letter-spacing="2">HIGINEX</text>
+
+    <!-- Product Subtitle & Name -->
+    <text x="400" y="395" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="16" fill="#0f172a" text-anchor="middle">DESENGRASANTE</text>
+    <text x="400" y="415" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="13" fill="#ea580c" text-anchor="middle">CONCENTRADO PRO</text>
+    <line x1="320" y1="430" x2="480" y2="430" stroke="#e2e8f0" stroke-width="2"/>
+
+    <!-- Hazard / High Power Badge -->
+    <rect x="355" y="445" width="90" height="26" rx="6" fill="#ea580c"/>
+    <text x="400" y="462" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="10" fill="#ffffff" text-anchor="middle" letter-spacing="1">ALTO PODER</text>
+
+    <!-- Formula Bullet Points -->
+    <text x="400" y="495" font-family="system-ui, -apple-system, sans-serif" font-weight="600" font-size="10" fill="#475569" text-anchor="middle">Fórmula Alcalina Industrial</text>
+    <text x="400" y="515" font-family="system-ui, -apple-system, sans-serif" font-weight="600" font-size="10" fill="#475569" text-anchor="middle">Cocinas, Pisos y Maquinaria</text>
+    <text x="400" y="535" font-family="system-ui, -apple-system, sans-serif" font-weight="600" font-size="10" fill="#475569" text-anchor="middle">Disuelve Grasa Pesada al Instante</text>
+
+    <!-- Bottom Measurement -->
+    <rect x="310" y="560" width="180" height="24" rx="4" fill="#0f172a"/>
+    <text x="400" y="576" font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="10" fill="#ffffff" text-anchor="middle" letter-spacing="1">CONTENIDO: 4 LITROS</text>
+  </g>
+</svg>

@@ -1,59 +1,96 @@
-<!-- Backdrop -->
-<div class="fixed inset-0 bg-neutral/50 z-40 lg:hidden cursor-pointer" (click)="close()"></div>
-
-<!-- Modal -->
-<div class="fixed inset-x-0 bottom-0 bg-base-100 rounded-t-2xl z-50 lg:hidden max-h-[85vh] flex flex-col">
-  <!-- Header -->
-  <div class="flex items-center justify-between p-4 border-b border-base-200">
-    <h2 class="text-base-content">Filtros</h2>
-    <button (click)="close()" class="p-2 hover:bg-base-200 rounded-lg transition-colors cursor-pointer">
-      <lucide-icon [img]="xIcon" class="w-5 h-5 text-base-content/60"></lucide-icon>
+<div class="flex flex-col gap-5">
+  <!-- Products section -->
+  <div>
+    <button
+      type="button"
+      (click)="toggleSection('products')"
+      class="w-full flex items-center justify-between py-1.5 text-xs font-bold uppercase tracking-wider text-base-content/70 hover:text-primary transition-colors cursor-pointer"
+    >
+      <span>Líneas de Producto</span>
+      @if (isSectionExpanded('products')) {
+        <lucide-icon [img]="chevronUpIcon" class="w-4 h-4 text-base-content/50"></lucide-icon>
+      } @else {
+        <lucide-icon [img]="chevronDownIcon" class="w-4 h-4 text-base-content/50"></lucide-icon>
+      }
     </button>
-  </div>
 
-  <!-- Filters Content -->
-  <div class="flex-1 overflow-y-auto p-4">
-    <div class="space-y-4">
-      <!-- Products -->
-      <div class="border-b border-base-200 pb-4">
-        <button (click)="toggleSection('products')"
-          class="w-full flex items-center justify-between py-3 hover:text-primary transition-colors">
-          <span class="text-base-content">Productos</span>
-          @if (isSectionExpanded('products')) {
-          <lucide-icon [img]="chevronUpIcon" class="w-4 h-4 text-base-content/40"></lucide-icon>
-          } @else {
-          <lucide-icon [img]="chevronDownIcon" class="w-4 h-4 text-base-content/40"></lucide-icon>
+    @if (isSectionExpanded('products')) {
+      <div class="mt-2.5 space-y-1">
+        @if (sortedProducts().length === 0) {
+          <p class="text-xs text-base-content/60 py-2">No hay líneas de producto registradas.</p>
+        } @else {
+          @for (product of sortedProducts(); track product.id) {
+            <div
+              (click)="toggleProduct(product.id)"
+              class="group flex items-center justify-between p-2.5 rounded-xl transition-all duration-150 cursor-pointer select-none"
+              [class.bg-primary/10]="isProductSelected(product.id)"
+              [class.border]="true"
+              [class.border-primary/30]="isProductSelected(product.id)"
+              [class.shadow-2xs]="isProductSelected(product.id)"
+              [class.border-transparent]="!isProductSelected(product.id)"
+              [class.hover:bg-base-200/70]="!isProductSelected(product.id)"
+            >
+              <div class="flex items-center gap-2.5 min-w-0">
+                <!-- iOS Custom Checkbox Pill -->
+                <div
+                  class="w-5 h-5 rounded-md flex items-center justify-center transition-all duration-150 shrink-0"
+                  [class.bg-linear-to-tr]="isProductSelected(product.id)"
+                  [class.from-primary]="isProductSelected(product.id)"
+                  [class.to-emerald-500]="isProductSelected(product.id)"
+                  [class.text-white]="isProductSelected(product.id)"
+                  [class.shadow-xs]="isProductSelected(product.id)"
+                  [class.border]="!isProductSelected(product.id)"
+                  [class.border-base-300]="!isProductSelected(product.id)"
+                  [class.bg-base-100]="!isProductSelected(product.id)"
+                  [class.group-hover:border-primary/60]="!isProductSelected(product.id)"
+                >
+                  @if (isProductSelected(product.id)) {
+                    <svg class="w-3.5 h-3.5 stroke-current stroke-[3] fill-none" viewBox="0 0 24 24">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  }
+                </div>
+
+                <!-- Label -->
+                <span
+                  class="text-xs line-clamp-2 transition-colors font-medium leading-snug"
+                  [class.text-primary]="isProductSelected(product.id)"
+                  [class.font-bold]="isProductSelected(product.id)"
+                  [class.text-base-content/80]="!isProductSelected(product.id)"
+                  [class.group-hover:text-base-content]="!isProductSelected(product.id)"
+                >
+                  {{ product.name }}
+                </span>
+              </div>
+
+              <!-- Active Dot -->
+              @if (isProductSelected(product.id)) {
+                <div class="w-1.5 h-1.5 rounded-full bg-primary shrink-0 shadow-2xs ml-1"></div>
+              }
+            </div>
           }
-        </button>
-        @if (isSectionExpanded('products')) {
-        <div class="mt-2 space-y-2">
-          @if (sortedProducts().length === 0) {
-          <p class="text-sm text-base-content/50">No hay productos disponibles.</p>
-          } @else { @for (product of sortedProducts(); track product.id) {
-          <label class="flex items-center gap-3 cursor-pointer group">
-            <input type="checkbox" [checked]="isProductSelected(product.id)" (change)="toggleProduct(product.id)"
-              class="checkbox checkbox-sm checkbox-primary" />
-            <span class="flex-1 text-sm text-base-content/70 group-hover:text-base-content">
-              {{ product.name }}
-            </span>
-          </label>
-          } }
-        </div>
         }
       </div>
-    </div>
-
-    <!-- Clear Filters -->
-    <button (click)="clearFilters()"
-      class="w-full mt-4 py-2 text-sm text-primary hover:text-primary-focus hover:bg-primary/10 rounded-lg transition-colors cursor-pointer">
-      Limpiar filtros
-    </button>
+    }
   </div>
 
-  <!-- Footer -->
-  <div class="p-4 border-t border-base-200">
-    <button (click)="close()" class="btn btn-primary w-full text-white py-3 rounded-lg shadow-md">
+  <!-- Actions -->
+  <div class="pt-4 border-t border-base-200 space-y-2.5">
+    <button
+      type="button"
+      (click)="close()"
+      class="w-full h-11 bg-linear-to-r from-primary to-emerald-600 hover:to-emerald-500 text-white font-bold rounded-xl shadow-md shadow-primary/25 transition-all active:scale-[0.98] cursor-pointer text-xs uppercase tracking-wider flex items-center justify-center"
+    >
       Aplicar filtros
     </button>
+    @if (filters().productIds.length > 0) {
+      <button
+        type="button"
+        (click)="clearFilters()"
+        class="w-full h-9 rounded-xl text-xs font-semibold text-base-content/70 hover:text-primary transition-colors cursor-pointer"
+      >
+        Limpiar filtros
+      </button>
+    }
   </div>
 </div>

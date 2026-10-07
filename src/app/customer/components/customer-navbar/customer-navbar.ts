@@ -11,12 +11,14 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import {
+  ArrowLeft,
   Bell,
   ChevronDown,
   CircleQuestionMark,
   CircleUser,
   LucideAngularModule,
   Settings,
+  ShoppingBag,
   User,
 } from 'lucide-angular';
 import { Role } from '../../../auth/interfaces';
@@ -30,7 +32,7 @@ import { CustomerUserMenu } from '../../../sales/components/customer-user-menu/c
   templateUrl: './customer-navbar.html',
   host: {
     class:
-      'sticky top-0 z-40 bg-base-100 border-b border-base-200 shadow-sm transition-transform duration-300',
+      'block sticky top-0 z-110 pointer-events-none transition-transform duration-300',
     '[class.translate-y-0]': 'isVisible()',
     '[class.-translate-y-full]': '!isVisible()',
   },
@@ -47,6 +49,8 @@ export class CustomerNavbar implements OnInit, OnDestroy {
   readonly helpIcon = CircleQuestionMark;
   readonly chevronDownIcon = ChevronDown;
   readonly userCircleIcon = CircleUser;
+  readonly shoppingBagIcon = ShoppingBag;
+  readonly arrowLeftIcon = ArrowLeft;
 
   // State
   isVisible = signal(true);

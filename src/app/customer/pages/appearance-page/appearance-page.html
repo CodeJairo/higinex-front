@@ -1,186 +1,178 @@
 <section class="space-y-6">
-  <!-- Encabezado de la sección -->
+  <!-- Header -->
   <header>
-    <h1 class="text-2xl font-semibold text-base-content">Apariencia y estilo</h1>
-    <p class="text-sm text-base-content/60 mt-1">
-      Personaliza cómo ves Higinex: tema claro u oscuro, colores y detalles visuales. Estos cambios
-      solo afectan tu experiencia.
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-base-content tracking-tight">Apariencia y Estilo</h1>
+    <p class="text-sm text-base-content/60 mt-0.5">
+      Personaliza cómo experimentas el portal de clientes Higinex. Estos ajustes se guardan en tu navegador.
     </p>
   </header>
 
-  <!-- Tema -->
-  <div class="card bg-base-100 border border-base-200 shadow-sm">
-    <div class="card-body">
-      <h2 class="card-title text-base">Tema de la interfaz</h2>
-      <p class="text-sm text-base-content/60">Elige el esquema de color principal para la aplicación.</p>
+  <!-- Theme Selection -->
+  <div class="ios-glass-card rounded-3xl p-6 sm:p-8 border border-white/80 shadow-xs space-y-4">
+    <div class="flex items-center gap-2.5">
+      <div class="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+        <lucide-icon [img]="sunIcon" class="w-4.5 h-4.5"></lucide-icon>
+      </div>
+      <div>
+        <h2 class="text-base font-extrabold text-base-content">Tema Visual</h2>
+        <p class="text-xs text-base-content/60">Elige la paleta principal de iluminación de la interfaz.</p>
+      </div>
+    </div>
 
-      <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
-        @for (theme of themeOptions; track theme.id) {
-        <button type="button" [class]="themeCardClasses(theme.id)" (click)="selectTheme(theme.id)">
-          <div class="card-body py-3 px-3">
-            <div class="flex items-center justify-between mb-1">
-              <span class="font-medium text-sm">
-                {{ theme.label }}
-              </span>
-              @if (selectedTheme() === theme.id) {
-              <span class="badge badge-xs"> Activo </span>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+      @for (theme of themeOptions; track theme.id) {
+        <button
+          type="button"
+          (click)="selectTheme(theme.id)"
+          class="p-4 sm:p-5 rounded-2xl border text-left transition-all duration-200 cursor-pointer relative overflow-hidden group"
+          [class.bg-white]="selectedTheme() === theme.id"
+          [class.border-primary]="selectedTheme() === theme.id"
+          [class.shadow-md]="selectedTheme() === theme.id"
+          [class.ring-2]="selectedTheme() === theme.id"
+          [class.ring-primary/20]="selectedTheme() === theme.id"
+          [class.bg-white/60]="selectedTheme() !== theme.id"
+          [class.border-black/[0.06]]="selectedTheme() !== theme.id"
+          [class.hover:border-black/20]="selectedTheme() !== theme.id"
+        >
+          <div class="flex items-center justify-between mb-1.5">
+            <div class="flex items-center gap-2">
+              @if (theme.id === 'corporate') {
+                <lucide-icon [img]="sunIcon" class="w-4 h-4 text-amber-500"></lucide-icon>
+              } @else {
+                <lucide-icon [img]="moonIcon" class="w-4 h-4 text-indigo-500"></lucide-icon>
               }
+              <span class="font-extrabold text-sm text-base-content">{{ theme.label }}</span>
             </div>
-            <p class="text-xs text-base-content/60">
-              {{ theme.description }}
-            </p>
+            @if (selectedTheme() === theme.id) {
+              <span class="bg-primary text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-xs">
+                <lucide-icon [img]="checkIcon" class="w-3 h-3"></lucide-icon>
+                Activo
+              </span>
+            }
           </div>
+          <p class="text-xs text-base-content/60 leading-relaxed">{{ theme.description }}</p>
         </button>
-        }
-      </div>
+      }
     </div>
   </div>
 
-  <!-- Color de acento -->
-  <div class="card bg-base-100 border border-base-200 shadow-sm">
-    <div class="card-body">
-      <h2 class="card-title text-base">Color de acento</h2>
-      <p class="text-sm text-base-content/60">
-        Define el color principal para botones, enlaces y elementos destacados.
-      </p>
+  <!-- Accent Color Selection -->
+  <div class="ios-glass-card rounded-3xl p-6 sm:p-8 border border-white/80 shadow-xs space-y-4">
+    <div class="flex items-center gap-2.5">
+      <div class="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+        <lucide-icon [img]="paletteIcon" class="w-4.5 h-4.5"></lucide-icon>
+      </div>
+      <div>
+        <h2 class="text-base font-extrabold text-base-content">Tono de Acento Institucional</h2>
+        <p class="text-xs text-base-content/60">Color para insignias, botones principales y resaltados.</p>
+      </div>
+    </div>
 
-      <div class="mt-4 flex flex-wrap gap-3">
-        @for (accent of accentOptions; track accent.id) {
-        <button type="button" [class]="accentButtonClasses(accent.id)" (click)="selectAccent(accent.id)">
-          <span [class]="accentSwatchClasses()" [style]="accentSwatchStyle(accent.id)"></span>
-          <span class="font-medium text-base-content/80">
-            {{ accent.label }}
-          </span>
+    <div class="flex flex-wrap gap-3 pt-1">
+      @for (accent of accentOptions; track accent.id) {
+        <button
+          type="button"
+          (click)="selectAccent(accent.id)"
+          class="h-10 px-4 rounded-full border text-xs font-bold transition-all flex items-center gap-2.5 cursor-pointer shadow-xs"
+          [class.bg-white]="selectedAccent() === accent.id"
+          [class.border-primary]="selectedAccent() === accent.id"
+          [class.ring-2]="selectedAccent() === accent.id"
+          [class.ring-primary/20]="selectedAccent() === accent.id"
+          [class.text-primary]="selectedAccent() === accent.id"
+          [class.bg-white/70]="selectedAccent() !== accent.id"
+          [class.border-black/[0.08]]="selectedAccent() !== accent.id"
+          [class.text-base-content/70]="selectedAccent() !== accent.id"
+        >
+          <span class="w-3.5 h-3.5 rounded-full shadow-inner" [style]="accentSwatchStyle(accent.id)"></span>
+          <span>{{ accent.label }}</span>
         </button>
-        }
-      </div>
+      }
     </div>
   </div>
 
-  <!-- Densidad y detalles visuales -->
-  <div class="card bg-base-100 border border-base-200 shadow-sm">
-    <div class="card-body">
-      <h2 class="card-title text-base">Detalles de la interfaz</h2>
-      <p class="text-sm text-base-content/60">
-        Ajusta qué tan compacto se ve todo y otros detalles visuales.
-      </p>
-
-      <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Bordes redondeados -->
-        <div class="form-control">
-          <label class="label cursor-pointer justify-start gap-3">
-            <input type="checkbox" class="checkbox checkbox-sm" [checked]="roundedCorners()"
-              (change)="onRoundedChange($event)" />
-            <div>
-              <span class="label-text text-sm font-medium"> Bordes redondeados </span>
-              <p class="text-xs text-base-content/60">
-                Usa esquinas más suaves en tarjetas, botones y campos.
-              </p>
-            </div>
-          </label>
-        </div>
-
-        <!-- Layout compacto -->
-        <div class="form-control">
-          <label class="label cursor-pointer justify-start gap-3">
-            <input type="checkbox" class="checkbox checkbox-sm" [checked]="compactLayout()"
-              (change)="onCompactChange($event)" />
-            <div>
-              <span class="label-text text-sm font-medium"> Diseño compacto </span>
-              <p class="text-xs text-base-content/60">
-                Reduce espacios internos para ver más contenido en pantalla.
-              </p>
-            </div>
-          </label>
-        </div>
-
-        <!-- Animaciones sutiles -->
-        <div class="form-control">
-          <label class="label cursor-pointer justify-start gap-3">
-            <input type="checkbox" class="checkbox checkbox-sm" [checked]="subtleAnimations()"
-              (change)="onSubtleAnimationsChange($event)" />
-            <div>
-              <span class="label-text text-sm font-medium"> Animaciones sutiles </span>
-              <p class="text-xs text-base-content/60">
-                Transiciones suaves en hover y cambios de estado.
-              </p>
-            </div>
-          </label>
-        </div>
+  <!-- Details & Density Switches -->
+  <div class="ios-glass-card rounded-3xl p-6 sm:p-8 border border-white/80 shadow-xs space-y-4">
+    <div class="flex items-center gap-2.5">
+      <div class="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+        <lucide-icon [img]="sparklesIcon" class="w-4.5 h-4.5"></lucide-icon>
       </div>
+      <div>
+        <h2 class="text-base font-extrabold text-base-content">Detalles de Interfaz y Fluidez</h2>
+        <p class="text-xs text-base-content/60">Configura la densidad de las tablas y estilo de las esquinas.</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
+      <!-- Rounded Corners -->
+      <label class="p-4 rounded-2xl bg-white/70 border border-black/[0.06] hover:bg-white flex items-start gap-3 cursor-pointer transition-all">
+        <input
+          type="checkbox"
+          class="checkbox checkbox-primary checkbox-sm rounded-lg mt-0.5"
+          [checked]="roundedCorners()"
+          (change)="onRoundedChange($event)"
+        />
+        <div>
+          <span class="text-xs font-bold text-base-content block">Bordes Curvos iOS</span>
+          <span class="text-[11px] text-base-content/60 leading-tight block mt-0.5">Esquinas suaves en tarjetas y botones.</span>
+        </div>
+      </label>
+
+      <!-- Compact Layout -->
+      <label class="p-4 rounded-2xl bg-white/70 border border-black/[0.06] hover:bg-white flex items-start gap-3 cursor-pointer transition-all">
+        <input
+          type="checkbox"
+          class="checkbox checkbox-primary checkbox-sm rounded-lg mt-0.5"
+          [checked]="compactLayout()"
+          (change)="onCompactChange($event)"
+        />
+        <div>
+          <span class="text-xs font-bold text-base-content block">Diseño Compacto</span>
+          <span class="text-[11px] text-base-content/60 leading-tight block mt-0.5">Mayor densidad de datos para compras rápidas.</span>
+        </div>
+      </label>
+
+      <!-- Subtle Animations -->
+      <label class="p-4 rounded-2xl bg-white/70 border border-black/[0.06] hover:bg-white flex items-start gap-3 cursor-pointer transition-all">
+        <input
+          type="checkbox"
+          class="checkbox checkbox-primary checkbox-sm rounded-lg mt-0.5"
+          [checked]="subtleAnimations()"
+          (change)="onSubtleAnimationsChange($event)"
+        />
+        <div>
+          <span class="text-xs font-bold text-base-content block">Animaciones Fluidas</span>
+          <span class="text-[11px] text-base-content/60 leading-tight block mt-0.5">Transiciones sutiles en hover y estados.</span>
+        </div>
+      </label>
     </div>
   </div>
 
-  <!-- Vista previa -->
-  <div class="card bg-base-100 border border-dashed border-base-300">
-    <div class="card-body">
-      <h2 class="card-title text-base">Vista previa rápida</h2>
-      <p class="text-sm text-base-content/60">
-        Así se verán algunos elementos de la interfaz con tu configuración.
-      </p>
-
-      <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Tarjeta de ejemplo -->
-        <div [class]="previewCardClasses()">
-          <div [class]="previewContentClasses()">
-            <div class="flex items-center justify-between gap-2">
-              <span class="text-xs uppercase tracking-wide opacity-70"> Tarjeta de ejemplo </span>
-              <span class="badge badge-xs bg-base-100/80 border-none"> Higinex </span>
-            </div>
-
-            <p class="font-semibold text-sm">Tus pedidos y preferencias en un solo lugar</p>
-            <p class="text-xs text-base-content/70">
-              Este bloque simula cómo se verán las tarjetas principales con la combinación de tema,
-              acento y densidad que elijas.
-            </p>
-
-            <div class="flex flex-wrap gap-2 pt-2">
-              <button [class]="previewGhostButtonClasses()" type="button">Cancelar</button>
-              <button [class]="previewButtonClasses()" type="button">Acción principal</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Lista / inputs ejemplo -->
-        <div [class]="previewStackClasses()">
-          <div class="form-control">
-            <label class="label py-1">
-              <span class="label-text text-xs">Campo de ejemplo</span>
-            </label>
-            <input type="text" class="input input-bordered input-sm" placeholder="Texto de muestra" />
-          </div>
-
-          <div class="form-control">
-            <label class="label py-1 cursor-pointer justify-start gap-2">
-              <input type="checkbox" class="checkbox checkbox-xs" checked />
-              <span class="label-text text-xs"> Elemento seleccionado de ejemplo </span>
-            </label>
-          </div>
-
-          <div class="flex flex-wrap gap-2 text-xs">
-            <span class="badge badge-outline">Etiqueta</span>
-            <span class="badge badge-outline">Preferencias</span>
-            <span class="badge badge-outline">Cuenta</span>
-          </div>
-        </div>
-      </div>
+  <!-- Actions Bar -->
+  <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+    <div>
+      @if (saveNotice()) {
+        <span class="h-8 px-4 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 text-xs font-bold inline-flex items-center gap-1.5 shadow-xs">
+          <lucide-icon [img]="checkIcon" class="w-3.5 h-3.5 text-emerald-600"></lucide-icon>
+          Preferencias actualizadas con éxito
+        </span>
+      }
     </div>
-  </div>
 
-  <!-- Acciones inferiores -->
-  <div class="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
-    @if (saveNotice()) {
-    <span
-      class="text-xs font-medium text-success-content bg-success/10 border border-success/20 px-3 py-1 rounded-full">
-      Cambios guardados
-    </span>
-    }
-    <div class="flex flex-col sm:flex-row gap-3 justify-end w-full sm:w-auto">
-      <button type="button" class="btn btn-ghost btn-sm" (click)="resetAppearance()">
-        Restablecer valores
+    <div class="flex items-center gap-3 self-end sm:self-auto">
+      <button
+        type="button"
+        class="h-9 px-4 rounded-full text-xs font-semibold text-base-content/60 hover:text-base-content hover:bg-black/[0.04] transition-all cursor-pointer inline-flex items-center gap-1.5"
+        (click)="resetAppearance()"
+      >
+        <lucide-icon [img]="rotateCcwIcon" class="w-3.5 h-3.5"></lucide-icon>
+        Restablecer
       </button>
-      <button type="button" class="btn btn-primary btn-sm" (click)="saveAppearance()">
-        Guardar cambios
+      <button
+        type="button"
+        class="h-10 px-6 rounded-full bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white shadow-md shadow-emerald-900/15 hover:shadow-lg text-xs font-bold transition-all cursor-pointer"
+        (click)="saveAppearance()"
+      >
+        Guardar Cambios
       </button>
     </div>
   </div>

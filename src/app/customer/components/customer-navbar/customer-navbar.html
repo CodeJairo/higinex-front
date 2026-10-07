@@ -1,55 +1,81 @@
-<nav class="sticky top-0 z-40 w-full bg-base-100/80 backdrop-blur-md border-b border-base-200">
-  <div class="max-w-7xl mx-auto navbar h-20 px-4 lg:px-8">
-    <div class="navbar-start">
-      <button (click)="goToHome()" class="group flex items-center gap-3.5 hover:opacity-90 transition-all duration-300">
+<header class="p-0 sm:p-3 pointer-events-auto sm:pointer-events-none sticky top-0 z-40 sm:static">
+  <nav
+    class="w-full max-w-[1680px] 3xl:max-w-[1780px] mx-auto rounded-none sm:rounded-[24px] bg-base-100/95 dark:bg-slate-900/95 backdrop-blur-md sm:ios-glass border-b border-base-200/80 dark:border-slate-800/80 sm:border pointer-events-auto px-4 sm:px-6 h-14 sm:h-16 2xl:h-17 flex items-center justify-between shadow-xs sm:shadow-lg transition-all"
+  >
+    <!-- Left: Brand Logo & Title -->
+    <div class="flex items-center gap-2.5 sm:gap-3">
+      <button
+        type="button"
+        (click)="goToHome()"
+        class="group flex items-center gap-2.5 sm:gap-3 hover:opacity-95 transition-all duration-200 cursor-pointer text-left"
+      >
         <div
-          class="w-12 h-12 bg-base-100 flex items-center justify-center rounded-2xl border border-base-200 shadow-sm group-hover:shadow-md group-hover:-translate-y-0.5 transition-all duration-300">
-          <img src="/logo.svg" alt="Higinex" class="w-full h-full object-cover p-1" />
+          class="w-8 h-8 sm:w-9 sm:h-9 bg-white/95 flex items-center justify-center shrink-0 rounded-xl sm:rounded-2xl border border-white/80 shadow-xs group-hover:scale-105 transition-all duration-200"
+        >
+          <img src="/logo.svg" alt="Higinex Logo" class="w-full h-full object-contain p-1" />
         </div>
 
-        <div class="flex flex-col items-start min-w-0">
-          <span class="text-xl font-black text-base-content leading-none tracking-tighter uppercase">Higinex</span>
-          <div class="flex items-center gap-1.5 mt-1">
-            <span class="w-1 h-1 rounded-full bg-primary"></span>
-            <span class="text-[10px] font-bold text-base-content/60 uppercase tracking-[0.15em]">
-              Panel Cliente
+        <div class="flex flex-col items-start leading-none">
+          <div class="flex items-center gap-1.5">
+            <span class="text-sm sm:text-base font-extrabold text-base-content tracking-tight">Higinex</span>
+            <span class="bg-primary/10 text-primary border border-primary/20 text-[9px] font-bold px-2 py-0.5 rounded-full tracking-wider">
+              B2B
             </span>
           </div>
+          <span class="text-[9px] font-bold text-primary/80 uppercase tracking-widest mt-0.5">
+            Portal Cliente
+          </span>
         </div>
       </button>
     </div>
 
-    <div class="navbar-center hidden md:flex">
-      <div
-        class="flex items-center gap-2 px-3 py-1.5 bg-base-200/50 rounded-full border border-base-300 backdrop-blur-sm">
+    <!-- Center / Prominent CTA: Return to Catalog (Directly answering user request) -->
+    <div class="flex items-center gap-2">
+      <button
+        type="button"
+        (click)="goToHome()"
+        class="h-9 px-3.5 sm:px-5 rounded-full bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white shadow-md shadow-emerald-900/15 hover:shadow-lg hover:scale-[1.02] text-xs font-bold transition-all duration-200 flex items-center gap-2 cursor-pointer group"
+        title="Explorar Catálogo B2B"
+      >
+        <lucide-icon [img]="shoppingBagIcon" class="w-4 h-4 transition-transform group-hover:scale-110"></lucide-icon>
+        <span class="hidden xs:inline">Explorar Catálogo B2B</span>
+        <span class="xs:hidden">Catálogo</span>
+      </button>
+    </div>
+
+    <!-- Right: Status & User Profile -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      <!-- Desktop Secure Badge -->
+      <div class="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/[0.03] border border-black/[0.05]">
         <div class="relative flex h-2 w-2">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
-          <span class="relative inline-flex rounded-full h-2 w-2 bg-success"></span>
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
         </div>
-        <span class="text-[10px] font-bold text-base-content/60 uppercase tracking-widest">
-          Conexión Segura
+        <span class="text-[10px] font-bold text-base-content/60 uppercase tracking-wider">
+          Sesión Segura
         </span>
       </div>
-    </div>
 
-    <div class="navbar-end gap-2">
-      <button
-        class="btn btn-ghost btn-circle btn-sm text-base-content/40 hover:text-base-content hover:bg-base-200 transition-all"
-        title="Centro de Ayuda">
-        <lucide-icon [img]="helpIcon" class="w-5 h-5 stroke-[1.5]"></lucide-icon>
-      </button>
+      <div class="hidden sm:block w-px h-6 bg-base-300/60 mx-0.5"></div>
 
-      <div class="hidden sm:block w-px h-6 bg-base-300 mx-1"></div>
-
-      <div class="pl-1">
-        @if (hasUser()) { @if (isAdmin()) {
-        <sales-admin-user-menu [userName]="userDisplayName()" [userDetail]="userDisplayDetail()"
-          (logout)="logout()"></sales-admin-user-menu>
-        } @else {
-        <sales-customer-user-menu [userName]="userDisplayName()" [userDetail]="userDisplayDetail()"
-          (logout)="logout()"></sales-customer-user-menu>
-        } }
+      <!-- User Menu -->
+      <div class="pl-0.5">
+        @if (hasUser()) {
+          @if (isAdmin()) {
+            <sales-admin-user-menu
+              [userName]="userDisplayName()"
+              [userDetail]="userDisplayDetail()"
+              (logout)="logout()"
+            ></sales-admin-user-menu>
+          } @else {
+            <sales-customer-user-menu
+              [userName]="userDisplayName()"
+              [userDetail]="userDisplayDetail()"
+              (logout)="logout()"
+            ></sales-customer-user-menu>
+          }
+        }
       </div>
     </div>
-  </div>
-</nav>
+  </nav>
+</header>

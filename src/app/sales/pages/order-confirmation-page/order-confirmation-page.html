@@ -1,237 +1,238 @@
 @if (order(); as order) {
-<div class="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-700">
-  <div class="card bg-base-100 border border-base-200 shadow-xl shadow-base-200/50 rounded-4xl overflow-hidden">
-    <div class="absolute top-0 left-0 w-full h-2 bg-linear-to-r from-success to-primary"></div>
-
-    <div class="p-8 text-center">
-      <div
-        class="w-20 h-20 bg-success/10 text-success rounded-3xl flex items-center justify-center mx-auto mb-6 border border-success/20 shadow-inner">
-        <lucide-icon [img]="checkCircleIcon" class="w-10 h-10"></lucide-icon>
+  <div class="max-w-5xl 2xl:max-w-6xl mx-auto space-y-6 animate-in fade-in duration-300">
+    <!-- Header Hero Card -->
+    <div class="ios-glass-card rounded-3xl p-6 sm:p-8 2xl:p-10 text-center border border-white/80 shadow-[0_20px_50px_-10px_rgba(13,107,70,0.15)]">
+      <div class="w-14 h-14 2xl:w-16 2xl:h-16 bg-linear-to-br from-primary to-emerald-500 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md shadow-primary/25">
+        <lucide-icon [img]="checkCircleIcon" class="w-7 h-7 2xl:w-8 2xl:h-8"></lucide-icon>
       </div>
 
-      <h2 class="text-3xl font-black text-base-content tracking-tight">¡Pedido Recibido!</h2>
-      <p class="text-base-content/60 font-medium mt-2 max-w-sm mx-auto">
-        Hemos registrado tu orden. Un asesor de Higinex se pondrá en contacto contigo para coordinar
-        el pago y envío.
+      <h1 class="text-2xl sm:text-3xl 2xl:text-4xl font-black text-base-content tracking-tight">¡Solicitud de Pedido Recibida!</h1>
+      <p class="text-xs sm:text-sm 2xl:text-base text-base-content/65 font-medium mt-2 max-w-lg 2xl:max-w-xl mx-auto leading-relaxed">
+        Hemos registrado tu orden institucional. Un asesor comercial de Higinex validará la disponibilidad en bodega y te contactará para formalizar la transacción y coordinar el despacho.
       </p>
 
-      <div class="flex flex-wrap justify-center gap-4 mt-8">
-        <div class="px-6 py-3 bg-base-200/50 rounded-2xl border border-base-200">
-          <p class="text-[10px] uppercase font-bold text-base-content/40 tracking-widest mb-1">
-            Número de orden
-          </p>
-          <p class="font-mono text-lg font-bold text-primary">{{ order.orderNumber }}</p>
+      <div class="flex flex-wrap justify-center items-center gap-3 mt-6">
+        <div class="px-4 py-2 bg-white/70 rounded-full border border-base-200/80 flex items-center gap-2 shadow-2xs">
+          <span class="text-[10px] uppercase font-bold text-base-content/50 tracking-wider">Número de Orden:</span>
+          <span class="font-mono text-sm font-black text-primary">#{{ order.orderNumber }}</span>
         </div>
 
-        <div class="px-6 py-3 bg-base-200/50 rounded-2xl border border-base-200">
-          <p class="text-[10px] uppercase font-bold text-base-content/40 tracking-widest mb-1">
-            Estado actual
-          </p>
-          <div [class]="
-              'badge border-none font-black py-3 px-4 rounded-lg uppercase text-[10px] ' +
-              getStatusBadgeClass(order.status)
-            ">
+        <div class="px-4 py-2 bg-white/70 rounded-full border border-base-200/80 flex items-center gap-2 shadow-2xs">
+          <span class="text-[10px] uppercase font-bold text-base-content/50 tracking-wider">Estado:</span>
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-bold {{ getStatusBadgeClass(order.status) }}">
             {{ order.status | orderStatusLabel }}
-          </div>
+          </span>
         </div>
       </div>
 
       @if (shouldShowReservationExpiresAt() && order.reservationExpiresAt) {
-      <div
-        class="mt-6 flex items-center justify-center gap-2 text-sm text-warning-content font-bold bg-warning/20 py-2 px-4 rounded-full w-fit mx-auto border border-warning/30">
-        <lucide-icon [img]="clockIcon" class="w-4 h-4"></lucide-icon>
-        Reserva activa hasta: {{ order.reservationExpiresAt | date : 'dd/MM/yyyy HH:mm' }}
-      </div>
-      }
-
-      <div class="mt-8 pt-6 border-t border-base-200/50">
-        <p class="text-xs text-base-content/50 flex flex-col sm:flex-row items-center justify-center gap-2">
-          <span class="flex items-center gap-2">
-            <lucide-icon [img]="bookmarkIcon" class="w-4 h-4"></lucide-icon>
-            <strong>Tip:</strong> Guarda este enlace para rastrear tu pedido.
-          </span>
-          <span class="hidden sm:inline opacity-50">|</span>
-          <span class="opacity-80">También te notificaremos por correo.</span>
-        </p>
-      </div>
-    </div>
-  </div>
-
-  <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-    <div class="md:col-span-7 space-y-4">
-      <h3 class="text-sm font-bold text-base-content/40 uppercase tracking-widest ml-1">
-        Detalle del pedido
-      </h3>
-
-      <div class="bg-base-100 rounded-3xl border border-base-200 shadow-sm overflow-hidden">
-        <div class="divide-y divide-base-200">
-          @for (item of order.items; track item.id) {
-          <div class="p-4 flex gap-4 items-center group hover:bg-base-200/30 transition-colors">
-            <div
-              class="w-16 h-16 bg-base-200 rounded-xl shrink-0 border border-base-300 flex items-center justify-center text-[10px] text-base-content/40 font-bold uppercase overflow-hidden">
-              Higinex
-            </div>
-            <div class="flex-1 min-w-0">
-              <p class="text-sm font-bold text-base-content truncate">
-                {{ item.productNameSnapshot }}
-              </p>
-              <p class="text-xs text-base-content/60">
-                {{ item.variantNameSnapshot }} <span class="mx-1">•</span> Cant: {{ item.quantity }}
-              </p>
-              <p class="text-[10px] text-base-content/40 mt-1 uppercase font-bold tracking-tighter">
-                SKU: {{ item.skuSnapshot ?? 'N/A' }}
-              </p>
-            </div>
-            <div class="text-right">
-              <p class="text-sm font-black text-base-content">
-                {{
-                toAmount(item.lineTotalAmount)
-                | currency : order.currency : 'symbol-narrow' : '1.0-0'
-                }}
-              </p>
-            </div>
-          </div>
-          }
+        <div class="mt-4 inline-flex items-center gap-2 text-xs text-warning-content font-medium bg-warning/15 py-1.5 px-3.5 rounded-full border border-warning/30">
+          <lucide-icon [img]="clockIcon" class="w-3.5 h-3.5 text-warning"></lucide-icon>
+          <span>Reserva temporal activa hasta: {{ order.reservationExpiresAt | date : 'dd/MM/yyyy HH:mm' }}</span>
         </div>
-      </div>
-
-
-      @if (order.shippingAddress) {
-      <div class="space-y-4">
-        <h3 class="text-sm font-bold text-base-content/40 uppercase tracking-widest ml-1">
-          Datos de Envío
-        </h3>
-
-        <div class="bg-base-100 rounded-3xl border border-base-200 p-6 shadow-sm flex gap-4">
-          <div class="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-            <lucide-icon [img]="mapIcon" class="w-6 h-6"></lucide-icon>
-          </div>
-
-          <div class="space-y-1">
-            <p class="font-bold text-base-content text-lg leading-tight">
-              {{ order.shippingAddress.line1 }}
-            </p>
-            <p class="text-base-content/60 text-sm font-medium">
-              {{ order.shippingAddress.neighborhood }}, {{ order.shippingAddress.city }}, {{ order.shippingAddress.state
-              }}
-              @if (order.shippingAddress.postalCode) {
-              - {{ order.shippingAddress.postalCode }}
-              }
-            </p>
-
-            @if (order.shippingAddress.recipientName || order.shippingAddress.phone) {
-            <div
-              class="flex items-center gap-2 mt-2 pt-2 border-t border-base-200 text-xs text-base-content/60 font-medium">
-              @if (order.shippingAddress.recipientName) {
-              <span>{{ order.shippingAddress.recipientName }}</span>
-              }
-              @if (order.shippingAddress.recipientName && order.shippingAddress.phone) {
-              <span class="w-1 h-1 rounded-full bg-base-content/20"></span>
-              }
-              @if (order.shippingAddress.phone) {
-              <span>{{ order.shippingAddress.phone }}</span>
-              }
-            </div>
-            }
-
-            @if (order.shippingAddress.notes) {
-            <div class="mt-2 text-xs text-base-content/60 bg-base-200/50 p-2 rounded-lg inline-block">
-              "{{ order.shippingAddress.notes }}"
-            </div>
-            }
-          </div>
-        </div>
-      </div>
       }
     </div>
 
-    <div class="md:col-span-5 space-y-6">
-      <h3 class="text-sm font-bold text-base-content/40 uppercase tracking-widest ml-1">
-        Resumen financiero
-      </h3>
-
-      <div class="bg-neutral rounded-4xl p-8 text-neutral-content shadow-xl shadow-base-300">
-        <div class="space-y-4">
-          <div class="flex justify-between text-sm opacity-60">
-            <span>Subtotal</span>
-            <span>{{
-              toAmount(order.subtotalAmount) | currency : order.currency : 'symbol-narrow' : '1.0-0'
-              }}</span>
-          </div>
-
-          <div class="flex justify-between text-sm opacity-60">
-            <span>Impuestos</span>
-            <span>{{
-              toAmount(order.taxesAmount) | currency : order.currency : 'symbol-narrow' : '1.0-0'
-              }}</span>
-          </div>
-
-          <div class="flex justify-between text-sm opacity-60">
-            <span>Costo de envío</span>
-            <span class="text-success">Gratis</span>
-          </div>
-
-          @if (toAmount(order.discountAmount) > 0) {
-          <div class="flex justify-between text-sm opacity-60">
-            <span>Descuento aplicado</span>
-            <span class="text-primary">-{{ toAmount(order.discountAmount) | currency : order.currency : 'symbol-narrow'
-              : '1.0-0' }}</span>
-          </div>
-          }
-
-          <div class="divider before:bg-neutral-content/10 after:bg-neutral-content/10 my-2"></div>
-
-          <div class="flex justify-between items-end">
-            <span class="font-bold opacity-80 uppercase text-xs tracking-widest">Total Final</span>
-            <span class="text-3xl font-black text-neutral-content tracking-tighter">
-              {{
-              toAmount(order.totalAmount) | currency : order.currency : 'symbol-narrow' : '1.0-0'
-              }}
+    <!-- Detail Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <!-- Left Column: Products Snapshot & Shipping -->
+      <div class="lg:col-span-7 space-y-5">
+        <!-- Products Snapshot Card -->
+        <div class="ios-glass-card rounded-3xl overflow-hidden border border-white/80 shadow-xs">
+          <div class="px-5 py-3.5 border-b border-base-200/80 flex items-center justify-between bg-white/40">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-base-content">
+              Detalle de Referencias
+            </h3>
+            <span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 text-[10px] font-bold">
+              {{ order.items.length }} {{ order.items.length === 1 ? 'producto' : 'productos' }}
             </span>
           </div>
+
+          <div class="divide-y divide-base-200/60 p-2">
+            @for (item of order.items; track item.id) {
+              <div class="p-3.5 flex gap-3.5 items-center hover:bg-white/60 rounded-2xl transition-colors">
+                <div class="w-12 h-12 rounded-xl bg-slate-50 border border-base-200/80 shrink-0 flex items-center justify-center text-[10px] text-primary font-black uppercase shadow-2xs">
+                  HGX
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-xs sm:text-sm font-bold text-base-content truncate">
+                    {{ item.productNameSnapshot }}
+                  </p>
+                  <p class="text-[11px] text-base-content/60 mt-0.5">
+                    {{ item.variantNameSnapshot }} <span class="mx-1">•</span> Cant: <span class="font-bold text-base-content">{{ item.quantity }}</span>
+                  </p>
+                  <p class="text-[10px] font-mono text-base-content/40 uppercase mt-0.5">
+                    SKU: {{ item.skuSnapshot ?? 'N/A' }}
+                  </p>
+                </div>
+                <div class="text-right shrink-0">
+                  <p class="text-xs sm:text-sm font-black text-base-content whitespace-nowrap">
+                    {{ toAmount(item.lineTotalAmount) | currency : order.currency : 'symbol-narrow' : '1.0-0' }}
+                  </p>
+                </div>
+              </div>
+            }
+          </div>
         </div>
 
-        <div class="mt-8 space-y-3">
-          <button (click)="goToCatalog()"
-            class="btn btn-primary w-full h-14 rounded-2xl border-none font-black text-base shadow-lg shadow-primary/20 text-primary-content">
-            VOLVER AL CATÁLOGO
-          </button>
+        <!-- Shipping Address Card -->
+        @if (order.shippingAddress) {
+          <div class="ios-glass-card rounded-3xl p-5 border border-white/80 shadow-xs space-y-3">
+            <div class="flex items-center gap-2.5 pb-2.5 border-b border-base-200/80">
+              <div class="w-7 h-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <lucide-icon [img]="mapIcon" class="w-4 h-4"></lucide-icon>
+              </div>
+              <h3 class="text-xs font-bold uppercase tracking-wider text-base-content">Dirección de Despacho</h3>
+            </div>
 
-          @if (order.status === 'CREATED' || order.status === 'PENDING_PAYMENT') {
-          <button
-            class="btn btn-ghost btn-block text-error hover:text-error hover:bg-error/10 font-bold transition-all">
-            <lucide-icon [img]="xIcon" class="w-4 h-4 mr-2"></lucide-icon>
-            Solicitar cancelación
-          </button>
-          }
-        </div>
+            <div class="text-xs sm:text-sm space-y-1">
+              <p class="font-bold text-base-content">{{ order.shippingAddress.line1 }}</p>
+              <p class="text-base-content/60">
+                {{ order.shippingAddress.neighborhood }}, {{ order.shippingAddress.city }}, {{ order.shippingAddress.state }}
+                @if (order.shippingAddress.postalCode) {
+                  - CP {{ order.shippingAddress.postalCode }}
+                }
+              </p>
+
+              @if (order.shippingAddress.recipientName || order.shippingAddress.phone) {
+                <div class="flex flex-wrap items-center gap-3 pt-2 text-xs text-base-content/70">
+                  @if (order.shippingAddress.recipientName) {
+                    <span>Contacto: <strong>{{ order.shippingAddress.recipientName }}</strong></span>
+                  }
+                  @if (order.shippingAddress.phone) {
+                    <span>Tel: <strong>{{ order.shippingAddress.phone }}</strong></span>
+                  }
+                </div>
+              }
+
+              @if (order.shippingAddress.notes) {
+                <div class="mt-2 text-xs text-base-content/70 bg-white/70 p-3 rounded-2xl border border-base-200/80">
+                  Notas: "{{ order.shippingAddress.notes }}"
+                </div>
+              }
+            </div>
+          </div>
+        }
       </div>
 
-      <div class="p-6 bg-info/10 rounded-3xl border border-info/20 flex items-start gap-4">
-        <div
-          class="w-10 h-10 bg-info text-info-content rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-info/20">
-          <lucide-icon [img]="phoneIcon" class="w-5 h-5"></lucide-icon>
+      <!-- Right Column: Financial Summary & Support -->
+      <div class="lg:col-span-5 space-y-5">
+        <!-- Financial Summary Card -->
+        <div class="ios-glass-card rounded-3xl p-5 sm:p-6 border border-white/80 shadow-[0_20px_50px_-10px_rgba(13,107,70,0.15)] space-y-4">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-base-content pb-3 border-b border-base-200/80">
+            Resumen Financiero
+          </h3>
+
+          <div class="space-y-2.5 text-xs sm:text-sm">
+            <div class="flex justify-between text-base-content/70">
+              <span>Subtotal</span>
+              <span class="font-bold text-base-content">
+                {{ toAmount(order.subtotalAmount) | currency : order.currency : 'symbol-narrow' : '1.0-0' }}
+              </span>
+            </div>
+
+            <div class="flex justify-between text-base-content/70">
+              <span>Impuestos (IVA 19%)</span>
+              <span class="font-bold text-base-content">
+                {{ toAmount(order.taxesAmount) | currency : order.currency : 'symbol-narrow' : '1.0-0' }}
+              </span>
+            </div>
+
+            <div class="flex justify-between text-base-content/70">
+              <span>Costo de envío</span>
+              <span class="font-bold text-emerald-700 bg-emerald-500/10 px-2 py-0.5 rounded-md text-[11px]">Gratis / A convenir</span>
+            </div>
+
+            @if (toAmount(order.discountAmount) > 0) {
+              <div class="flex justify-between text-base-content/70">
+                <span>Descuento aplicado</span>
+                <span class="font-bold text-primary">
+                  -{{ toAmount(order.discountAmount) | currency : order.currency : 'symbol-narrow' : '1.0-0' }}
+                </span>
+              </div>
+            }
+
+            <div class="border-t border-base-200/80 pt-3.5">
+              <div class="flex justify-between items-baseline">
+                <div>
+                  <span class="text-[10px] font-black uppercase tracking-wider text-base-content/60 block">Total Liquidado</span>
+                  <span class="text-[11px] text-base-content/40 font-medium">IVA INCLUIDO</span>
+                </div>
+                <span class="text-2xl sm:text-3xl font-black text-primary tracking-tight whitespace-nowrap">
+                  {{ toAmount(order.totalAmount) | currency : order.currency : 'symbol-narrow' : '1.0-0' }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-2 space-y-2.5">
+            <button
+              type="button"
+              (click)="goToCatalog()"
+              class="w-full h-12 rounded-xl bg-linear-to-r from-primary to-emerald-600 hover:to-emerald-500 text-white font-bold text-xs sm:text-sm shadow-md shadow-primary/25 transition-all active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2 uppercase tracking-wider"
+            >
+              <span>Volver al Catálogo</span>
+              <lucide-icon [img]="arrowRightIcon" class="w-4 h-4"></lucide-icon>
+            </button>
+
+            @if (order.status === 'CREATED' || order.status === 'PENDING_PAYMENT') {
+              <button
+                type="button"
+                class="w-full h-9 rounded-xl text-xs text-error/80 hover:text-error hover:bg-error/10 font-bold transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+              >
+                <lucide-icon [img]="xIcon" class="w-3.5 h-3.5"></lucide-icon>
+                <span>Solicitar cancelación de pedido</span>
+              </button>
+            }
+          </div>
         </div>
-        <div>
-          <h4 class="text-sm font-bold text-base-content">¿Dudas con tu orden?</h4>
-          <p class="text-xs text-base-content/70 mt-1">
-            Escríbenos directamente a WhatsApp para agilizar tu despacho.
-          </p>
-          <button class="mt-3 text-sm font-black text-primary hover:underline">
-            Chat Soporte 📱
-          </button>
+
+        <!-- Support Card -->
+        <div class="ios-glass-card rounded-3xl p-5 border border-white/80 shadow-xs flex items-start gap-3.5">
+          <div class="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+            <lucide-icon [img]="phoneIcon" class="w-4 h-4"></lucide-icon>
+          </div>
+          <div class="space-y-1 text-xs">
+            <h4 class="font-bold text-base-content">¿Consultas sobre este pedido?</h4>
+            <p class="text-base-content/70 leading-relaxed">
+              Comunícate con la mesa de atención corporativa para coordinar facturación, entregas urgentes o cartas de garantía.
+            </p>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 } @else if (isLoading()) {
-<div class="max-w-3xl mx-auto p-8 text-center text-base-content/60">Cargando orden...</div>
+  <ui-loading-state type="spinner" message="Cargando detalles de la orden..."></ui-loading-state>
 } @else if (hasError()) {
-<div class="max-w-3xl mx-auto p-8 text-center">
-  <p class="text-base-content/60 mb-4">No se pudo cargar la orden.</p>
-  <button (click)="retryLoad()" class="btn btn-primary">Reintentar</button>
-</div>
+  <div class="max-w-md mx-auto p-8 text-center space-y-4 ios-glass-card rounded-3xl border border-error/20">
+    <div class="w-12 h-12 rounded-2xl bg-error/10 text-error flex items-center justify-center mx-auto">
+      <lucide-icon [img]="xIcon" class="w-6 h-6"></lucide-icon>
+    </div>
+    <h3 class="text-base font-bold text-base-content">No se pudo cargar la orden</h3>
+    <p class="text-xs text-base-content/60">Verifica el enlace o recarga la información.</p>
+    <button
+      type="button"
+      (click)="retryLoad()"
+      class="h-9 px-4 rounded-xl bg-primary text-white text-xs font-bold hover:brightness-105"
+    >
+      Reintentar
+    </button>
+  </div>
 } @else {
-<div class="max-w-3xl mx-auto p-8 text-center text-base-content/60">Orden no disponible.</div>
+  <ui-empty-state
+    title="Orden no disponible"
+    description="No se encontró el registro de la orden solicitada. Puede que el identificador sea incorrecto."
+  >
+    <div actions>
+      <button
+        type="button"
+        (click)="goToCatalog()"
+        class="h-10 px-5 rounded-xl bg-linear-to-r from-primary to-emerald-600 hover:to-emerald-500 text-white text-xs font-bold shadow-md shadow-primary/25 transition-all cursor-pointer flex items-center gap-2"
+      >
+        <span>Volver al catálogo</span>
+        <lucide-icon [img]="arrowRightIcon" class="w-4 h-4"></lucide-icon>
+      </button>
+    </div>
+  </ui-empty-state>
 }

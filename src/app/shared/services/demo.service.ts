@@ -3,6 +3,8 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { CustomerAddress } from '../../customer/interfaces/customer-address.interface';
+import { InventoryBalance } from '../../admin/interfaces/inventory.interface';
+import { Product, ProductVariant, VariantAttributes } from '../../sales/interfaces/product.interface';
 
 // Demo data interfaces
 export interface DemoCustomer {
@@ -24,6 +26,7 @@ export interface DemoProduct {
   slug: string;
   description: string;
   status: string;
+  images?: DemoImage[];
   variants: DemoVariant[];
 }
 
@@ -36,6 +39,7 @@ export interface DemoVariant {
   images?: DemoImage[];
   inventory?: DemoInventoryBalance;
   price?: DemoPrice;
+  isActive?: boolean;
 }
 
 export interface DemoImage {
@@ -343,6 +347,145 @@ export class DemoService {
 
   getDemoCustomer(): DemoCustomer | null {
     return this.demoDataSignal().customer;
+  }
+
+  /**
+   * Returns inventory balances with full variant and product objects,
+   * avoiding undefined variant errors on the inventory management pages.
+   */
+  getDemoInventoryBalances(): InventoryBalance[] {
+    const products = this.getDemoProducts();
+    const inventory = this.getDemoInventory();
+
+    return inventory.map((item) => {
+      let matchedVariant: DemoVariant | undefined;
+      let matchedProduct: DemoProduct | undefined;
+
+      for (const p of products) {
+        const found = p.variants?.find((v) => v.id === item.variantId || v.sku === item.variantId);
+        if (found) {
+          matchedVariant = found;
+          matchedProduct = p;
+          break;
+        }
+      }
+
+      const onHand = item.onHand ?? 0;
+      const reserved = item.reserved ?? 0;
+
+      return {
+        variantId: item.variantId,
+        onHand,
+        reserved,
+        available: onHand - reserved,
+        updatedAt: item.updatedAt || new Date().toISOString(),
+        variant: {
+          id: matchedVariant?.id || item.variantId,
+          sku: matchedVariant?.sku || item.variantId,
+          gtin: matchedVariant?.gtin ?? null,
+          name: matchedVariant?.name || 'Variante Demo',
+          isActive: matchedVariant?.isActive ?? true,
+          product: {
+            id: matchedProduct?.id || 'demo-prod',
+            name: matchedProduct?.name || 'Producto Demo',
+            slug: matchedProduct?.slug || 'producto-demo',
+            status: matchedProduct?.status || 'PUBLISHED',
+          },
+        },
+      };
+    });
+  }
+
+  /**
+   * Returns products in the shape expected by the catalog and admin product services.
+   */
+  getDemoProductList(): Product[] {
+    return this.getDemoProducts().map((p) => ({
+      id: p.id,
+      name: p.name,
+      slug: p.slug,
+      description: p.description,
+      status: (p.status as 'PUBLISHED' | 'DRAFT') || 'PUBLISHED',
+      createdAt: '2026-01-01T00:00:00.000Z',
+      updatedAt: '2026-01-01T00:00:00.000Z',
+      deletedAt: null,
+    }));
+  }
+
+  /**
+   * Returns product variants with active contract pricing and inventory balances.
+   */
+  getDemoProductVariants(): ProductVariant[] {
+    const products = this.getDemoProducts();
+    const contracts = this.getDemoContracts();
+    const inventory = this.getDemoInventory();
+
+    const priceMap = new Map<string, number>();
+    for (const c of contracts) {
+      const contractItems = (c as { items?: { variantId: string; unitPriceCop: number }[] }).items;
+      if (Array.isArray(contractItems)) {
+        for (const it of contractItems) {
+          if (it.variantId && typeof it.unitPriceCop === 'number') {
+            priceMap.set(it.variantId, it.unitPriceCop);
+          }
+        }
+      }
+    }
+
+    const inventoryMap = new Map<string, { onHand: number; reserved: number; updatedAt?: string }>();
+    for (const inv of inventory) {
+      inventoryMap.set(inv.variantId, {
+        onHand: inv.onHand,
+        reserved: inv.reserved,
+        updatedAt: inv.updatedAt,
+      });
+    }
+
+    const variants: ProductVariant[] = [];
+
+    for (const prod of products) {
+      for (const v of prod.variants ?? []) {
+        const inv = inventoryMap.get(v.id);
+        const unitPriceCop = priceMap.get(v.id) ?? v.price?.amountCop ?? null;
+
+        variants.push({
+          id: v.id,
+          productId: prod.id,
+          sku: v.sku,
+          gtin: v.gtin ?? '',
+          name: v.name,
+          attributesJson: (v.attributesJson as VariantAttributes) ?? {},
+          isActive: v.isActive ?? true,
+          createdAt: '2026-01-01T00:00:00.000Z',
+          updatedAt: '2026-01-01T00:00:00.000Z',
+          product: {
+            id: prod.id,
+            name: prod.name,
+            slug: prod.slug,
+            status: (prod.status as 'PUBLISHED' | 'DRAFT') || 'PUBLISHED',
+          },
+          images: (prod.images ?? []).map((img) => ({
+            id: img.id,
+            altText: img.altText ?? prod.name,
+            isDefault: img.isDefault,
+            createdAt: img.createdAt || '2026-01-01T00:00:00.000Z',
+            mimeType: img.mimeType || 'image/jpeg',
+            filename: img.filename || '',
+            url: (img as { url?: string }).url,
+          })),
+          inventory: inv
+            ? {
+                onHand: inv.onHand,
+                reserved: inv.reserved,
+                updatedAt: inv.updatedAt || new Date().toISOString(),
+              }
+            : null,
+          unitPriceCop,
+        });
+      }
+    }
+
+    return variants;
   }
 
   // === Private Methods ===

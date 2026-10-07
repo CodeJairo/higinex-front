@@ -44,5 +44,7 @@ export class MyOrderDetailPageComponent {
         },
     }));
 
-
+    printOrder(): void {
+        window.print();
+    }
 }

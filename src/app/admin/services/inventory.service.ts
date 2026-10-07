@@ -55,10 +55,18 @@ export class InventoryManagementService {
     offset: number = 0,
     q: string = ''
   ): Observable<InventoryBalance[]> {
-    // In demo mode, return inventory from sessionStorage
+    // In demo mode, return hydrated inventory from demoService
     if (this.demoService.isDemoMode()) {
-      const inventory = this.demoService.getDemoInventory() as unknown as InventoryBalance[];
-      return of(inventory.slice(offset, offset + limit));
+      const inventory = this.demoService.getDemoInventoryBalances();
+      const filtered = q
+        ? inventory.filter(
+            (b) =>
+              b.variant.sku.toLowerCase().includes(q.toLowerCase()) ||
+              b.variant.name.toLowerCase().includes(q.toLowerCase()) ||
+              b.variant.product.name.toLowerCase().includes(q.toLowerCase()),
+          )
+        : inventory;
+      return of(filtered.slice(offset, offset + limit));
     }
 
     const params = new HttpParams({
@@ -136,9 +144,9 @@ export class InventoryManagementService {
     offset: number = 0,
     status: string = 'ALL'
   ): Observable<Product[]> {
-    // In demo mode, return products from sessionStorage
+    // In demo mode, return products from demoService
     if (this.demoService.isDemoMode()) {
-      const products = this.demoService.getDemoProducts() as unknown as Product[];
+      const products = this.demoService.getDemoProductList() as unknown as Product[];
       return of(products.slice(offset, offset + limit));
     }
 

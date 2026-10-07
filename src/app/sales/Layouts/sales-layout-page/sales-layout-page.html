@@ -1,5 +1,12 @@
 <demo-banner />
-<div class="min-h-screen flex flex-col bg-base-200">
+<div class="min-h-screen flex flex-col ios-canvas relative overflow-x-hidden">
+  <!-- Dynamic Ambient Aurora Glow Background -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden -z-10" aria-hidden="true">
+    <div class="ios-ambient-orb ios-ambient-orb-1"></div>
+    <div class="ios-ambient-orb ios-ambient-orb-2"></div>
+    <div class="ios-ambient-orb ios-ambient-orb-3"></div>
+  </div>
+
   <sales-navbar />
   <router-outlet />
   <sales-footer />

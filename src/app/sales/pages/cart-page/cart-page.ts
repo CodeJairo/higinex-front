@@ -16,12 +16,20 @@ import { CheckoutCartItem } from '../../interfaces';
 import { CartService } from '../../services/cart.service';
 import { CatalogService } from '../../services/catalog.service';
 import { ImageWithFallback } from '../../../shared/components/image-with-fallback/image-with-fallback';
+import { UiEmptyStateComponent } from '../../../shared/components/ui/empty-state/empty-state.component';
+import { UiPageHeaderComponent } from '../../../shared/components/ui/page-header/page-header.component';
 
 const PLACEHOLDER_IMAGE = '/placeholder-product.svg';
 
 @Component({
   selector: 'customer-cart-page',
-  imports: [CurrencyPipe, LucideAngularModule, ImageWithFallback],
+  imports: [
+    CurrencyPipe,
+    LucideAngularModule,
+    ImageWithFallback,
+    UiPageHeaderComponent,
+    UiEmptyStateComponent,
+  ],
   templateUrl: './cart-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -82,11 +90,19 @@ export class CartPage {
 
   onQuantityChange(item: CheckoutCartItem, event: Event): void {
     const input = event.target as HTMLInputElement;
-    const value = parseInt(input.value, 10);
+    const value = parseInt(input.value.trim(), 10);
     if (!isNaN(value) && value >= 1) {
       this.cartService.updateQuantity(item.variantId, value);
     } else {
-      // Reset to 1 if invalid
+      this.cartService.updateQuantity(item.variantId, 1);
+      input.value = '1';
+    }
+  }
+
+  onQuantityBlur(item: CheckoutCartItem, event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const value = parseInt(input.value.trim(), 10);
+    if (isNaN(value) || value < 1) {
       this.cartService.updateQuantity(item.variantId, 1);
       input.value = '1';
     }

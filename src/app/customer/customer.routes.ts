@@ -13,6 +13,11 @@ export const customerRoutes: Routes = [
     component: CustomerLayoutPage,
     children: [
       {
+        path: '',
+        redirectTo: 'orders',
+        pathMatch: 'full',
+      },
+      {
         path: 'addresses',
         component: AddressesPage,
       },

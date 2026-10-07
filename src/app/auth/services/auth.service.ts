@@ -140,6 +140,7 @@ export class AuthService {
   async login(email: string, password: string): Promise<boolean> {
     this.loginErrorSignal.set(null);
     try {
+      this.demoService.exitDemoMode();
       await this.loginMutation.mutateAsync({ email, password });
       return true;
     } catch (error) {
@@ -148,12 +149,18 @@ export class AuthService {
     }
   }
 
-  async sendPasswordRecovery(email: string): Promise<boolean> {
+  async sendPasswordRecovery(email: string): Promise<{ success: boolean; message?: string }> {
     try {
       await this.requestPasswordRecoveryMutation.mutateAsync(email);
-      return true;
+      return { success: true };
     } catch (error) {
-      return false;
+      let message = 'No se pudo procesar la solicitud. Verifique el correo ingresado o intente nuevamente.';
+      if (error instanceof HttpErrorResponse && error.error?.message) {
+        message = Array.isArray(error.error.message)
+          ? error.error.message.join(', ')
+          : error.error.message;
+      }
+      return { success: false, message };
     }
   }
 
@@ -369,18 +376,39 @@ export class AuthService {
 
   private mapLoginError(error: unknown): string {
     if (error instanceof HttpErrorResponse) {
+      const serverMessage = error.error?.message;
+      if (typeof serverMessage === 'string') {
+        if (serverMessage === 'User not found' || serverMessage.toLowerCase().includes('not found')) {
+          return 'Este correo no está registrado como cliente corporativo en el sistema.';
+        }
+        if (serverMessage.includes('Invalid credentials') || serverMessage.toLowerCase().includes('password')) {
+          return 'La contraseña ingresada es incorrecta. Verifique sus datos o use el enlace de recuperación.';
+        }
+        if (serverMessage.toLowerCase().includes('inactive')) {
+          return 'Su cuenta corporativa se encuentra inactiva. Comuníquese con su gestor comercial.';
+        }
+        if (serverMessage.toLowerCase().includes('email not verified')) {
+          return 'Su correo aún no ha sido verificado. Revise su bandeja de entrada corporativa.';
+        }
+      }
       if (error.status === 403) {
-        return 'Tu correo no esta verificado. Revisa tu bandeja y vuelve a intentar.';
+        return 'Su cuenta corporativa no tiene permisos de acceso o aún no ha sido activada.';
       }
       if (error.status === 401) {
-        return 'Credenciales invalidas. Verifica tu correo y contrasena.';
+        return 'Credenciales incorrectas. Verifique el correo corporativo y la contraseña ingresada.';
+      }
+      if (error.status === 404 || error.status === 400) {
+        return 'Este correo no está registrado en el sistema. Solicítelo a través de su gestor comercial.';
+      }
+      if (error.status === 429) {
+        return 'Demasiados intentos de acceso. Por seguridad institucional, espere unos minutos.';
       }
       if (error.status === 0) {
-        return 'No se pudo conectar con el servidor. Intenta de nuevo.';
+        return 'No se pudo conectar con el servidor corporativo. Compruebe su conexión de red.';
       }
     }
 
-    return 'No se pudo iniciar sesion. Intenta de nuevo.';
+    return 'No se pudo iniciar sesión. Verifique sus credenciales corporativas e intente nuevamente.';
   }
 
   private buildUrl(path: string): string {

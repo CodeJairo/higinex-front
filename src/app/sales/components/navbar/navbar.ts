@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { LucideAngularModule, Search, ShoppingCart } from 'lucide-angular';
+import { LucideAngularModule, Search, ShoppingCart, X } from 'lucide-angular';
 import { Role } from '../../../auth/interfaces';
 import { AuthService } from '../../../auth/services/auth.service';
 import { CartService } from '../../services/cart.service';
@@ -37,6 +37,7 @@ export class Navbar implements OnInit, OnDestroy {
   // Icons
   readonly searchIcon = Search;
   readonly cartIcon = ShoppingCart;
+  readonly xIcon = X;
 
   // State
   isVisible = signal(true);
@@ -47,7 +48,6 @@ export class Navbar implements OnInit, OnDestroy {
   isAdmin = computed(() => this.authService.user()?.role === Role.ADMIN);
   private lastScrollY = 0;
   private scrollHandler!: () => void;
-  private clickHandler!: (event: MouseEvent) => void;
 
   // From services
   readonly totalItems = this.cartService.totalItems;
@@ -94,12 +94,10 @@ export class Navbar implements OnInit, OnDestroy {
 
     // { passive: true } mejora el rendimiento del scroll
     window.addEventListener('scroll', this.scrollHandler, { passive: true });
-    document.addEventListener('click', this.clickHandler);
   }
 
   ngOnDestroy(): void {
     window.removeEventListener('scroll', this.scrollHandler);
-    document.removeEventListener('click', this.clickHandler);
   }
 
   private handleScroll(): void {
@@ -167,6 +165,10 @@ export class Navbar implements OnInit, OnDestroy {
 
   clearCart(): void {
     this.cartService.clearCart();
+  }
+
+  clearSearch(): void {
+    this.searchQuery.set('');
   }
 
   private capitalizeWords(value: string): string {
